@@ -1,7 +1,8 @@
-﻿namespace Castos.Podcasts
+﻿namespace Castos
 
 open System
 
+[<AutoOpen>]
 module Podcasts =
     type Episode =
         { Name : string
@@ -16,5 +17,5 @@ module Podcasts =
         { Name : string
           Folder : string
           Category : string
-          Current : PendingEpisode
-          Epiosdes : Episode list }
+          Current : PendingEpisode option
+          Episodes : Episode list }
