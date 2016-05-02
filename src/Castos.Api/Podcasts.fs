@@ -15,5 +15,6 @@ module Podcasts =
     type Podcast =
         { Name : string
           Folder : string
+          Category : string
           Current : PendingEpisode
           Epiosdes : Episode list }
