@@ -1,6 +1,7 @@
 ﻿open Suave
+open Suave.Successful
 
 [<EntryPoint>]
 let main argv =
-    startWebServer defaultConfig (Successful.OK "Hello World!")
+    startWebServer defaultConfig (OK "Hello World!")
     0
