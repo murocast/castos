@@ -4,7 +4,7 @@ open System
 open System.IO
 
 module FileSystem =
-    let path = @"\\qnap\Music\Podcasts"
+    let basePath = @"\\qnap\Music\Podcasts"
 
     let episodes path =
         let files = Directory.GetFiles(path)
@@ -26,11 +26,11 @@ module FileSystem =
         podcasts
 
     let Podcasts =
-        let categories = Directory.GetDirectories(path)
-                         |> Seq.filter(fun x -> not(x.Substring(path.Length + 1).StartsWith(".")))
-                         |> Seq.map(fun x -> x.Substring(path.Length + 1))
+        let categories = Directory.GetDirectories(basePath)
+                         |> Seq.filter(fun x -> not(x.Substring(basePath.Length + 1).StartsWith(".")))
+                         |> Seq.map(fun x -> x.Substring(basePath.Length + 1))
                          |> Seq.toList
         let podcasts = categories
-                       |> Seq.collect(fun x -> podcastsOfCategory path x)
+                       |> Seq.collect(fun x -> podcastsOfCategory basePath x)
                        |> Seq.toList
         ()
