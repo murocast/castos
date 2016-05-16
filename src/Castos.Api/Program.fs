@@ -1,8 +1,22 @@
-﻿open Suave
+﻿open Newtonsoft.Json
+open Newtonsoft.Json.FSharp
+
+open Suave
 open Suave.Filters
 open Suave.Operators
 open Suave.Successful
 open Suave.WebPart
+
+let settings = new JsonSerializerSettings()
+               |> Serialisation.extend
+
+let inline unjson<'T> json =
+        let a = JsonConvert.DeserializeObject<'T>(json, settings)
+        a
+
+let inline mkjson a =
+        let json = JsonConvert.SerializeObject(a, settings)
+        json
 
 let podcastRoutes =
     choose

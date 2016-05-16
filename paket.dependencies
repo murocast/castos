@@ -2,3 +2,4 @@ source C:\tmp\packages
 source https://www.nuget.org/api/v2/
 nuget FAKE
 nuget Suave
+nuget Newtonsoft.Json.FSharp
