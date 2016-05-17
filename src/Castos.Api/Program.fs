@@ -22,6 +22,11 @@ let podcastRoutes =
     choose
         [ path "/api/podcasts" >=> choose [ GET >=> OK "TODO: All podcasts" ]
 
+          path "/api/podcasts/categories/" >=> choose [ GET >=> OK "TODO: All categories" ]
+
+          pathScan "/api/podcasts/categories/%s"
+          <| fun category -> choose [ GET >=> OK(sprintf "TODO: Show all podcasts of category '%s'" category) ]
+
           pathScan "/api/podcasts/%s"
           <| fun podcast -> choose [ GET >=> OK(sprintf "TODO: Show information about podcast '%s'" podcast) ]
 
