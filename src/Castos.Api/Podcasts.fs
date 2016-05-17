@@ -46,12 +46,16 @@ module Podcasts =
             |> Seq.toList
         podcasts
 
-    let Podcasts =
-        let categories =
-            Directory.GetDirectories(basePath)
-            |> Seq.filter (fun x -> not (x.Substring(basePath.Length + 1).StartsWith(".")))
-            |> Seq.map (fun x -> x.Substring(basePath.Length + 1))
-            |> Seq.toList
+    let categories =
+        Directory.GetDirectories(basePath)
+        |> Seq.filter (fun x -> not (x.Substring(basePath.Length + 1).StartsWith(".")))
+        |> Seq.map (fun x -> x.Substring(basePath.Length + 1))
+        |> Seq.toList
+
+    let podcasts =
         categories
         |> Seq.collect (fun x -> podcastsOfCategory basePath x)
         |> Seq.toList
+
+    let GetPodcasts (s:string) =
+        Success podcasts

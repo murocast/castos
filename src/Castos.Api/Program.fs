@@ -8,6 +8,8 @@ open Suave.RequestErrors
 open Suave.Successful
 open Suave.WebPart
 
+open Castos.Podcasts
+
 let settings = new JsonSerializerSettings()
                |> Serialisation.extend
 
@@ -31,7 +33,7 @@ let processAsync f =
 
 let podcastRoutes =
     choose
-        [ path "/api/podcasts" >=> choose [ GET >=> OK "TODO: All podcasts" ]
+        [ path "/api/podcasts" >=> choose [ GET >=> warbler (fun c -> processAsync GetPodcasts) ]
 
           path "/api/podcasts/categories/" >=> choose [ GET >=> OK "TODO: All categories" ]
 
