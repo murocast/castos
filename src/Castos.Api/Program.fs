@@ -4,6 +4,7 @@ open Newtonsoft.Json.FSharp
 open Suave
 open Suave.Filters
 open Suave.Operators
+open Suave.RequestErrors
 open Suave.Successful
 open Suave.WebPart
 
@@ -17,6 +18,16 @@ let inline unjson<'T> json =
 let inline mkjson a =
         let json = JsonConvert.SerializeObject(a, settings)
         json
+
+let processAsync f =
+    fun (x:HttpContext) ->
+        async{
+            let data = System.Text.Encoding.UTF8.GetString x.request.rawForm
+            let result = f data
+            return! match result with
+                    | Success (a) -> OK (mkjson a) x
+                    | Failure (_) -> BAD_REQUEST "Error" x
+        }
 
 let podcastRoutes =
     choose
