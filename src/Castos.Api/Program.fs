@@ -50,7 +50,14 @@ let podcastRoutes =
           <| fun (podcast, episode) ->
               choose [ GET >=> OK(sprintf "TODO: Show information about episode '%s' of podcast '%s'" podcast episode) ] ]
 
+let playerRoutes =
+    choose
+        [ path "/api/players" >=> choose [GET >=> OK "TODO: Show all available players" ]
+
+          pathScan "/api/players/%s"
+          <| fun player -> choose [ GET >=> OK(sprintf "TODO: Show information about player %s" player) ] ]
+
 [<EntryPoint>]
 let main argv =
-    startWebServer defaultConfig (choose [ podcastRoutes ])
+    startWebServer defaultConfig (choose [ podcastRoutes; playerRoutes ])
     0
