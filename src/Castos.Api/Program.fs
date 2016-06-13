@@ -9,6 +9,7 @@ open Suave.Successful
 open Suave.WebPart
 
 open Castos.Podcasts
+open Castos.Players
 
 let settings = new JsonSerializerSettings()
                |> Serialisation.extend
@@ -52,7 +53,7 @@ let podcastRoutes =
 
 let playerRoutes =
     choose
-        [ path "/api/players" >=> choose [GET >=> OK "TODO: Show all available players" ]
+        [ path "/api/players" >=> choose [GET >=> warbler (fun c -> processAsync GetPlayers) ]
 
           pathScan "/api/players/%s"
           <| fun player -> choose [ GET >=> OK(sprintf "TODO: Show information about player %s" player) ] ]

@@ -3,6 +3,8 @@ NUGET
   specs:
     FAKE (4.25.5)
     FSharp.Core (4.0.0.1)
+    FSharp.Data (2.3)
+      Zlib.Portable (>= 1.11) - framework: portable-net45+sl5+win8, portable-net45+win8, portable-net45+win8+wp8+wpa81
     Newtonsoft.Json (8.0.3)
     Newtonsoft.Json.FSharp (3.2.2)
       FSharp.Core (>= 3.1.2.1)
@@ -11,3 +13,4 @@ NUGET
     NodaTime (1.3.2)
     Suave (1.1.2)
       FSharp.Core (>= 3.1.2.5)
+    Zlib.Portable (1.11) - framework: portable-net45+sl5+win8, portable-net45+win8, portable-net45+win8+wp8+wpa81
