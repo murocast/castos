@@ -58,6 +58,16 @@ let playerRoutes =
           pathScan "/api/players/%s"
           <| fun player -> choose [ GET >=> OK(sprintf "TODO: Show information about player %s" player) ] ]
 
+let smapiRoutes =
+    choose
+        [ path "/getExtendedMetadata" >=> choose [GET >=> OK "TODO: Smapi"]
+          path "/getExtendedMetadataText" >=> choose [GET >=> OK "TODO: Smapi"]
+          path "/getLastUpdate" >=> choose [GET >=> OK "TODO: Smapi"]
+          path "/getMediaMetadata" >=> choose [GET >=> OK "TODO: Smapi"]
+          path "/getMediaURI" >=> choose [GET >=> OK "TODO: Smapi"]
+          path "/getMetadata" >=> choose [GET >=> OK "TODO: Smapi"]
+          path "/search" >=> choose [GET >=> OK "TODO: Smapi"] ]
+
 [<EntryPoint>]
 let main argv =
     startWebServer defaultConfig (choose [ podcastRoutes; playerRoutes ])
