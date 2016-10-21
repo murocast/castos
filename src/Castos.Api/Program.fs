@@ -32,6 +32,21 @@ let processAsync f =
                     | Failure (_) -> BAD_REQUEST "Error" x
         }
 
+let processSmapiAction a =
+    Success(a)
+
+let processSmapiRequest =
+    fun (c:HttpContext) ->
+        async{
+            let result = match "SOAPAction" |> c.request.header with
+                         | Choice1Of2 m -> processSmapiAction m
+                         | Choice2Of2 e -> Failure (e)
+
+            return! match result with
+                    | Success (content) -> OK content c
+                    | Failure (content) -> BAD_REQUEST content c
+        }
+
 let podcastRoutes =
     choose
         [ path "/api/podcasts" >=> choose [ GET >=> warbler (fun c -> processAsync GetPodcasts) ]
@@ -60,15 +75,16 @@ let playerRoutes =
 
 let smapiRoutes =
     choose
-        [ path "/getExtendedMetadata" >=> choose [GET >=> OK "TODO: Smapi"]
-          path "/getExtendedMetadataText" >=> choose [GET >=> OK "TODO: Smapi"]
-          path "/getLastUpdate" >=> choose [GET >=> OK "TODO: Smapi"]
-          path "/getMediaMetadata" >=> choose [GET >=> OK "TODO: Smapi"]
-          path "/getMediaURI" >=> choose [GET >=> OK "TODO: Smapi"]
-          path "/getMetadata" >=> choose [GET >=> OK "TODO: Smapi"]
-          path "/search" >=> choose [GET >=> OK "TODO: Smapi"] ]
+        [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest)]
+//          path "/getExtendedMetadataText" >=> choose [GET >=> OK "TODO: Smapi"]
+//          path "/getLastUpdate" >=> choose [GET >=> OK "TODO: Smapi"]
+//          path "/getMediaMetadata" >=> choose [GET >=> OK "TODO: Smapi"]
+//          path "/getMediaURI" >=> choose [GET >=> OK "TODO: Smapi"]
+//          path "/getMetadata" >=> choose [POST >=> OK "TODO: Smapi"]
+//          path "/search" >=> choose [GET >=> OK "TODO: Smapi"]
+          ]
 
 [<EntryPoint>]
 let main argv =
-    startWebServer defaultConfig (choose [ podcastRoutes; playerRoutes ])
+    startWebServer defaultConfig (choose [ podcastRoutes; playerRoutes; smapiRoutes ])
     0
