@@ -11,6 +11,8 @@ open Suave.WebPart
 open Castos.Podcasts
 open Castos.Players
 
+open Castos.Smapi
+
 let settings = new JsonSerializerSettings()
                |> Serialisation.extend
 
@@ -32,20 +34,12 @@ let processAsync f =
                     | Failure (_) -> BAD_REQUEST "Error" x
         }
 
-let processSmapiMethod a =
-    match a with
-    | "getMetadata" -> Success(a)
-    | _ -> Failure(sprintf "Method not implemented %s" a)
-
-let extractSmapiMethod (m:string) =
-    m.[34..] //cut until #: http://www.sonos.com/Services/1.1#getMetadata
-
 let processSmapiRequest =
     fun (c:HttpContext) ->
         async{
             let result = match "SOAPAction" |> c.request.header with
-                         | Choice1Of2 m -> processSmapiMethod (extractSmapiMethod m)
-                         | Choice2Of2 e -> Failure (e)
+                            | Choice1Of2 m -> processSmapiMethod (extractSmapiMethod m)
+                            | Choice2Of2 e -> Failure (e)
 
             return! match result with
                     | Success (content) -> OK content c

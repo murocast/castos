@@ -55,6 +55,7 @@
     <Compile Include="Rop.fs" />
     <Compile Include="Podcasts.fs" />
     <Compile Include="Players.fs" />
+    <Compile Include="Smapi.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <None Include="paket.references" />
