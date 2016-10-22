@@ -32,14 +32,19 @@ let processAsync f =
                     | Failure (_) -> BAD_REQUEST "Error" x
         }
 
-let processSmapiAction a =
-    Success(a)
+let processSmapiMethod a =
+    match a with
+    | "getMetadata" -> Success(a)
+    | _ -> Failure(sprintf "Method not implemented %s" a)
+
+let extractSmapiMethod (m:string) =
+    m.[34..] //cut until #: http://www.sonos.com/Services/1.1#getMetadata
 
 let processSmapiRequest =
     fun (c:HttpContext) ->
         async{
             let result = match "SOAPAction" |> c.request.header with
-                         | Choice1Of2 m -> processSmapiAction m
+                         | Choice1Of2 m -> processSmapiMethod (extractSmapiMethod m)
                          | Choice2Of2 e -> Failure (e)
 
             return! match result with
