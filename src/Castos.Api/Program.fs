@@ -38,7 +38,7 @@ let processSmapiRequest =
     fun (c:HttpContext) ->
         async{
             let result = match "SOAPAction" |> c.request.header with
-                            | Choice1Of2 m -> processSmapiMethod (extractSmapiMethod m)
+                            | Choice1Of2 m -> processSmapiMethod m
                             | Choice2Of2 e -> Failure (e)
 
             return! match result with
