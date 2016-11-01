@@ -24,10 +24,12 @@ let inline mkjson a =
         let json = JsonConvert.SerializeObject(a, settings)
         json
 
+let rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
+
 let processAsync f =
     fun (x:HttpContext) ->
         async{
-            let data = System.Text.Encoding.UTF8.GetString x.request.rawForm
+            let data = rawFormString x
             let result = f data
             return! match result with
                     | Success (a) -> OK (mkjson a) x
@@ -38,7 +40,7 @@ let processSmapiRequest =
     fun (c:HttpContext) ->
         async{
             let result = match "SOAPAction" |> c.request.header with
-                            | Choice1Of2 m -> processSmapiMethod m
+                            | Choice1Of2 m -> processSmapiMethod m (rawFormString c)
                             | Choice2Of2 e -> Failure (e)
 
             return! match result with
