@@ -1,5 +1,7 @@
 ﻿namespace Castos
 
+open Smapi
+open Smapi.Respond
 open FSharp.Data
 
 module Smapi =
@@ -10,7 +12,19 @@ module Smapi =
 
     let processGetMetadata s =
         let req = getMetadataRequest.Parse s
-        Success(s)
+        let items = [ MediaMetadata { Id = ""
+                                      ItemType = Artist
+                                      Title = "TitleOne"
+                                      MimeType = "media/mp3"
+                                      ItemMetadata = TrackMetadata { AlbumId = "Album1"
+                                                                     Duration = 123
+                                                                     ArtistId = "Artist1"
+                                                                     Genre = ""
+                                                                     Artist = "Mobi"
+                                                                     Album = "First"
+                                                                     AlbumArtURI = "" }}]
+        let response = getMetadataResponse items
+        Success(response)
 
     let processSmapiMethod a form =
         match extractSmapiMethod a with
