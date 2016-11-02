@@ -3,6 +3,7 @@ namespace Smapi
 open System.Xml
 open System.Xml.Linq
 
+open Microsoft.FSharp.Reflection
 
 type ItemType =
     | Artist
@@ -67,6 +68,15 @@ module Respond =
     [<Literal>]
     let NsSonos = "http://www.sonos.com/Services/1.1"
 
+    let toString (x:'a) =
+        match FSharpValue.GetUnionFields(x, typeof<'a>) with
+        | case, _ -> case.Name
+
+    let fromString<'a> (s:string) =
+        match FSharpType.GetUnionCases typeof<'a> |> Array.filter (fun case -> case.Name = s) with
+        |[|case|] -> Some(FSharpValue.MakeUnion(case,[||]) :?> 'a)
+        |_ -> None
+
     let getNode name ns =
         new XElement(XName.Get(name, ns))
 
@@ -84,7 +94,7 @@ module Respond =
     let getMediaCollectionNode (c:Collection) =
         let root = getNode "mediaCollection" NsSonos
         addToNodeWithValue root "id" NsSonos c.Id |> ignore
-        addToNodeWithValue root "itemType" NsSonos (string c.ItemType) |> ignore
+        addToNodeWithValue root "itemType" NsSonos (toString c.ItemType) |> ignore
         addToNodeWithValue root "title" NsSonos (string c.Title) |> ignore
         addToNodeWithValue root "canPlay" NsSonos (string c.CanPlay) |> ignore
         root
@@ -111,7 +121,7 @@ module Respond =
         let root = getNode "mediaMetadata" NsSonos
         addToNodeWithValue root "id" NsSonos e.Id |> ignore
         addToNodeWithValue root "title" NsSonos (string e.Title) |> ignore
-        addToNodeWithValue root "itemType" NsSonos (string e.ItemType) |> ignore
+        addToNodeWithValue root "itemType" NsSonos (toString e.ItemType) |> ignore
         addToNodeWithValue root "mimeType" NsSonos (string e.MimeType) |> ignore
         let node = match e.ItemMetadata with
                    | TrackMetadata t -> getTrackMetadata t
