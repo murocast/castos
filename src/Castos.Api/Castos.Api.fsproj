@@ -229,6 +229,7 @@
     <None Include="Samples\zones.json" />
     <EmbeddedResource Include="Samples\GetMetadataRequest.xml" />
     <EmbeddedResource Include="Samples\GetMediaMetadataRequest.xml" />
+    <EmbeddedResource Include="Samples\GetMediaURIRequest.xml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Data.DesignTime">
