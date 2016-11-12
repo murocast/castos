@@ -230,6 +230,7 @@
     <EmbeddedResource Include="Samples\GetMetadataRequest.xml" />
     <EmbeddedResource Include="Samples\GetMediaMetadataRequest.xml" />
     <EmbeddedResource Include="Samples\GetMediaURIRequest.xml" />
+    <EmbeddedResource Include="Samples\GetLastUpdateRequest.xml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Data.DesignTime">
