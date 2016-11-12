@@ -75,15 +75,7 @@ let playerRoutes =
           <| fun player -> choose [ GET >=> OK(sprintf "TODO: Show information about player %s" player) ] ]
 
 let smapiRoutes =
-    choose
-        [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest)]
-//          path "/getExtendedMetadataText" >=> choose [GET >=> OK "TODO: Smapi"]
-//          path "/getLastUpdate" >=> choose [GET >=> OK "TODO: Smapi"]
-//          path "/getMediaMetadata" >=> choose [GET >=> OK "TODO: Smapi"]
-//          path "/getMediaURI" >=> choose [GET >=> OK "TODO: Smapi"]
-//          path "/getMetadata" >=> choose [POST >=> OK "TODO: Smapi"]
-//          path "/search" >=> choose [GET >=> OK "TODO: Smapi"]
-          ]
+    choose [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest)] ]
 
 [<EntryPoint>]
 let main argv =
