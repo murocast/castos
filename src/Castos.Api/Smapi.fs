@@ -68,7 +68,7 @@ module Smapi =
         let req = getExtendedMetadataRequest.Parse s
         failwith "TODO"
 
-    let processGetExtendedMetadataTextRequest s =
+    let processGetExtendedMetadataText s =
         let req = getExtendedMetadataTextRequest.Parse s
         failwith "TODO"
 
