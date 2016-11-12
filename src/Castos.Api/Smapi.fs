@@ -18,6 +18,7 @@ module Smapi =
     type getMediaMetadataRequest = XmlProvider<"Samples/GetMediaMetadataRequest.xml">
     type getMediaURIRequest = XmlProvider<"Samples/GetMediaURIRequest.xml">
     type getLastUpdateRequest = XmlProvider<"Samples/GetLastUpdateRequest.xml">
+    type getExtendedMetadataRequest = XmlProvider<"Samples/getExtendedMetadataRequest.xml">
 
     let extractSmapiMethod (m:string) =
         m.[34..] //cut until #: http://www.sonos.com/Services/1.1#getMetadata
@@ -57,8 +58,13 @@ module Smapi =
     let processGetMediaURI s =
         let req = getMediaURIRequest.Parse s
         failwith "TODO"
+
     let processGetLastUpdate s =
         let req = getLastUpdateRequest.Parse s
+        failwith "TODO"
+
+    let processGetExtendedMetadata s =
+        let req = getExtendedMetadataRequest.Parse s
         failwith "TODO"
 
     let processSmapiMethod a form =
@@ -67,5 +73,6 @@ module Smapi =
         | "getMediaMetadata" -> processGetMediaMetadata form
         | "getMediaURI" -> processGetMediaURI form
         | "getLastUpdate" -> processGetLastUpdate form
+        | "getExtendedMetadataRequest" -> processGetExtendedMetadata form
         | _ -> Failure(sprintf "Method not implemented %s" a)
 
