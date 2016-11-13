@@ -130,11 +130,16 @@ module Respond =
 
         root
 
-    let getMetadataResponse items =
-        let envelop = getNode "Envelope" NsEnvelope
-        let body = addToNode envelop "Body" NsEnvelope
+    let getEnvelopeWithResult =
+        let envelope = getNode "Envelope" NsEnvelope
+        let body = addToNode envelope "Body" NsEnvelope
         let response = addToNode body "getMetadataResponse" NsSonos
         let result = addToNode response "getMetadataResult" NsSonos
+        envelope, result
+
+
+    let getMetadataResponse items =
+        let envelope, result = getEnvelopeWithResult
 
         let index = addToNodeWithValue result "index" NsSonos "0"
         let amount = string (Seq.length items)
@@ -147,6 +152,6 @@ module Respond =
                        | MediaMetadata e -> getMediaMetadataNode e
             result.Add(node)
 
-        envelop.ToString()
+        envelope.ToString()
 
 
