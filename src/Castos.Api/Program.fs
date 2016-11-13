@@ -1,4 +1,6 @@
-﻿open Newtonsoft.Json
+﻿open System.Net
+
+open Newtonsoft.Json
 open Newtonsoft.Json.FSharp
 
 open Suave
@@ -7,6 +9,7 @@ open Suave.Operators
 open Suave.RequestErrors
 open Suave.Successful
 open Suave.WebPart
+open Suave.SuaveConfig
 
 open Castos.Podcasts
 open Castos.Players
@@ -79,5 +82,9 @@ let smapiRoutes =
 
 [<EntryPoint>]
 let main argv =
-    startWebServer defaultConfig (choose [ podcastRoutes; playerRoutes; smapiRoutes ])
+    let cfg =
+        { defaultConfig with
+            bindings = [ HttpBinding.mk HTTP IPAddress.Any 80us ]
+        }
+    startWebServer cfg (choose [ podcastRoutes; playerRoutes; smapiRoutes ])
     0

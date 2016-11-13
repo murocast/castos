@@ -23,7 +23,7 @@ module Smapi =
     type getExtendedMetadataTextRequest = XmlProvider<"Samples/GetExtendedMetadataTextRequest.xml">
 
     let extractSmapiMethod (m:string) =
-        m.[34..] //cut until #: http://www.sonos.com/Services/1.1#getMetadata
+        m.Trim('"').[34..] //cut until #: http://www.sonos.com/Services/1.1#getMetadata
 
     let getRootCollections =
         [ MediaCollection { Id = LibraryId
