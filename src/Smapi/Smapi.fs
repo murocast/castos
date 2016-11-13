@@ -130,16 +130,16 @@ module Respond =
 
         root
 
-    let getEnvelopeWithResult =
+    let getEnvelopeWithBody() =
         let envelope = getNode "Envelope" NsEnvelope
         let body = addToNode envelope "Body" NsEnvelope
-        let response = addToNode body "getMetadataResponse" NsSonos
-        let result = addToNode response "getMetadataResult" NsSonos
-        envelope, result
+        envelope, body
 
 
     let getMetadataResponse items =
-        let envelope, result = getEnvelopeWithResult
+        let envelope, body = getEnvelopeWithBody()
+        let response = addToNode body "getMetadataResponse" NsSonos
+        let result = addToNode response "getMetadataResult" NsSonos
 
         let index = addToNodeWithValue result "index" NsSonos "0"
         let amount = string (Seq.length items)

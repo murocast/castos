@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Smapi.fs" />
+    <Compile Include="GetLastUpdate.fs" />
     <None Include="Script.fsx" />
   </ItemGroup>
   <PropertyGroup>

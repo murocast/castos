@@ -2,6 +2,7 @@
 
 open Smapi
 open Smapi.Respond
+open Smapi.GetLastUpdate
 open FSharp.Data
 
 module Smapi =
@@ -62,7 +63,11 @@ module Smapi =
 
     let processGetLastUpdate s =
         let req = getLastUpdateRequest.Parse s
-        failwith "TODO"
+        let result = { AutoRefreshEnabled = false
+                       Catalog = (string 4321)
+                       Favorites = (string 4321)
+                       PollIntervall = 30 }
+        Success (toLastUpdateXml result)
 
     let processGetExtendedMetadata s =
         let req = getExtendedMetadataRequest.Parse s
