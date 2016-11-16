@@ -5,6 +5,15 @@ open Smapi.Respond
 open Smapi.GetLastUpdate
 open FSharp.Data
 
+
+type SmapiMethod =
+    | GetMetadata of string
+    | GetMediaMetadata of string
+    | GetMediaURI of string
+    | GetLastUpdate of string
+    | GetExtendedMetadataRequest of string
+    | GetExtendedMetadataRequestText of string
+
 module Smapi =
     [<Literal>]
     let RootId = "root"
@@ -39,9 +48,8 @@ module Smapi =
                             Title = "Recent"
                             CanPlay = false }]
 
-    let processGetMetadata s =
-        let req = getMetadataRequest.Parse s
-        let items = match req.Body.GetMetadata.Id with
+    let processGetMetadata (s:getMetadataRequest.Envelope) =
+        let items = match s.Body.GetMetadata.Id with
                     | RootId -> getRootCollections
                     | LibraryId
                     | CurrentId
@@ -52,7 +60,6 @@ module Smapi =
         Success(response)
 
     let processGetMediaMetadata s =
-        let req = getMediaMetadataRequest.Parse s
 //        let items = match req.Body.GetMediaMetadata.Id with
 //                    | RootId ->
         failwith "TODO"
@@ -62,7 +69,6 @@ module Smapi =
         failwith "TODO"
 
     let processGetLastUpdate s =
-        let req = getLastUpdateRequest.Parse s
         let result = { AutoRefreshEnabled = false
                        Catalog = (string 4321)
                        Favorites = (string 4321)
@@ -77,13 +83,10 @@ module Smapi =
         let req = getExtendedMetadataTextRequest.Parse s
         failwith "TODO"
 
-    let processSmapiMethod a form =
-        match extractSmapiMethod a with
-        | "getMetadata" -> processGetMetadata form
-        | "getMediaMetadata" -> processGetMediaMetadata form
-        | "getMediaURI" -> processGetMediaURI form
-        | "getLastUpdate" -> processGetLastUpdate form
-        | "getExtendedMetadataRequest" -> processGetExtendedMetadata form
-        | "getExtendedMetadataRequestText" -> processGetExtendedMetadataText form
-        | _ -> Failure(sprintf "Method not implemented %s" a)
+    let processSmapiMethod m =
+        match m with
+        | GetMetadata s -> processGetMetadata (getMetadataRequest.Parse s)
+        | GetLastUpdate s -> processGetLastUpdate (getLastUpdateRequest.Parse s)
+        | GetMediaMetadata s -> processGetMediaMetadata (getMediaMetadataRequest.Parse s)
+        | _ -> Failure("blubber")
 

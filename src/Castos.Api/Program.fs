@@ -11,6 +11,7 @@ open Suave.Successful
 open Suave.WebPart
 open Suave.SuaveConfig
 
+open Castos
 open Castos.Podcasts
 open Castos.Players
 
@@ -39,13 +40,28 @@ let processAsync f =
                     | Failure (_) -> BAD_REQUEST "Error" x
         }
 
+let getSmapiMethod c =
+        let m = match "SOAPAction" |> c.request.header with
+                | Choice1Of2 m -> extractSmapiMethod m
+                | Choice2Of2 e -> failwith "No method in request"
+
+        match m with
+        | "getMetadata" -> Success (GetMetadata (rawFormString c))
+        | "getMediaMetadata" -> Success (GetMediaMetadata (rawFormString c))
+        | "getMediaURI" -> Success(GetMediaURI (rawFormString c))
+        | "getLastUpdate" -> Success(GetLastUpdate(rawFormString c))
+        | "getExtendedMetadataRequest" -> Success(GetExtendedMetadataRequest(rawFormString c))
+        | "getExtendedMetadataRequestText" -> Success(GetExtendedMetadataRequestText(rawFormString c))
+        | _ -> Failure(sprintf "Method not implemented %s" m)
+
+let smapiImp =
+    getSmapiMethod
+    >> Rop.bind processSmapiMethod
+
 let processSmapiRequest =
     fun (c:HttpContext) ->
         async{
-            let result = match "SOAPAction" |> c.request.header with
-                            | Choice1Of2 m -> processSmapiMethod m (rawFormString c)
-                            | Choice2Of2 e -> Failure (e)
-
+            let result = smapiImp c
             return! match result with
                     | Success (content) -> OK content c
                     | Failure (content) -> BAD_REQUEST content c
