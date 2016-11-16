@@ -31,13 +31,13 @@ let inline mkjson a =
 let rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
 
 let processAsync f =
-    fun (x:HttpContext) ->
+    fun (c:HttpContext) ->
         async{
-            let data = rawFormString x
+            let data = rawFormString c
             let result = f data
             return! match result with
-                    | Success (a) -> OK (mkjson a) x
-                    | Failure (_) -> BAD_REQUEST "Error" x
+                    | Success (a) -> OK (mkjson a) c
+                    | Failure (_) -> BAD_REQUEST "Error" c
         }
 
 let getSmapiMethod c =
