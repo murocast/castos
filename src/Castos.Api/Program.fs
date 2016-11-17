@@ -101,6 +101,7 @@ let main argv =
     let cfg =
         { defaultConfig with
             bindings = [ HttpBinding.mk HTTP IPAddress.Any 80us ]
+            logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Verbose
         }
     startWebServer cfg (choose [ podcastRoutes; playerRoutes; smapiRoutes ])
     0
