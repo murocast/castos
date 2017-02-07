@@ -1,6 +1,7 @@
 ﻿namespace Castos
 
 open FSharp.Data
+open Chessie.ErrorHandling
 
 module Players =
     type Player =
@@ -13,4 +14,4 @@ module Players =
         |> Seq.map (fun z ->  { Id = z.Coordinator.RoomName })
 
     let GetPlayers (s:string)  =
-        Success players
+        ok players

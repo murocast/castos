@@ -5,6 +5,7 @@ open Smapi.Respond
 open Smapi.GetLastUpdate
 open FSharp.Data
 
+open Chessie.ErrorHandling
 
 type SmapiMethod =
     | GetMetadata of string
@@ -57,7 +58,7 @@ module Smapi =
                     | _ -> failwith "unknown id"
 
         let response = getMetadataResponse items
-        Success(response)
+        ok response
 
     let processGetMediaMetadata s =
 //        let items = match req.Body.GetMediaMetadata.Id with
@@ -73,7 +74,7 @@ module Smapi =
                        Catalog = (string 4321)
                        Favorites = (string 4321)
                        PollIntervall = 30 }
-        Success (toLastUpdateXml result)
+        ok (toLastUpdateXml result)
 
     let processGetExtendedMetadata s =
         let req = getExtendedMetadataRequest.Parse s
@@ -88,5 +89,5 @@ module Smapi =
         | GetMetadata s -> processGetMetadata (getMetadataRequest.Parse s)
         | GetLastUpdate s -> processGetLastUpdate (getLastUpdateRequest.Parse s)
         | GetMediaMetadata s -> processGetMediaMetadata (getMediaMetadataRequest.Parse s)
-        | _ -> Failure("blubber")
+        | _ -> fail "blubber"
 

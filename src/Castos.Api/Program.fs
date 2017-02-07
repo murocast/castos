@@ -17,6 +17,8 @@ open Castos.Players
 
 open Castos.Smapi
 
+open Chessie.ErrorHandling
+
 let settings = new JsonSerializerSettings()
                |> Serialisation.extend
 
@@ -36,8 +38,8 @@ let processAsync f =
             let data = rawFormString c
             let result = f data
             return! match result with
-                    | Success (a) -> OK (mkjson a) c
-                    | Failure (_) -> BAD_REQUEST "Error" c
+                    | Ok (a, _) -> OK (mkjson a) c
+                    | Bad (_) -> BAD_REQUEST "Error" c
         }
 
 let getSmapiMethod c =
@@ -46,25 +48,28 @@ let getSmapiMethod c =
                 | Choice2Of2 e -> failwith "No method in request"
 
         match m with
-        | "getMetadata" -> Success (GetMetadata (rawFormString c))
-        | "getMediaMetadata" -> Success (GetMediaMetadata (rawFormString c))
-        | "getMediaURI" -> Success(GetMediaURI (rawFormString c))
-        | "getLastUpdate" -> Success(GetLastUpdate(rawFormString c))
-        | "getExtendedMetadataRequest" -> Success(GetExtendedMetadataRequest(rawFormString c))
-        | "getExtendedMetadataRequestText" -> Success(GetExtendedMetadataRequestText(rawFormString c))
-        | _ -> Failure(sprintf "Method not implemented %s" m)
+        | "getMetadata" -> ok (GetMetadata (rawFormString c))
+        | "getMediaMetadata" -> ok (GetMediaMetadata (rawFormString c))
+        | "getMediaURI" -> ok(GetMediaURI (rawFormString c))
+        | "getLastUpdate" -> ok(GetLastUpdate(rawFormString c))
+        | "getExtendedMetadataRequest" -> ok(GetExtendedMetadataRequest(rawFormString c))
+        | "getExtendedMetadataRequestText" -> ok(GetExtendedMetadataRequestText(rawFormString c))
+        | _ -> fail(sprintf "Method not implemented %s" m)
 
-let smapiImp =
-    getSmapiMethod
-    >> Rop.bind processSmapiMethod
+let smapiImp c =
+    getSmapiMethod c
+     >>= processSmapiMethod
+
+let toLines (strings) =
+    List.fold (+) "" strings
 
 let processSmapiRequest =
     fun (c:HttpContext) ->
         async{
             let result = smapiImp c
             return! match result with
-                    | Success (content) -> OK content c
-                    | Failure (content) -> BAD_REQUEST content c
+                    | Ok (content, _) -> OK content c
+                    | Bad (content) -> BAD_REQUEST (toLines content) c
         }
 
 let podcastRoutes =

@@ -3,6 +3,8 @@
 open System
 open System.IO
 
+open Chessie.ErrorHandling
+
 module Podcasts =
     type Episode =
         { Name : string
@@ -58,4 +60,4 @@ module Podcasts =
         |> Seq.toList
 
     let GetPodcasts (s:string) =
-        Success podcasts
+        ok podcasts
