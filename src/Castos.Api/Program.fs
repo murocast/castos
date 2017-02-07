@@ -33,13 +33,13 @@ let inline mkjson a =
 let rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
 
 let processAsync f =
-    fun (c:HttpContext) ->
+    fun context ->
         async{
-            let data = rawFormString c
+            let data = rawFormString context
             let result = f data
             return! match result with
-                    | Ok (a, _) -> OK (mkjson a) c
-                    | Bad (_) -> BAD_REQUEST "Error" c
+                    | Ok (a, _) -> OK (mkjson a) context
+                    | Bad (_) -> BAD_REQUEST "Error" context
         }
 
 let getSmapiMethod c =
@@ -64,17 +64,17 @@ let toLines (strings) =
     List.fold (+) "" strings
 
 let processSmapiRequest =
-    fun (c:HttpContext) ->
+    fun context ->
         async{
-            let result = smapiImp c
+            let result = smapiImp context
             return! match result with
-                    | Ok (content, _) -> OK content c
-                    | Bad (content) -> BAD_REQUEST (toLines content) c
+                    | Ok (content, _) -> OK content context
+                    | Bad (content) -> BAD_REQUEST (toLines content) context
         }
 
 let podcastRoutes =
     choose
-        [ path "/api/podcasts" >=> choose [ GET >=> warbler (fun c -> processAsync GetPodcasts) ]
+        [ path "/api/podcasts" >=> choose [ GET >=> warbler (fun context -> processAsync GetPodcasts) ]
 
           path "/api/podcasts/categories/" >=> choose [ GET >=> OK "TODO: All categories" ]
 
