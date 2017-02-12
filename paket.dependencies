@@ -4,5 +4,8 @@ nuget FAKE
 nuget FSharp.Data
 nuget Suave
 nuget Newtonsoft.Json.FSharp
-nuget FsUnit
 github fsprojects/Chessie src/Chessie/ErrorHandling.fs
+
+nuget Expecto
+nuget Expecto.BenchmarkDotNet
+nuget Expecto.FsCheck

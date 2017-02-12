@@ -1,2 +1,3 @@
-FSharp.Core
-FsUnit
+Expecto
+Expecto.BenchmarkDotNet
+Expecto.FsCheck
