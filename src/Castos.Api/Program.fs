@@ -56,6 +56,13 @@ let getSmapiMethod c =
         | "getExtendedMetadataRequestText" -> ok(GetExtendedMetadataRequestText(rawFormString c))
         | _ -> fail(sprintf "Method not implemented %s" m)
 
+let processSmapiMethod m =
+        match m with
+        | GetMetadata s -> processGetMetadata (getMetadataRequest.Parse s)
+        | GetLastUpdate s -> processGetLastUpdate (getLastUpdateRequest.Parse s)
+        | GetMediaMetadata s -> processGetMediaMetadata (getMediaMetadataRequest.Parse s)
+        | _ -> fail "blubber"
+
 let smapiImp c =
     getSmapiMethod c
      >>= processSmapiMethod

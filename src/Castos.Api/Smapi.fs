@@ -84,10 +84,3 @@ module Smapi =
         let req = getExtendedMetadataTextRequest.Parse s
         failwith "TODO"
 
-    let processSmapiMethod m =
-        match m with
-        | GetMetadata s -> processGetMetadata (getMetadataRequest.Parse s)
-        | GetLastUpdate s -> processGetLastUpdate (getLastUpdateRequest.Parse s)
-        | GetMediaMetadata s -> processGetMediaMetadata (getMediaMetadataRequest.Parse s)
-        | _ -> fail "blubber"
-
