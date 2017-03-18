@@ -50,19 +50,19 @@ module Smapi =
                             ItemType = Collection
                             Title = "Recent"
                             CanPlay = false }]
-    let getLibraryCollection podcasts =
+    let getCategories podcasts =
         podcasts
         |> Seq.ofList
         |> Seq.groupBy (fun x -> x.Category)
-        |> Seq.map (fun x -> MediaCollection { Id = fst x
-                                               ItemType = Collection
-                                               Title = fst x
-                                               CanPlay = false })                                                   
+        |> Seq.map (fun (category, _) -> MediaCollection { Id = category
+                                                           ItemType = Collection
+                                                           Title = category
+                                                           CanPlay = false })                                                   
         |> List.ofSeq
-    let processGetMetadata (podcasts:Podcast list) (s:getMetadataRequest.Envelope) =
+    let processGetMetadata podcasts (s:getMetadataRequest.Envelope) =
         let items = match s.Body.GetMetadata.Id with
                     | RootId -> getRootCollections
-                    | LibraryId -> getLibraryCollection podcasts
+                    | LibraryId -> getCategories podcasts
                     | CurrentId
                     | RecentId
                     | _ -> failwith "unknown id"
