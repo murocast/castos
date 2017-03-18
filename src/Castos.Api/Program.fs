@@ -32,11 +32,20 @@ let inline mkjson a =
 
 let rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
 
-let processAsync f =
+let processFormAsync f =
     fun context ->
         async{
             let data = rawFormString context
             let result = f data
+            return! match result with
+                    | Ok (a, _) -> OK (mkjson a) context
+                    | Bad (_) -> BAD_REQUEST "Error" context
+        }
+
+let processAsync f =
+    fun context ->
+        async{
+            let result = f()
             return! match result with
                     | Ok (a, _) -> OK (mkjson a) context
                     | Bad (_) -> BAD_REQUEST "Error" context
@@ -57,11 +66,12 @@ let getSmapiMethod c =
         | _ -> fail(sprintf "Method not implemented %s" m)
 
 let processSmapiMethod m =
-        match m with
-        | GetMetadata s -> processGetMetadata (getMetadataRequest.Parse s)
-        | GetLastUpdate s -> processGetLastUpdate (getLastUpdateRequest.Parse s)
-        | GetMediaMetadata s -> processGetMediaMetadata (getMediaMetadataRequest.Parse s)
-        | _ -> fail "blubber"
+    let podcasts = GetPodcasts()
+    match m with
+    | GetMetadata s -> processGetMetadata podcasts (getMetadataRequest.Parse s)
+    | GetLastUpdate s -> processGetLastUpdate (getLastUpdateRequest.Parse s)
+    | GetMediaMetadata s -> processGetMediaMetadata (getMediaMetadataRequest.Parse s)
+    | _ -> fail "blubber"
 
 let smapiImp c =
     getSmapiMethod c
@@ -81,7 +91,7 @@ let processSmapiRequest =
 
 let podcastRoutes =
     choose
-        [ path "/api/podcasts" >=> choose [ GET >=> warbler (fun context -> processAsync GetPodcasts) ]
+        [ path "/api/podcasts" >=> choose [ GET >=> warbler (fun context -> processAsync (fun() -> ok GetPodcasts)) ]
 
           path "/api/podcasts/categories/" >=> choose [ GET >=> OK "TODO: All categories" ]
 
@@ -100,7 +110,7 @@ let podcastRoutes =
 
 let playerRoutes =
     choose
-        [ path "/api/players" >=> choose [GET >=> warbler (fun c -> processAsync GetPlayers) ]
+        [ path "/api/players" >=> choose [GET >=> warbler (fun c -> processFormAsync GetPlayers) ]
 
           pathScan "/api/players/%s"
           <| fun player -> choose [ GET >=> OK(sprintf "TODO: Show information about player %s" player) ] ]

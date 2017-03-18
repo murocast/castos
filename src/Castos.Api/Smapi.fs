@@ -5,6 +5,8 @@ open Smapi.Respond
 open Smapi.GetLastUpdate
 open FSharp.Data
 
+open Podcasts
+
 open Chessie.ErrorHandling
 
 type SmapiMethod =
@@ -48,11 +50,19 @@ module Smapi =
                             ItemType = Collection
                             Title = "Recent"
                             CanPlay = false }]
-
-    let processGetMetadata (s:getMetadataRequest.Envelope) =
+    let getLibraryCollection podcasts =
+        podcasts
+        |> Seq.ofList
+        |> Seq.groupBy (fun x -> x.Category)
+        |> Seq.map (fun x -> MediaCollection { Id = fst x
+                                               ItemType = Collection
+                                               Title = fst x
+                                               CanPlay = false })                                                   
+        |> List.ofSeq
+    let processGetMetadata (podcasts:Podcast list) (s:getMetadataRequest.Envelope) =
         let items = match s.Body.GetMetadata.Id with
                     | RootId -> getRootCollections
-                    | LibraryId
+                    | LibraryId -> getLibraryCollection podcasts
                     | CurrentId
                     | RecentId
                     | _ -> failwith "unknown id"

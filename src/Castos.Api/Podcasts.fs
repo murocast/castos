@@ -3,8 +3,6 @@
 open System
 open System.IO
 
-open Chessie.ErrorHandling
-
 module Podcasts =
     type Episode =
         { Name : string
@@ -22,7 +20,7 @@ module Podcasts =
           Current : PendingEpisode option
           Episodes : Episode list }
 
-    let basePath = @"\\qnap\Music\Podcasts"
+    let basePath = @"\\le-nas\brase\music\podcasts"
 
     let episodes path =
         let files =
@@ -59,5 +57,5 @@ module Podcasts =
         |> Seq.collect (fun x -> podcastsOfCategory basePath x)
         |> Seq.toList
 
-    let GetPodcasts (s:string) =
-        ok podcasts
+    let GetPodcasts() =
+        podcasts
