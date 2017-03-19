@@ -19,13 +19,8 @@ let smapi =
                                            ItemType = Artist
                                            Title = "TitleOne"
                                            MimeType = "media/mp3"
-                                           ItemMetadata = TrackMetadata { AlbumId = "Album1"
-                                                                          Duration = 123
-                                                                          ArtistId = "Artist1"
-                                                                          Genre = ""
-                                                                          Artist = "Mobi"
-                                                                          Album = "First"
-                                                                          AlbumArtURI = "" }}]
+                                           ItemMetadata = TrackMetadata { Duration = 123
+                                                                          Artist = "Mobi"  }} ]
             let metadata = getMetadataResponse (Seq.ofList items)
             let reader = XmlReader.Create(new StringReader(metadata))
             let xml = XElement.Load(reader)

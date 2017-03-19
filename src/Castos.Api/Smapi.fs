@@ -44,6 +44,11 @@ module Smapi =
         let m = Regex.Match(str, categoryPattern)
         if (m.Success) then Some m.Groups.[1].Value else None
 
+    let (|Podcast|_|) str =
+        let podcastPattern = "__podcast_(.*)"
+        let m = Regex.Match(str, podcastPattern)
+        if (m.Success) then Some m.Groups.[1].Value else None
+
     let getRootCollections =
         [ MediaCollection { Id = LibraryId
                             ItemType = Collection
@@ -75,14 +80,27 @@ module Smapi =
                                                 Title = p.Name
                                                 CanPlay = false })
 
+    let getEpisodesOfPodcast podcasts pname =
+        let podcast = podcasts
+                      |> List.pick (fun p -> if (p.Name = pname) then Some p else None)
+        podcast.Episodes
+        |> List.map (fun e -> MediaMetadata { Id = e.Name
+                                              ItemType = Track
+                                              Title = e.Name
+                                              MimeType = "audio/mp3"
+                                              ItemMetadata = TrackMetadata { Artist = "Artist"
+                                                                             Duration = e.Length.Seconds  }})
+
     let processGetMetadata podcasts (s:getMetadataRequest.Envelope) =
-        let items = match s.Body.GetMetadata.Id with
+        let id = s.Body.GetMetadata.Id
+        let items = match id with
                     | RootId -> getRootCollections
                     | LibraryId -> getCategories podcasts
                     | Category c -> getPodcastsOfCategory podcasts c
+                    | Podcast p -> getEpisodesOfPodcast podcasts p
                     | CurrentId
                     | RecentId
-                    | _ -> failwith "unknown id"
+                    | _ -> failwithf "unknown id %s" id
 
         let response = getMetadataResponse items
         ok response

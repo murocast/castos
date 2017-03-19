@@ -18,6 +18,7 @@ type ItemType =
     | Container
     | AlbumList
     | TrackList
+    | Track
     | StreamList
     | ArtistTrackList
     | Audiobook
@@ -37,13 +38,8 @@ type StreamMetadata = {
 }
 
 type TrackMetadata = {
-    AlbumId:string
-    Duration:int
-    ArtistId:string
-    Genre:string
     Artist:string
-    Album:string
-    AlbumArtURI:string
+    Duration:int
 }
 
 type ItemMediaData =
@@ -101,13 +97,13 @@ module Respond =
 
     let getTrackMetadata t =
         let root = getNode "trackMetadata" NsSonos
-        addToNodeWithValue root "albumId" NsSonos t.AlbumId |> ignore
+        // addToNodeWithValue root "albumId" NsSonos t.AlbumId |> ignore
         addToNodeWithValue root "duration" NsSonos (string t.Duration) |> ignore
-        addToNodeWithValue root "artistId" NsSonos t.ArtistId |> ignore
-        addToNodeWithValue root "genre" NsSonos t.Genre |> ignore
+        // addToNodeWithValue root "artistId" NsSonos t.ArtistId |> ignore
+        // addToNodeWithValue root "genre" NsSonos t.Genre |> ignore
         addToNodeWithValue root "artist" NsSonos t.Artist |> ignore
-        addToNodeWithValue root "album" NsSonos t.Album |> ignore
-        addToNodeWithValue root "albumArtUri" NsSonos t.AlbumArtURI |> ignore
+        // addToNodeWithValue root "album" NsSonos t.Album |> ignore
+        // addToNodeWithValue root "albumArtUri" NsSonos t.AlbumArtURI |> ignore
         root
 
     let getStreamMetadata s =
