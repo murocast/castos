@@ -1,4 +1,5 @@
-﻿FSharp.Data
+﻿FSharp.Core
+FSharp.Data
 Suave
 Newtonsoft.Json.FSharp
 File:ErrorHandling.fs .
