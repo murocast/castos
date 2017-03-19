@@ -3,7 +3,9 @@
 open Smapi
 open Smapi.Respond
 open Smapi.GetLastUpdate
+
 open FSharp.Data
+open System.Text.RegularExpressions
 
 open Podcasts
 
@@ -37,6 +39,11 @@ module Smapi =
     let extractSmapiMethod (m:string) =
         m.Trim('"').[34..] //cut until #: http://www.sonos.com/Services/1.1#getMetadata
 
+    let (|Category|_|) str =
+        let categoryPattern = "__category_(.*)"
+        let m = Regex.Match(str, categoryPattern)
+        if (m.Success) then Some m.Groups.[1].Value else None
+
     let getRootCollections =
         [ MediaCollection { Id = LibraryId
                             ItemType = Collection
@@ -54,15 +61,25 @@ module Smapi =
         podcasts
         |> Seq.ofList
         |> Seq.groupBy (fun x -> x.Category)
-        |> Seq.map (fun (category, _) -> MediaCollection { Id = category
+        |> Seq.map (fun (category, _) -> MediaCollection { Id = "__category_" + category
                                                            ItemType = Collection
                                                            Title = category
                                                            CanPlay = false })                                                   
         |> List.ofSeq
+
+    let getPodcastsOfCategory podcasts c =
+        podcasts
+        |> List.where (fun p -> p.Category = c)
+        |> List.map (fun p -> MediaCollection { Id = "__podcast_" + p.Name
+                                                ItemType = Collection
+                                                Title = p.Name
+                                                CanPlay = false })
+
     let processGetMetadata podcasts (s:getMetadataRequest.Envelope) =
         let items = match s.Body.GetMetadata.Id with
                     | RootId -> getRootCollections
                     | LibraryId -> getCategories podcasts
+                    | Category c -> getPodcastsOfCategory podcasts c
                     | CurrentId
                     | RecentId
                     | _ -> failwith "unknown id"
