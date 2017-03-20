@@ -5,6 +5,8 @@ open Newtonsoft.Json.FSharp
 
 open Suave
 open Suave.Filters
+open Suave.Logging
+open Suave.Logging.Message
 open Suave.Operators
 open Suave.RequestErrors
 open Suave.Successful
@@ -118,12 +120,23 @@ let playerRoutes =
 let smapiRoutes =
     choose [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest)] ]
 
+
 [<EntryPoint>]
 let main argv =
+    let logger = Targets.create Debug [||]
+    let loggedWebApp context = async {
+        logger.debug (
+            eventX "Received request {method} {url} {form}"
+                >> setField "method" context.request.``method``
+                >> setField "url" context.request.url
+                >> setField "form" (rawFormString context))
+        let! response = (choose [ podcastRoutes; playerRoutes; smapiRoutes ]) context
+        return response }
+
     let cfg =
         { defaultConfig with
-            bindings = [ HttpBinding.create HTTP IPAddress.Any 80us ]            
-            // logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Verbose
+            bindings = [ HttpBinding.create HTTP IPAddress.Any 80us ]
+            logger = logger
         }
-    startWebServer cfg (choose [ podcastRoutes; playerRoutes; smapiRoutes ])
+    startWebServer cfg loggedWebApp
     0
