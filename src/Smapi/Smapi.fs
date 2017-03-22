@@ -90,7 +90,7 @@ module Respond =
     let getMediaCollectionNode (c:Collection) =
         let root = getNode "mediaCollection" NsSonos
         addToNodeWithValue root "id" NsSonos c.Id |> ignore
-        addToNodeWithValue root "itemType" NsSonos (toString c.ItemType) |> ignore
+        addToNodeWithValue root "itemType" NsSonos ((toString c.ItemType).ToLower()) |> ignore
         addToNodeWithValue root "title" NsSonos (string c.Title) |> ignore
         addToNodeWithValue root "canPlay" NsSonos (string c.CanPlay) |> ignore
         root
@@ -117,7 +117,7 @@ module Respond =
         let root = getNode "mediaMetadata" NsSonos
         addToNodeWithValue root "id" NsSonos e.Id |> ignore
         addToNodeWithValue root "title" NsSonos (string e.Title) |> ignore
-        addToNodeWithValue root "itemType" NsSonos (toString e.ItemType) |> ignore
+        addToNodeWithValue root "itemType" NsSonos ((toString e.ItemType).ToLower()) |> ignore
         addToNodeWithValue root "mimeType" NsSonos (string e.MimeType) |> ignore
         let node = match e.ItemMetadata with
                    | TrackMetadata t -> getTrackMetadata t
