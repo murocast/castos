@@ -89,7 +89,7 @@ module Smapi =
                                               Title = e.Name
                                               MimeType = "audio/mp3"
                                               ItemMetadata = TrackMetadata { Artist = "Artist"
-                                                                             Duration = e.Length.Seconds  }})
+                                                                             Duration = 500  }})
 
     let processGetMetadata podcasts (s:getMetadataRequest.Envelope) =
         let id = s.Body.GetMetadata.Id
