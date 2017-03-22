@@ -131,6 +131,13 @@ let main argv =
                 >> setField "url" context.request.url
                 >> setField "form" (rawFormString context))
         let! response = (choose [ podcastRoutes; playerRoutes; smapiRoutes ]) context
+        match response with
+        | Some context ->
+            match context.response.content with
+            | Bytes c -> logger.debug (eventX "Send response {form}"
+                            >> setField "form" (System.Text.Encoding.UTF8.GetString c))
+            | _ -> ()
+        | _ -> ()
         return response }
 
     let cfg =
