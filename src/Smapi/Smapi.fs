@@ -86,7 +86,6 @@ module Respond =
         node.Value <- value
         node
 
-
     let getMediaCollectionNode (c:Collection) =
         let root = getNode "mediaCollection" NsSonos
         addToNodeWithValue root "id" NsSonos c.Id |> ignore
@@ -113,8 +112,7 @@ module Respond =
         addToNodeWithValue root "currentShow" NsSonos s.CurrentShow |> ignore
         root
 
-    let getMediaMetadataNode e =
-        let root = getNode "mediaMetadata" NsSonos
+    let getMediaMetadataBody root e =
         addToNodeWithValue root "id" NsSonos e.Id |> ignore
         addToNodeWithValue root "title" NsSonos (string e.Title) |> ignore
         addToNodeWithValue root "itemType" NsSonos ((toString e.ItemType).ToLower()) |> ignore
@@ -123,8 +121,11 @@ module Respond =
                    | TrackMetadata t -> getTrackMetadata t
                    | StreamMetadata s -> getStreamMetadata s
         root.Add(node)
-
         root
+
+    let getMediaMetadataNode e =
+        let root = getNode "mediaMetadata" NsSonos
+        getMediaMetadataBody root e
 
     let getEnvelopeWithBody() =
         let envelope = getNode "Envelope" NsEnvelope
@@ -149,5 +150,15 @@ module Respond =
             result.Add(node)
 
         envelope.ToString()
+
+    let getMediaMetadataRepnose item =
+        let envelope, body = getEnvelopeWithBody()
+        let response = addToNode body "getMediaMetadataResponse" NsSonos
+        let result = addToNode response "getMediaMetadataResult" NsSonos
+
+        let result = getMediaMetadataBody result item
+
+        envelope.ToString()
+
 
 

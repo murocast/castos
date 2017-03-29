@@ -71,8 +71,8 @@ let processSmapiMethod m =
     let podcasts = GetPodcasts()
     match m with
     | GetMetadata s -> processGetMetadata podcasts (getMetadataRequest.Parse s)
-    | GetLastUpdate s -> processGetLastUpdate (getLastUpdateRequest.Parse s)
-    | GetMediaMetadata s -> processGetMediaMetadata (getMediaMetadataRequest.Parse s)
+    | GetMediaMetadata s -> processGetMediaMetadata podcasts (getMediaMetadataRequest.Parse s)
+    | GetLastUpdate s -> processGetLastUpdate (getLastUpdateRequest.Parse s)    
     | _ -> fail "blubber"
 
 let smapiImp c =

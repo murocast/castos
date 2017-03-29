@@ -69,7 +69,7 @@ module Smapi =
         |> Seq.map (fun (category, _) -> MediaCollection { Id = "__category_" + category
                                                            ItemType = Collection
                                                            Title = category
-                                                           CanPlay = false })                                                   
+                                                           CanPlay = false })
         |> List.ofSeq
 
     let getPodcastsOfCategory podcasts c =
@@ -80,11 +80,14 @@ module Smapi =
                                                 Title = p.Name
                                                 CanPlay = false })
 
+    let getPodcast podcasts pname =
+        podcasts
+        |> List.pick (fun p -> if (p.Name = pname) then Some p else None)
+
     let getEpisodesOfPodcast podcasts pname =
-        let podcast = podcasts
-                      |> List.pick (fun p -> if (p.Name = pname) then Some p else None)
+        let podcast = getPodcast podcasts pname
         podcast.Episodes
-        |> List.map (fun e -> MediaMetadata { Id = e.Name
+        |> List.map (fun e -> MediaMetadata { Id = sprintf "%s___%s___%s" podcast.Category podcast.Name e.Name
                                               ItemType = Track
                                               Title = e.Name
                                               MimeType = "audio/mp3"
@@ -105,10 +108,20 @@ module Smapi =
         let response = getMetadataResponse items
         ok response
 
-    let processGetMediaMetadata s =
-//        let items = match req.Body.GetMediaMetadata.Id with
-//                    | RootId ->
-        failwith "TODO"
+    let processGetMediaMetadata podcasts (s:getMediaMetadataRequest.Envelope) =
+        let id = s.Body.GetMediaMetadata.Id
+        let splitted = id.Split([|"___"|], System.StringSplitOptions.RemoveEmptyEntries)
+        let podcast = getPodcast podcasts splitted.[1]
+        let e = podcast.Episodes
+                      |> List.pick (fun e -> if (e.Name = splitted.[2]) then Some e else None)
+        let metadata = { Id = id
+                         ItemType = Track
+                         Title = e.Name
+                         MimeType = "audio/mp3"
+                         ItemMetadata = TrackMetadata { Artist = "Artist"
+                                                        Duration = 500  }}
+        let response = Smapi.Respond.getMediaMetadataRepnose metadata
+        ok response
 
     let processGetMediaURI s =
         let req = getMediaURIRequest.Parse s
@@ -118,7 +131,7 @@ module Smapi =
         let result = { AutoRefreshEnabled = false
                        Catalog = (string 4321)
                        Favorites = (string 4321)
-                       PollIntervall = 30 }
+                       PollIntervall = 500 }
         ok (toLastUpdateXml result)
 
     let processGetExtendedMetadata s =
