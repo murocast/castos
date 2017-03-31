@@ -34,6 +34,9 @@ let inline mkjson a =
 
 let rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
 
+let baseurl = "http://192.168.178.34"
+let podcastFileBasePath = baseurl + "/play/"
+
 let processFormAsync f =
     fun context ->
         async{
@@ -73,7 +76,7 @@ let processSmapiMethod m =
     | GetMetadata s -> processGetMetadata podcasts (getMetadataRequest.Parse s)
     | GetMediaMetadata s -> processGetMediaMetadata podcasts (getMediaMetadataRequest.Parse s)
     | GetLastUpdate s -> processGetLastUpdate (getLastUpdateRequest.Parse s)    
-    | GetMediaURI s -> processGetMediaURI s
+    | GetMediaURI s -> processGetMediaURI s podcastFileBasePath
     | _ -> fail "blubber"
 
 let smapiImp c =
@@ -110,6 +113,10 @@ let podcastRoutes =
           pathScan "/api/podcasts/%s/episodes/%s"
           <| fun (podcast, episode) ->
               choose [ GET >=> OK(sprintf "TODO: Show information about episode '%s' of podcast '%s'" podcast episode) ] ]
+let playRoutes =
+    choose  
+        [ pathScan "/play/%s"
+          <| fun id -> choose [GET >=> Files.file (Podcasts.GetPathFromId id) ]]
 
 let playerRoutes =
     choose
@@ -131,7 +138,7 @@ let main argv =
                 >> setField "method" context.request.``method``
                 >> setField "url" context.request.url
                 >> setField "form" (rawFormString context))
-        let! response = (choose [ podcastRoutes; playerRoutes; smapiRoutes ]) context
+        let! response = (choose [ podcastRoutes; playRoutes; playerRoutes; smapiRoutes ]) context
         match response with
         | Some context ->
             match context.response.content with
@@ -140,11 +147,14 @@ let main argv =
             | _ -> ()
         | _ -> ()
         return response }
-
+    let mimeTypes =
+        Writers.defaultMimeTypesMap
+            @@ (function | ".mp3" -> Writers.createMimeType "audio/mp3" false | _ -> None)
     let cfg =
         { defaultConfig with
             bindings = [ HttpBinding.create HTTP IPAddress.Any 80us ]
             logger = logger
+            mimeTypesMap = mimeTypes
         }
     startWebServer cfg loggedWebApp
     0

@@ -123,10 +123,10 @@ module Smapi =
         let response = Smapi.Respond.getMediaMetadataRepnose metadata
         ok response
 
-    let processGetMediaURI s =
+    let processGetMediaURI s httpBasePath=
         let req = getMediaURIRequest.Parse s
         let id = req.Body.GetMediaUri.Id        
-        let path = Podcasts.GetPathFromId id
+        let path = httpBasePath + id
         let response = Smapi.Respond.getMediaUriResponse path
         ok response
 
