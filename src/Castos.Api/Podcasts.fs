@@ -32,6 +32,7 @@ module Podcasts =
                      Name = name
                      Length = TimeSpan.FromMinutes(0.) //TODO: Read from File
                      Path = x })
+            |> Seq.sortBy (fun e -> e.Id)
             |> Seq.toList
         files
 
