@@ -159,6 +159,14 @@ module Respond =
         let result = getMediaMetadataBody result item
 
         envelope.ToString()
+    
+    let getMediaUriResponse uri =
+        let envelope, body = getEnvelopeWithBody()
+        let response = addToNode body "getMediaURIResponse" NsSonos
+        let result = addToNode response "getMediaURIResult" NsSonos
+        result.Value <- uri
+
+        envelope.ToString()
 
 
 

@@ -5,7 +5,8 @@ open System.IO
 
 module Podcasts =
     type Episode =
-        { Name : string
+        { Id : string
+          Name : string
           Length : TimeSpan
           Path : string }
 
@@ -22,11 +23,13 @@ module Podcasts =
 
     let basePath = @"\\le-nas\brase\music\podcasts"
 
-    let episodes path =
+    let episodes path category podcast =
         let files =
             Directory.GetFiles(path)
             |> Seq.map (fun x ->
-                   { Name = Path.GetFileName(x)
+                   let name = Path.GetFileName(x)
+                   { Id = sprintf "%s___%s___%s" category podcast name
+                     Name = name
                      Length = TimeSpan.FromMinutes(0.) //TODO: Read from File
                      Path = x })
             |> Seq.toList
@@ -38,11 +41,12 @@ module Podcasts =
         let podcasts =
             Directory.GetDirectories(categoryPath)
             |> Seq.map (fun x ->
-                   { Name = x.Substring(categoryPath.Length + 1)
+                   let name = x.Substring(categoryPath.Length + 1)
+                   { Name = name
                      Category = category
                      Folder = x
                      Current = None
-                     Episodes = episodes x })
+                     Episodes = episodes x category name })
             |> Seq.toList
         podcasts
 
@@ -59,3 +63,7 @@ module Podcasts =
 
     let GetPodcasts() =
         podcasts
+
+    let GetPathFromId (id:string) =
+        let splitted = id.Split([|"___"|], System.StringSplitOptions.RemoveEmptyEntries)
+        sprintf @"%s\%s\%s\%s" basePath splitted.[0] splitted.[1] splitted.[2]

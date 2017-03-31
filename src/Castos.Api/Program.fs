@@ -73,6 +73,7 @@ let processSmapiMethod m =
     | GetMetadata s -> processGetMetadata podcasts (getMetadataRequest.Parse s)
     | GetMediaMetadata s -> processGetMediaMetadata podcasts (getMediaMetadataRequest.Parse s)
     | GetLastUpdate s -> processGetLastUpdate (getLastUpdateRequest.Parse s)    
+    | GetMediaURI s -> processGetMediaURI s
     | _ -> fail "blubber"
 
 let smapiImp c =

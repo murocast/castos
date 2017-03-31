@@ -87,7 +87,7 @@ module Smapi =
     let getEpisodesOfPodcast podcasts pname =
         let podcast = getPodcast podcasts pname
         podcast.Episodes
-        |> List.map (fun e -> MediaMetadata { Id = sprintf "%s___%s___%s" podcast.Category podcast.Name e.Name
+        |> List.map (fun e -> MediaMetadata { Id = e.Id
                                               ItemType = Track
                                               Title = e.Name
                                               MimeType = "audio/mp3"
@@ -125,7 +125,10 @@ module Smapi =
 
     let processGetMediaURI s =
         let req = getMediaURIRequest.Parse s
-        failwith "TODO"
+        let id = req.Body.GetMediaUri.Id        
+        let path = Podcasts.GetPathFromId id
+        let response = Smapi.Respond.getMediaUriResponse path
+        ok response
 
     let processGetLastUpdate s =
         let result = { AutoRefreshEnabled = false
