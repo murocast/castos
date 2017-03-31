@@ -16,8 +16,8 @@ type SmapiMethod =
     | GetMediaMetadata of string
     | GetMediaURI of string
     | GetLastUpdate of string
-    | GetExtendedMetadataRequest of string
-    | GetExtendedMetadataRequestText of string
+    | GetExtendedMetadata of string
+    | GetExtendedMetadataText of string
 
 module Smapi =
     [<Literal>]
@@ -29,12 +29,12 @@ module Smapi =
     [<Literal>]
     let RecentId = "recent"
 
-    type getMetadataRequest = XmlProvider<"Samples/GetMetadataRequest.xml">
-    type getMediaMetadataRequest = XmlProvider<"Samples/GetMediaMetadataRequest.xml">
-    type getMediaURIRequest = XmlProvider<"Samples/GetMediaURIRequest.xml">
-    type getLastUpdateRequest = XmlProvider<"Samples/GetLastUpdateRequest.xml">
-    type getExtendedMetadataRequest = XmlProvider<"Samples/getExtendedMetadataRequest.xml">
-    type getExtendedMetadataTextRequest = XmlProvider<"Samples/GetExtendedMetadataTextRequest.xml">
+    type GetMetadataRequest = XmlProvider<"Samples/GetMetadataRequest.xml">
+    type GetMediaMetadataRequest = XmlProvider<"Samples/GetMediaMetadataRequest.xml">
+    type GetMediaURIRequest = XmlProvider<"Samples/GetMediaURIRequest.xml">
+    type GetLastUpdateRequest = XmlProvider<"Samples/GetLastUpdateRequest.xml">
+    type GetExtendedMetadataRequest = XmlProvider<"Samples/getExtendedMetadataRequest.xml">
+    type GetExtendedMetadataTextRequest = XmlProvider<"Samples/GetExtendedMetadataTextRequest.xml">
 
     let extractSmapiMethod (m:string) =
         m.Trim('"').[34..] //cut until #: http://www.sonos.com/Services/1.1#getMetadata
@@ -94,7 +94,7 @@ module Smapi =
                                               ItemMetadata = TrackMetadata { Artist = "Artist"
                                                                              Duration = 500  }})
 
-    let processGetMetadata podcasts (s:getMetadataRequest.Envelope) =
+    let processGetMetadata podcasts (s:GetMetadataRequest.Envelope) =
         let id = s.Body.GetMetadata.Id
         let items = match id with
                     | RootId -> getRootCollections
@@ -108,7 +108,7 @@ module Smapi =
         let response = getMetadataResponse items
         ok response
 
-    let processGetMediaMetadata podcasts (s:getMediaMetadataRequest.Envelope) =
+    let processGetMediaMetadata podcasts (s:GetMediaMetadataRequest.Envelope) =
         let id = s.Body.GetMediaMetadata.Id
         let splitted = id.Split([|"___"|], System.StringSplitOptions.RemoveEmptyEntries)
         let podcast = getPodcast podcasts splitted.[1]
@@ -124,7 +124,7 @@ module Smapi =
         ok response
 
     let processGetMediaURI s httpBasePath=
-        let req = getMediaURIRequest.Parse s
+        let req = GetMediaURIRequest.Parse s
         let id = req.Body.GetMediaUri.Id        
         let path = httpBasePath + id
         let response = Smapi.Respond.getMediaUriResponse path
@@ -138,10 +138,10 @@ module Smapi =
         ok (toLastUpdateXml result)
 
     let processGetExtendedMetadata s =
-        let req = getExtendedMetadataRequest.Parse s
+        let req = GetExtendedMetadataRequest.Parse s
         failwith "TODO"
 
     let processGetExtendedMetadataText s =
-        let req = getExtendedMetadataTextRequest.Parse s
+        let req = GetExtendedMetadataTextRequest.Parse s
         failwith "TODO"
 

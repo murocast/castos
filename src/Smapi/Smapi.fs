@@ -74,7 +74,7 @@ module Respond =
         |_ -> None
 
     let getNode name ns =
-        new XElement(XName.Get(name, ns))
+        XElement(XName.Get(name, ns))
 
     let addToNode (node:XElement) name ns =
         let newNode = getNode name ns

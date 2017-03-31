@@ -21,7 +21,7 @@ open Castos.Smapi
 
 open Chessie.ErrorHandling
 
-let settings = new JsonSerializerSettings()
+let settings = JsonSerializerSettings()
                |> Serialisation.extend
 
 let inline unjson<'T> json =
@@ -66,16 +66,16 @@ let getSmapiMethod c =
         | "getMediaMetadata" -> ok (GetMediaMetadata (rawFormString c))
         | "getMediaURI" -> ok(GetMediaURI (rawFormString c))
         | "getLastUpdate" -> ok(GetLastUpdate(rawFormString c))
-        | "getExtendedMetadataRequest" -> ok(GetExtendedMetadataRequest(rawFormString c))
-        | "getExtendedMetadataRequestText" -> ok(GetExtendedMetadataRequestText(rawFormString c))
+        | "getExtendedMetadataRequest" -> ok(GetExtendedMetadata(rawFormString c))
+        | "getExtendedMetadataRequestText" -> ok(GetExtendedMetadataText(rawFormString c))
         | _ -> fail(sprintf "Method not implemented %s" m)
 
 let processSmapiMethod m =
     let podcasts = GetPodcasts()
     match m with
-    | GetMetadata s -> processGetMetadata podcasts (getMetadataRequest.Parse s)
-    | GetMediaMetadata s -> processGetMediaMetadata podcasts (getMediaMetadataRequest.Parse s)
-    | GetLastUpdate s -> processGetLastUpdate (getLastUpdateRequest.Parse s)    
+    | GetMetadata s -> processGetMetadata podcasts (GetMetadataRequest.Parse s)
+    | GetMediaMetadata s -> processGetMediaMetadata podcasts (GetMediaMetadataRequest.Parse s)
+    | GetLastUpdate s -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
     | GetMediaURI s -> processGetMediaURI s podcastFileBasePath
     | _ -> fail "blubber"
 
