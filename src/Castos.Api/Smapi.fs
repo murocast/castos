@@ -87,12 +87,14 @@ module Smapi =
     let getEpisodesOfPodcast podcasts pname =
         let podcast = getPodcast podcasts pname
         podcast.Episodes
+        |> List.sortByDescending (fun e -> e.Name)
         |> List.map (fun e -> MediaMetadata { Id = e.Id
                                               ItemType = Track
                                               Title = e.Name
                                               MimeType = "audio/mp3"
                                               ItemMetadata = TrackMetadata { Artist = "Artist"
                                                                              Duration = 500  }})
+        |> List.truncate 100
 
     let processGetMetadata podcasts (s:GetMetadataRequest.Envelope) =
         let id = s.Body.GetMetadata.Id
