@@ -25,20 +25,21 @@ module Podcasts =
 
     let basePath = @"\\le-nas\brase\music\podcasts"
 
-    let getDuration filepath = 
+    let getTagFile filepath = 
         let name = Path.GetFileName(filepath)
         use stream = File.OpenRead(filepath)
         let tagFile = TagLib.File.Create(StreamFileAbstraction(name, stream,stream))        
-        tagFile.Properties.Duration
+        tagFile
 
     let episodes path category podcast =
         let files =
             Directory.GetFiles(path)
             |> Seq.map (fun x ->                   
-                   let name = Path.GetFileName(x)
-                   { Id = sprintf "%s___%s___%s" category podcast name
-                     Name = name
-                     Length = getDuration x
+                   let fileName = Path.GetFileName(x)
+                   let tagFile = getTagFile x
+                   { Id = sprintf "%s___%s___%s" category podcast fileName
+                     Name = tagFile.Tag.Title
+                     Length = tagFile.Properties.Duration
                      Path = x })
             |> Seq.sortBy (fun e -> e.Id)
             |> Seq.toList
