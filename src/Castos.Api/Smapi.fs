@@ -62,26 +62,26 @@ module Smapi =
                             ItemType = Collection
                             Title = "Recent"
                             CanPlay = false }]
+        |> Seq.ofList
     let getCategories podcasts =
         podcasts
-        |> Seq.ofList
         |> Seq.groupBy (fun x -> x.Category)
         |> Seq.map (fun (category, _) -> MediaCollection { Id = "__category_" + category
                                                            ItemType = Collection
                                                            Title = category
                                                            CanPlay = false })
-        |> List.ofSeq
 
     let getPodcastsOfCategory podcasts c =
         podcasts
-        |> List.where (fun p -> p.Category = c)
-        |> List.map (fun p -> MediaCollection { Id = "__podcast_" + p.Name
-                                                ItemType = Collection
-                                                Title = p.Name
-                                                CanPlay = false })
+        |> Seq.where (fun p -> p.Category = c)
+        |> Seq.map (fun p -> MediaCollection { Id = "__podcast_" + p.Name
+                                               ItemType = Collection
+                                               Title = p.Name
+                                               CanPlay = false })
 
     let getPodcast podcasts pname =
         podcasts
+        |> List.ofSeq
         |> List.pick (fun p -> if (p.Name = pname) then Some p else None)
 
     let getEpisodesOfPodcast podcasts pname =
@@ -93,8 +93,9 @@ module Smapi =
                                               Title = e.Name
                                               MimeType = "audio/mp3"
                                               ItemMetadata = TrackMetadata { Artist = "Artist"
-                                                                             Duration = 500  }})
+                                                                             Duration = int e.Length.TotalSeconds }})
         |> List.truncate 100
+        |> Seq.ofList
 
     let processGetMetadata podcasts (s:GetMetadataRequest.Envelope) =
         let id = s.Body.GetMetadata.Id
@@ -121,7 +122,7 @@ module Smapi =
                          Title = e.Name
                          MimeType = "audio/mp3"
                          ItemMetadata = TrackMetadata { Artist = "Artist"
-                                                        Duration = 500  }}
+                                                        Duration = int e.Length.TotalSeconds  }}
         let response = Smapi.Respond.getMediaMetadataRepnose metadata
         ok response
 

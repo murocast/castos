@@ -3,6 +3,8 @@
 open System
 open System.IO
 
+open TagLib
+
 module Podcasts =
     type Episode =
         { Id : string
@@ -23,14 +25,20 @@ module Podcasts =
 
     let basePath = @"\\le-nas\brase\music\podcasts"
 
+    let getDuration filepath = 
+        let name = Path.GetFileName(filepath)
+        use stream = File.OpenRead(filepath)
+        let tagFile = TagLib.File.Create(StreamFileAbstraction(name, stream,stream))        
+        tagFile.Properties.Duration
+
     let episodes path category podcast =
         let files =
             Directory.GetFiles(path)
-            |> Seq.map (fun x ->
+            |> Seq.map (fun x ->                   
                    let name = Path.GetFileName(x)
                    { Id = sprintf "%s___%s___%s" category podcast name
                      Name = name
-                     Length = TimeSpan.FromMinutes(0.) //TODO: Read from File
+                     Length = getDuration x
                      Path = x })
             |> Seq.sortBy (fun e -> e.Id)
             |> Seq.toList
@@ -48,19 +56,16 @@ module Podcasts =
                      Folder = x
                      Current = None
                      Episodes = episodes x category name })
-            |> Seq.toList
         podcasts
 
     let categories =
         Directory.GetDirectories(basePath)
         |> Seq.filter (fun x -> not (x.Substring(basePath.Length + 1).StartsWith(".")))
-        |> Seq.map (fun x -> x.Substring(basePath.Length + 1))
-        |> Seq.toList
+        |> Seq.map (fun x -> x.Substring(basePath.Length + 1))        
 
     let podcasts =
         categories
         |> Seq.collect (fun x -> podcastsOfCategory basePath x)
-        |> Seq.toList
 
     let GetPodcasts() =
         podcasts

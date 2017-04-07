@@ -11,3 +11,5 @@ github fsprojects/Chessie src/Chessie/ErrorHandling.fs
 nuget Expecto
 nuget Expecto.BenchmarkDotNet
 nuget Expecto.FsCheck
+
+nuget TagLib.Portable
