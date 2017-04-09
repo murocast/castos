@@ -116,7 +116,7 @@ module Smapi =
         let splitted = id.Split([|"___"|], System.StringSplitOptions.RemoveEmptyEntries)
         let podcast = getPodcast podcasts splitted.[1]
         let e = podcast.Episodes
-                      |> List.pick (fun e -> if (e.Name = splitted.[2]) then Some e else None)
+                      |> List.pick (fun e -> if (e.Id = id) then Some e else None)
         let metadata = { Id = id
                          ItemType = Track
                          Title = e.Name
