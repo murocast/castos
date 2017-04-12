@@ -1,0 +1,11 @@
+<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+    <s:Body>
+        <reportPlayStatus 
+            xmlns="http://www.sonos.com/Services/1.1">
+            <id>Inet___MetroLaut___metrolaut-spezial-anschlag-auf-das-kulturzentrum-suruc.mp3</id>
+            <status>paused</status>
+            <contextId>Inet___MetroLaut___metrolaut-spezial-anschlag-auf-das-kulturzentrum-suruc.mp3</contextId>
+            <offsetMillis>221102</offsetMillis>
+        </reportPlayStatus>
+    </s:Body>
+</s:Envelope>
