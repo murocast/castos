@@ -18,6 +18,8 @@ type SmapiMethod =
     | GetLastUpdate of string
     | GetExtendedMetadata of string
     | GetExtendedMetadataText of string
+    | ReportPlayStatus of string
+    | ReportPlaySeconds of string
 
 module Smapi =
     [<Literal>]
@@ -35,6 +37,8 @@ module Smapi =
     type GetLastUpdateRequest = XmlProvider<"Samples/GetLastUpdateRequest.xml">
     type GetExtendedMetadataRequest = XmlProvider<"Samples/getExtendedMetadataRequest.xml">
     type GetExtendedMetadataTextRequest = XmlProvider<"Samples/GetExtendedMetadataTextRequest.xml">
+    type ReportPlaySecondsRequest = XmlProvider<"Samples/ReportPlaySecondsRequest.xml">
+    type ReportPlayStatusRequest = XmlProvider<"Samples/ReportPlayStatusRequest.xml">
 
     let extractSmapiMethod (m:string) =
         m.Trim('"').[34..] //cut until #: http://www.sonos.com/Services/1.1#getMetadata

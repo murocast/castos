@@ -68,6 +68,8 @@ let getSmapiMethod c =
         | "getLastUpdate" -> ok(GetLastUpdate(rawFormString c))
         | "getExtendedMetadataRequest" -> ok(GetExtendedMetadata(rawFormString c))
         | "getExtendedMetadataRequestText" -> ok(GetExtendedMetadataText(rawFormString c))
+        | "reportPlaySeconds" -> ok(ReportPlaySeconds(rawFormString c))
+        | "reportPlayStatus" -> ok(ReportPlayStatus(rawFormString c))
         | _ -> fail(sprintf "Method not implemented %s" m)
 
 
@@ -81,6 +83,8 @@ let processSmapiMethod m =
     | GetMediaMetadata s -> processGetMediaMetadata podcasts (GetMediaMetadataRequest.Parse s)
     | GetLastUpdate s -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
     | GetMediaURI s -> processGetMediaURI s podcastFileBasePath
+    | ReportPlaySeconds s -> ok("")
+    | ReportPlayStatus s -> ok("")
     | _ -> fail "blubber"
 
 let smapiImp c =
