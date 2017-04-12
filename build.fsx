@@ -2,6 +2,8 @@
 #r "./packages/FAKE/tools/FakeLib.dll"
 
 open Fake
+open System
+open System.IO
 
 // Directories
 let buildDir  = "./build/"
@@ -33,10 +35,19 @@ Target "Deploy" (fun _ ->
         |> Zip buildDir (deployDir + "ApplicationName." + version + ".zip")
 )
 
+Target "Run" (fun _ ->
+    ExecProcess (fun info -> info.FileName <- (buildDir + "Castos.Api.exe")) TimeSpan.MaxValue
+    |> ignore
+)
+
 // Build order
 "Clean"
   ==> "Build"
   ==> "Deploy"
+  
+"Clean"
+  ==> "Build"
+  ==> "Run"
 
 // start build
-RunTargetOrDefault "Build"
+RunTargetOrDefault "Run"
