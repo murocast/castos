@@ -80,6 +80,8 @@
     <EmbeddedResource Include="Samples\GetLastUpdateRequest.xml" />
     <EmbeddedResource Include="Samples\GetExtendedMetadataRequest.xml" />
     <EmbeddedResource Include="Samples\GetExtendedMetadataTextRequest.xml" />
+    <EmbeddedResource Include="Samples\ReportPlaySecondsRequest.xml" />
+    <EmbeddedResource Include="Samples\ReportPlayStatusRequest.xml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Data.DesignTime">

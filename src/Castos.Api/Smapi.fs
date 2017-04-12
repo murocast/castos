@@ -93,7 +93,8 @@ module Smapi =
                                               Title = e.Name
                                               MimeType = "audio/mp3"
                                               ItemMetadata = TrackMetadata { Artist = "Artist"
-                                                                             Duration = int e.Length.TotalSeconds }})
+                                                                             Duration = int e.Length.TotalSeconds
+                                                                             CanResume = true }})
         |> List.truncate 100
         |> Seq.ofList
 
@@ -122,7 +123,8 @@ module Smapi =
                          Title = e.Name
                          MimeType = "audio/mp3"
                          ItemMetadata = TrackMetadata { Artist = "Artist"
-                                                        Duration = int e.Length.TotalSeconds  }}
+                                                        Duration = int e.Length.TotalSeconds
+                                                        CanResume = true  }}
         let response = Smapi.Respond.getMediaMetadataRepnose metadata
         ok response
 

@@ -70,8 +70,12 @@ let getSmapiMethod c =
         | "getExtendedMetadataRequestText" -> ok(GetExtendedMetadataText(rawFormString c))
         | _ -> fail(sprintf "Method not implemented %s" m)
 
+
+let podcasts = 
+    GetPodcasts()
+    |> List.ofSeq
+    |> Seq.ofList
 let processSmapiMethod m =
-    let podcasts = GetPodcasts()
     match m with
     | GetMetadata s -> processGetMetadata podcasts (GetMetadataRequest.Parse s)
     | GetMediaMetadata s -> processGetMediaMetadata podcasts (GetMediaMetadataRequest.Parse s)

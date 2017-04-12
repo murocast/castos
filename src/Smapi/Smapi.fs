@@ -40,6 +40,7 @@ type StreamMetadata = {
 type TrackMetadata = {
     Artist:string
     Duration:int
+    CanResume:bool
 }
 
 type ItemMediaData =
@@ -103,6 +104,7 @@ module Respond =
         addToNodeWithValue root "artist" NsSonos t.Artist |> ignore
         // addToNodeWithValue root "album" NsSonos t.Album |> ignore
         // addToNodeWithValue root "albumArtUri" NsSonos t.AlbumArtURI |> ignore
+        addToNodeWithValue root "canResume" NsSonos (string t.CanResume) |> ignore
         root
 
     let getStreamMetadata s =
