@@ -70,6 +70,7 @@ let getSmapiMethod c =
         | "getExtendedMetadataRequestText" -> ok(GetExtendedMetadataText(rawFormString c))
         | "reportPlaySeconds" -> ok(ReportPlaySeconds(rawFormString c))
         | "reportPlayStatus" -> ok(ReportPlayStatus(rawFormString c))
+        | "setPlayedSeconds" -> ok(SetPlayedSeconds(rawFormString c))
         | _ -> fail(sprintf "Method not implemented %s" m)
 
 
@@ -85,6 +86,7 @@ let processSmapiMethod m =
     | GetMediaURI s -> processGetMediaURI s podcastFileBasePath
     | ReportPlaySeconds s -> ok("")
     | ReportPlayStatus s -> ok("")
+    | SetPlayedSeconds s -> ok("")
     | _ -> fail "blubber"
 
 let smapiImp c =
