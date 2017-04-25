@@ -13,3 +13,5 @@ nuget Expecto.BenchmarkDotNet
 nuget Expecto.FsCheck
 
 nuget TagLib.Portable
+
+nuget FSharp.Compiler.Tools
