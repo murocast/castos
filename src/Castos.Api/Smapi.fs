@@ -9,8 +9,6 @@ open System.Text.RegularExpressions
 
 open Podcasts
 
-open Chessie.ErrorHandling
-
 type SmapiMethod =
     | GetMetadata of string
     | GetMediaMetadata of string

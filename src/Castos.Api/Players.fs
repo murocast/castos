@@ -1,7 +1,6 @@
 ﻿namespace Castos
 
 open FSharp.Data
-open Chessie.ErrorHandling
 
 module Players =
     type Player =

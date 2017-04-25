@@ -19,8 +19,6 @@ open Castos.Players
 
 open Castos.Smapi
 
-open Chessie.ErrorHandling
-
 let settings = JsonSerializerSettings()
                |> Serialisation.extend
 
@@ -43,8 +41,8 @@ let processFormAsync f =
             let data = rawFormString context
             let result = f data
             return! match result with
-                    | Ok (a, _) -> OK (mkjson a) context
-                    | Bad (_) -> BAD_REQUEST "Error" context
+                    | Success (a) -> OK (mkjson a) context
+                    | Failure (_) -> BAD_REQUEST "Error" context
         }
 
 let processAsync f =
@@ -52,8 +50,8 @@ let processAsync f =
         async{
             let result = f()
             return! match result with
-                    | Ok (a, _) -> OK (mkjson a) context
-                    | Bad (_) -> BAD_REQUEST "Error" context
+                    | Success (a) -> OK (mkjson a) context
+                    | Failure (_) -> BAD_REQUEST "Error" context
         }
 
 let getSmapiMethod c =
@@ -74,7 +72,7 @@ let getSmapiMethod c =
         | _ -> fail(sprintf "Method not implemented %s" m)
 
 
-let podcasts = 
+let podcasts =
     GetPodcasts()
     |> List.ofSeq
     |> Seq.ofList
@@ -101,13 +99,13 @@ let processSmapiRequest =
         async{
             let result = smapiImp context
             return! match result with
-                    | Ok (content, _) -> OK content context
-                    | Bad (content) -> BAD_REQUEST (toLines content) context
+                    | Success (content) -> OK content context
+                    | Failure (content) -> BAD_REQUEST (content) context
         }
 
 let podcastRoutes =
     choose
-        [ path "/api/podcasts" >=> choose [ GET >=> warbler (fun context -> processAsync (fun() -> ok GetPodcasts)) ]
+        [ path "/api/podcasts" >=> choose [ GET >=> warbler (fun context -> processAsync (fun() -> Castos.ErrorHandling.ok GetPodcasts)) ]
 
           path "/api/podcasts/categories/" >=> choose [ GET >=> OK "TODO: All categories" ]
 
@@ -124,7 +122,7 @@ let podcastRoutes =
           <| fun (podcast, episode) ->
               choose [ GET >=> OK(sprintf "TODO: Show information about episode '%s' of podcast '%s'" podcast episode) ] ]
 let playRoutes =
-    choose  
+    choose
         [ pathScan "/play/%s"
           <| fun id -> choose [GET >=> Files.file (Podcasts.GetPathFromId id) ]]
 
