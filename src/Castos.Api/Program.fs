@@ -16,6 +16,7 @@ open Suave.SuaveConfig
 open Castos
 open Castos.Podcasts
 open Castos.Players
+open Castos.Events
 
 open Castos.Smapi
 
@@ -76,13 +77,19 @@ let podcasts =
     GetPodcasts()
     |> List.ofSeq
     |> Seq.ofList
+
+let playEpisodeEvents = createInMemoryEventStore<EpisodeEventData, Error>(Error.VersionConflict "Version conflict")
+
 let processSmapiMethod m =
     match m with
     | GetMetadata s -> processGetMetadata podcasts (GetMetadataRequest.Parse s)
     | GetMediaMetadata s -> processGetMediaMetadata podcasts (GetMediaMetadataRequest.Parse s)
     | GetLastUpdate s -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
     | GetMediaURI s -> processGetMediaURI s podcastFileBasePath
-    | ReportPlaySeconds s -> ok("")
+    | ReportPlaySeconds s -> 
+        processReportPlaySecondsRequest playEpisodeEvents s
+        |> ignore
+        ok("")
     | ReportPlayStatus s -> ok("")
     | SetPlayedSeconds s -> ok("")
     | _ -> fail "blubber"

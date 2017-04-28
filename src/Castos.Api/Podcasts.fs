@@ -7,10 +7,11 @@ open TagLib
 
 module Podcasts =
     type Episode =
-        { Id : string
+        { Id : PodcastId
           Name : string
           Length : TimeSpan
           Path : string }
+    and PodcastId = string
 
     type PendingEpisode =
         { Episode : Episode

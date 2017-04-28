@@ -147,6 +147,19 @@ module Smapi =
                        PollIntervall = 500 }
         ok (toLastUpdateXml result)
 
+    let processReportPlaySecondsRequest eventstore s =
+        let req = ReportPlaySecondsRequest.Parse s
+        let id = req.Body.ReportPlaySeconds.Id
+        let position = req.Body.ReportPlaySeconds.OffsetMillis
+
+        let ev = PlaySecondsReported { Id = id
+                                       Position = position }
+
+        let version = match eventstore.GetEvents (StreamId id) with
+                      | Success (version, _) -> version
+                      | _ -> StreamVersion 0
+        eventstore.SaveEvents (StreamId id) version [ev]
+
     let processGetExtendedMetadata s =
         let req = GetExtendedMetadataRequest.Parse s
         failwith "TODO"
@@ -154,4 +167,3 @@ module Smapi =
     let processGetExtendedMetadataText s =
         let req = GetExtendedMetadataTextRequest.Parse s
         failwith "TODO"
-
