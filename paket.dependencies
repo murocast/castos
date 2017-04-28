@@ -1,5 +1,4 @@
 redirects: on
-source C:\tmp\packages
 source https://www.nuget.org/api/v2/
 nuget FAKE
 nuget FSharp.Core ~> 4
