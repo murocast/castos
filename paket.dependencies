@@ -6,6 +6,7 @@ nuget FSharp.Core ~> 4
 nuget FSharp.Data
 nuget Suave
 nuget Newtonsoft.Json.FSharp
+nuget NodaTime 1.3.4 //Newtonsoft.Json.FSharp 3.2.2 (latest) does not work with NodaTime >= 2.0
 github fsprojects/Chessie src/Chessie/ErrorHandling.fs
 
 nuget Expecto
