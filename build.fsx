@@ -72,7 +72,7 @@ Target "Run" (fun _ ->
 
 "Clean"
   ==> "Build"
-  ==> "Run"
+  ==> "Watch"
 
 // start build
-RunTargetOrDefault "Run"
+RunTargetOrDefault "Build"
