@@ -61,7 +61,7 @@ Target "Build" (fun _ ->
     build()
 )
 
-Target "Run" (fun _ ->
+Target "Watch" (fun _ ->
     async {
         Threading.Thread.Sleep(3000)
         Process.Start(sprintf "http://localhost:%d" 8083) |> ignore }
