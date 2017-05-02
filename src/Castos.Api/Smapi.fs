@@ -132,13 +132,13 @@ module Smapi =
         let response = Smapi.Respond.getMediaMetadataRepnose metadata
         ok response
 
-    let lastPlayEpisodeStopped ls = 
-         match List.isEmpty ls with
-         | true -> None
-         | false -> Some (List.filter (fun x -> match x with
-                                                | PlaySecondsReported data -> true
-                                                | _ -> false) ls
-                          |> List.reduce (fun _ i -> i))
+    let lastPlayEpisodeStopped ls =
+        let filteredLs = List.filter (fun x -> match x with
+                                               | PlaySecondsReported data -> true
+                                               | _ -> false) ls
+        match List.isEmpty filteredLs with
+        | true -> None
+        | false -> Some (List.reduce (fun _ i -> i) filteredLs)
 
     let processGetMediaURI eventstore s httpBasePath =
         let req = GetMediaURIRequest.Parse s
