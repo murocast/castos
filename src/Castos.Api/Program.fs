@@ -85,7 +85,7 @@ let processSmapiMethod m =
     | GetMetadata s -> processGetMetadata podcasts (GetMetadataRequest.Parse s)
     | GetMediaMetadata s -> processGetMediaMetadata podcasts (GetMediaMetadataRequest.Parse s)
     | GetLastUpdate s -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
-    | GetMediaURI s -> processGetMediaURI s podcastFileBasePath
+    | GetMediaURI s -> processGetMediaURI playEpisodeEvents s podcastFileBasePath
     | ReportPlaySeconds s -> 
         processReportPlaySecondsRequest playEpisodeEvents s
         |> ignore

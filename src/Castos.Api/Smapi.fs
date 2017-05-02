@@ -132,12 +132,27 @@ module Smapi =
         let response = Smapi.Respond.getMediaMetadataRepnose metadata
         ok response
 
-    let processGetMediaURI s httpBasePath=
+    let lastPlayEpisodeStopped ls = 
+         match List.isEmpty ls with
+         | true -> None
+         | false -> Some (List.filter (fun x -> match x with
+                                                | PlaySecondsReported data -> true
+                                                | _ -> false) ls
+                          |> List.reduce (fun _ i -> i))
+
+    let processGetMediaURI eventstore s httpBasePath =
         let req = GetMediaURIRequest.Parse s
         let id = req.Body.GetMediaUri.Id        
         let path = httpBasePath + id
         let encodedPath = path.Replace(" ", "%20")
-        let response = Smapi.Respond.getMediaUriResponse encodedPath id None
+
+        let position = match eventstore.GetEvents (StreamId id) with
+                       | Success (_ , events) -> match lastPlayEpisodeStopped events with
+                                                 | Some (PlaySecondsReported data) -> Some data.Position                   
+                                                 | _ -> None
+                       | _ -> None
+
+        let response = Smapi.Respond.getMediaUriResponse encodedPath id position
         ok response
 
     let processGetLastUpdate s =

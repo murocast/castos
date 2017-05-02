@@ -176,7 +176,7 @@ module Respond =
 
         positionInformation
     
-    let getMediaUriResponse uri id position =
+    let getMediaUriResponse uri id (position:int option) =
         let envelope, body = getEnvelopeWithBody()
         let response = addToNode body "getMediaURIResponse" NsSonos
         let result = addToNode response "getMediaURIResult" NsSonos
