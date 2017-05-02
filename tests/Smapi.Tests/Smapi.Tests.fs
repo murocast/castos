@@ -26,7 +26,7 @@ let smapi =
             let reader = XmlReader.Create(new StringReader(metadata))
             let xml = XElement.Load(reader)
             let nameTable = reader.NameTable
-            let nsManager = new XmlNamespaceManager(nameTable)
+            let nsManager = XmlNamespaceManager(nameTable)
             nsManager.AddNamespace("sn", NsSonos)
             let count = xml.XPathSelectElements("//sn:count", nsManager).Single()
             Expect.equal "1" count.Value "XML-Node should be there"
