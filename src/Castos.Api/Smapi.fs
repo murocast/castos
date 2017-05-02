@@ -135,6 +135,7 @@ module Smapi =
     let lastPlayEpisodeStopped ls =
         let filteredLs = List.filter (fun x -> match x with
                                                | PlaySecondsReported data -> true
+                                               | PlayEpisodeStopped data -> true
                                                | _ -> false) ls
         match List.isEmpty filteredLs with
         | true -> None
@@ -148,7 +149,8 @@ module Smapi =
 
         let position = match eventstore.GetEvents (StreamId id) with
                        | Success (_ , events) -> match lastPlayEpisodeStopped events with
-                                                 | Some (PlaySecondsReported data) -> Some data.Position                   
+                                                 | Some (PlaySecondsReported data) -> Some data.Position
+                                                 | Some (PlayEpisodeStopped data) -> Some data.Position
                                                  | _ -> None
                        | _ -> None
 
