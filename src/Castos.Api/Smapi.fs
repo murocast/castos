@@ -137,7 +137,7 @@ module Smapi =
         let id = req.Body.GetMediaUri.Id        
         let path = httpBasePath + id
         let encodedPath = path.Replace(" ", "%20")
-        let response = Smapi.Respond.getMediaUriResponse encodedPath
+        let response = Smapi.Respond.getMediaUriResponse encodedPath id None
         ok response
 
     let processGetLastUpdate s =

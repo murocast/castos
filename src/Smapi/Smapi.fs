@@ -161,12 +161,30 @@ module Respond =
         let result = getMediaMetadataBody result item
 
         envelope.ToString()
+
+    let getPositionInformation id position =
+        let positionInformation = getNode "positionInformation" NsSonos
+        
+        addToNodeWithValue positionInformation "id" NsSonos id
+        |> ignore
+        
+        addToNodeWithValue positionInformation "index" NsSonos (string 0)
+        |> ignore
+
+        addToNodeWithValue positionInformation "offsetMillis" NsSonos (string position)
+        |> ignore
+
+        positionInformation
     
-    let getMediaUriResponse uri =
+    let getMediaUriResponse uri id position =
         let envelope, body = getEnvelopeWithBody()
         let response = addToNode body "getMediaURIResponse" NsSonos
         let result = addToNode response "getMediaURIResult" NsSonos
         result.Value <- uri
+
+        match position with
+        | Some i -> response.Add(getPositionInformation id i)
+        | _ -> ()
 
         envelope.ToString()
 
