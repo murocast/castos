@@ -15,3 +15,6 @@ nuget Expecto.FsCheck
 nuget TagLib.Portable
 
 nuget FSharp.Compiler.Tools
+
+nuget EventStore.Client
+nuget EventStore.Client.Embedded

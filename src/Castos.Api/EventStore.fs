@@ -1,6 +1,11 @@
 namespace Castos
 
 open System
+open System.Net
+
+open EventStore.ClientAPI
+open EventStore.ClientAPI.Embedded
+
 
 [<AutoOpen>]
 module EventStore =
@@ -110,4 +115,46 @@ module EventStore =
         let getEventsInMap map id = Map.tryFind id map, map
 
         let agent = createEventStoreAgent initState getEventsInMap saveEventsInMap
+        createEventStore<'TEvent, 'TError> versionError agent
+
+
+    let createGetEventStoreEventStore<'TEvent, 'TError> (versionError:'TError) =
+        let decontructStreamVersion = function | StreamVersion i -> int64(i)
+        let decontructStreamId = function | StreamId s -> s
+
+        let createStore() = async {
+            let nodeBuilder = EmbeddedVNodeBuilder
+                                                .AsSingleNode()
+                                                .OnDefaultEndpoints()
+                                                .RunInMemory()
+            let node = nodeBuilder.Build();
+            node.Start()        
+
+            use store = EmbeddedEventStoreConnection.Create(node)
+            do! store.ConnectAsync()        
+
+            return store
+        }        
+
+        let createEventData (event:'TEvent) =
+            let eventType = event.GetType().ToString()
+            let json = mkjson event
+            let metadata = null
+            EventData(Guid.NewGuid(), eventType, true, Text.Encoding.UTF8.GetBytes(json), metadata)
+
+        let store = createStore() |> Async.RunSynchronously
+
+        let saveEvents (store:IEventStoreConnection) streamId expectedVersion events =            
+            let id = decontructStreamId streamId
+            let anyVersion = ExpectedVersion.Any
+            let eventData = List.map createEventData events
+            let result = store.AppendToStreamAsync(id, decontructStreamVersion expectedVersion , eventData) |> Async.AwaitTask |> Async.RunSynchronously
+            (Ok, store)
+
+        let getEvents (store:IEventStoreConnection) streamId = 
+            let id = decontructStreamId streamId
+            //store.ReadAllEventsForwardAsync(id,...TODO
+            failwith "bla"
+
+        let agent = createEventStoreAgent store getEvents saveEvents
         createEventStore<'TEvent, 'TError> versionError agent

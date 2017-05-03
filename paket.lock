@@ -22,6 +22,9 @@ NUGET
       BenchmarkDotNet.Core (>= 0.10.4) - framework: >= net46
       Microsoft.CodeAnalysis.CSharp (>= 2.0) - framework: >= net46
       System.Threading.Tasks (>= 4.3) - framework: >= net46
+    EventStore.Client (4.0)
+    EventStore.Client.Embedded (4.0)
+      EventStore.Client (4.0)
     Expecto (4.1.1)
       Argu (>= 3.7)
       FSharp.Core (>= 3.1.2.5)

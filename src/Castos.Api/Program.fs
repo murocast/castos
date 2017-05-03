@@ -1,8 +1,5 @@
 ﻿open System.Net
 
-open Newtonsoft.Json
-open Newtonsoft.Json.FSharp
-
 open Suave
 open Suave.Filters
 open Suave.Logging
@@ -19,18 +16,6 @@ open Castos.Players
 open Castos.Events
 
 open Castos.Smapi
-
-let settings = JsonSerializerSettings()
-               |> Serialisation.extend
-
-let inline unjson<'T> json =
-        let a = JsonConvert.DeserializeObject<'T>(json, settings)
-        a
-
-let inline mkjson a =
-        let json = JsonConvert.SerializeObject(a, settings)
-        json
-
 let rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
 
 let baseurl = "http://192.168.178.34"
