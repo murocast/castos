@@ -63,7 +63,7 @@ let podcasts =
     |> List.ofSeq
     |> Seq.ofList
 
-let playEpisodeEvents = createInMemoryEventStore<EpisodeEventData, Error>(Error.VersionConflict "Version conflict")
+let playEpisodeEvents = createGetEventStoreEventStore<EpisodeEventData, Error>(Error.VersionConflict "Version conflict")
 
 let processSmapiMethod m =
     match m with

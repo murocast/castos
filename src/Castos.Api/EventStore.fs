@@ -128,17 +128,17 @@ module EventStore =
                                                 .OnDefaultEndpoints()
                                                 .RunInMemory()
             let node = nodeBuilder.Build();
-            node.Start()        
+            node.Start()
 
             use store = EmbeddedEventStoreConnection.Create(node)
-            do! store.ConnectAsync()        
+            do! store.ConnectAsync()
 
             return store
-        }        
+        }
 
         let store = createStore() |> Async.RunSynchronously
 
-        let saveEvents (store:IEventStoreConnection) streamId expectedVersion events =            
+        let saveEvents (store:IEventStoreConnection) streamId expectedVersion events =
             let createEventData (event:'TEvent) =
                 let eventType = event.GetType().ToString()
                 let json = mkjson event
@@ -149,11 +149,12 @@ module EventStore =
                 let! a = store.AppendToStreamAsync(id, version, eventData)
                 return a
             }
-                
+
             let id = decontructStreamId streamId
             let anyVersion = ExpectedVersion.Any
             let eventData = List.map createEventData events
-            let result =  appendToStream id (decontructStreamVersion expectedVersion) (Array.ofList eventData) |> Async.RunSynchronously
+            let version = decontructStreamVersion expectedVersion
+            let result =  appendToStream id (int64 anyVersion) (Array.ofList eventData) |> Async.RunSynchronously
             (Ok, store)
 
         let getEvents (store:IEventStoreConnection) streamId = //TODO: Tail recursion
@@ -169,7 +170,7 @@ module EventStore =
 
             let id = decontructStreamId streamId
             let events = readStreamEvents store id (int64 0) 200
-                         |> List.map (fun ev -> 
+                         |> List.map (fun ev ->
                                             let json = (Text.Encoding.UTF8.GetString ev.Event.Data)
                                             let evType = Type.GetType(ev.Event.EventType)
                                             unjson json)
