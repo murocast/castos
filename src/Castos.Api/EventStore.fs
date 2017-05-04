@@ -144,16 +144,25 @@ module EventStore =
                 let json = mkjson event
                 let metadata = null
                 EventData(Guid.NewGuid(), eventType, true, Text.Encoding.UTF8.GetBytes(json), metadata)
+
+            let appendToStream id version eventData = async {
+                let! a = store.AppendToStreamAsync(id, version, eventData)
+                return a
+            }
                 
             let id = decontructStreamId streamId
             let anyVersion = ExpectedVersion.Any
             let eventData = List.map createEventData events
-            let result = store.AppendToStreamAsync(id, decontructStreamVersion expectedVersion , eventData) |> Async.AwaitTask |> Async.RunSynchronously
+            let result =  appendToStream id (decontructStreamVersion expectedVersion) (Array.ofList eventData) |> Async.RunSynchronously
             (Ok, store)
 
         let getEvents (store:IEventStoreConnection) streamId = //TODO: Tail recursion
             let rec readStreamEvents (store:IEventStoreConnection) streamId start count =
-                let slice = store.ReadStreamEventsForwardAsync(streamId, start, count, false) |> Async.AwaitTask |> Async.RunSynchronously            
+                let readStreamEventsForward (store:IEventStoreConnection) streamId start count = async{
+                    let! a = store.ReadStreamEventsForwardAsync(streamId, start, count, false)
+                    return a
+                }
+                let slice = readStreamEventsForward store streamId start count |> Async.RunSynchronously
                 match slice.IsEndOfStream with
                 | false -> List.ofArray slice.Events @ readStreamEvents store streamId slice.NextEventNumber count
                 | true -> List.ofArray slice.Events
