@@ -18,3 +18,5 @@ nuget FSharp.Compiler.Tools
 
 nuget EventStore.Client
 nuget EventStore.Client.Embedded
+
+nuget Argu

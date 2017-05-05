@@ -16,9 +16,20 @@ open Castos.Players
 open Castos.Events
 
 open Castos.Smapi
+
+open Argu
+
+type Arguments =
+    | BaseUrl of string
+with
+    interface IArgParserTemplate with
+        member s.Usage =
+            match s with
+            | BaseUrl _ -> "Url smapi listens on"
+
 let rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
 
-let baseurl = "http://192.168.178.34"
+let mutable baseurl = "http://192.168.178.34"
 let podcastFileBasePath = baseurl + "/play/"
 
 let processFormAsync f =
@@ -71,7 +82,7 @@ let processSmapiMethod m =
     | GetMediaMetadata s -> processGetMediaMetadata podcasts (GetMediaMetadataRequest.Parse s)
     | GetLastUpdate s -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
     | GetMediaURI s -> processGetMediaURI playEpisodeEvents s podcastFileBasePath
-    | ReportPlaySeconds s -> 
+    | ReportPlaySeconds s ->
         processReportPlaySecondsRequest playEpisodeEvents s
         |> ignore
         ok("")
@@ -131,6 +142,10 @@ let smapiRoutes =
 
 [<EntryPoint>]
 let main argv =
+    let parser = ArgumentParser.Create<Arguments>(programName = "Castos.Api.exe")
+    let results = parser.Parse()
+    baseurl <- results.GetResult  (<@ BaseUrl @>, defaultValue = baseurl)
+
     let logger = Targets.create Debug [||]
     let loggedWebApp context = async {
         logger.debug (
