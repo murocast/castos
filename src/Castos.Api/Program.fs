@@ -30,7 +30,7 @@ with
 let rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
 
 let mutable baseurl = "http://192.168.178.34"
-let podcastFileBasePath = baseurl + "/play/"
+let podcastFileBasePath() = baseurl + "/play/"
 
 let processFormAsync f =
     fun context ->
@@ -81,7 +81,7 @@ let processSmapiMethod m =
     | GetMetadata s -> processGetMetadata podcasts (GetMetadataRequest.Parse s)
     | GetMediaMetadata s -> processGetMediaMetadata podcasts (GetMediaMetadataRequest.Parse s)
     | GetLastUpdate s -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
-    | GetMediaURI s -> processGetMediaURI playEpisodeEvents s podcastFileBasePath
+    | GetMediaURI s -> processGetMediaURI playEpisodeEvents s (podcastFileBasePath())
     | ReportPlaySeconds s ->
         processReportPlaySecondsRequest playEpisodeEvents s
         |> ignore
