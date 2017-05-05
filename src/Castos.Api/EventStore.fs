@@ -2,6 +2,7 @@ namespace Castos
 
 open System
 open System.Net
+open System.IO
 
 open EventStore.ClientAPI
 open EventStore.ClientAPI.Embedded
@@ -9,6 +10,7 @@ open EventStore.ClientAPI.Embedded
 
 [<AutoOpen>]
 module EventStore =
+    open System.Reflection
 
     type StreamId = StreamId of string
     type StreamVersion = StreamVersion of int
@@ -123,10 +125,11 @@ module EventStore =
         let decontructStreamId = function | StreamId s -> s
 
         let createStore() = async {
+            let path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
             let nodeBuilder = EmbeddedVNodeBuilder
                                                 .AsSingleNode()
                                                 .OnDefaultEndpoints()
-                                                .RunInMemory()
+                                                .RunOnDisk(Path.Combine(path, "castos", "data"))
             let node = nodeBuilder.Build();
             node.Start()
 
@@ -154,7 +157,7 @@ module EventStore =
             let anyVersion = ExpectedVersion.Any
             let eventData = List.map createEventData events
             let version = decontructStreamVersion expectedVersion
-            let result =  appendToStream id (int64 anyVersion) (Array.ofList eventData) |> Async.RunSynchronously
+            let result =  appendToStream id (int64 anyVersion) (Array.ofList eventData) |> Async.RunSynchronously //TODO: avoid AnyVersion
             (Ok, store)
 
         let getEvents (store:IEventStoreConnection) streamId = //TODO: Tail recursion
