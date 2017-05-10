@@ -29,7 +29,7 @@ with
 
 let rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
 
-let mutable baseurl = "http://192.168.178.34"
+let mutable baseurl = "http://127.0.0.1"
 let podcastFileBasePath() = baseurl + "/play/"
 
 let processFormAsync f =
