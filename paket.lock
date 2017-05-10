@@ -959,6 +959,9 @@ NUGET
       System.Xml.XPath (>= 4.3) - framework: >= net46, >= netstandard13
     System.Xml.XPath.XmlDocument (4.3) - framework: netcore11
     TagLib.Portable (1.0.4)
+    Topshelf (4.0.3)
+    Topshelf.FSharp (3.0)
+      Topshelf (>= 4.0.2)
     Zlib.Portable (1.11) - framework: >= netstandard11, portable-net45+sl5+win8, portable-net45+win8, portable-net45+win8+wp8+wpa81
 GITHUB
   remote: fsprojects/Chessie

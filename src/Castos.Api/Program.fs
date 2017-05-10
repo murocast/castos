@@ -1,4 +1,5 @@
 ﻿open System.Net
+open System.Threading
 
 open Suave
 open Suave.Filters
@@ -18,6 +19,9 @@ open Castos.Events
 open Castos.Smapi
 
 open Argu
+
+open Topshelf
+open Time
 
 type Arguments =
     | BaseUrl of string
@@ -140,6 +144,8 @@ let smapiRoutes =
     choose [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest)] ]
 
 
+
+
 [<EntryPoint>]
 let main argv =
     let parser = ArgumentParser.Create<Arguments>(programName = "Castos.Api.exe")
@@ -165,11 +171,27 @@ let main argv =
     let mimeTypes =
         Writers.defaultMimeTypesMap
             @@ (function | ".mp3" -> Writers.createMimeType "audio/mp3" false | _ -> None)
+    let cts = new CancellationTokenSource()
     let cfg =
         { defaultConfig with
             bindings = [ HttpBinding.create HTTP IPAddress.Any 80us ]
             logger = logger
             mimeTypesMap = mimeTypes
+            cancellationToken = cts.Token
         }
-    startWebServer cfg loggedWebApp
-    0
+    let listening, server = startWebServerAsync cfg loggedWebApp
+
+    let start hc =
+        Async.Start(server, cts.Token)
+        true
+
+    let stop hc = 
+        cts.Cancel()
+        true
+
+    Service.Default
+    |> service_name "Castos"
+    |> with_start start
+    |> with_recovery (ServiceRecovery.Default |> restart (min 10))
+    |> with_stop stop
+    |> run

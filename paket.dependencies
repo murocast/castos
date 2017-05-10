@@ -20,3 +20,5 @@ nuget EventStore.Client
 nuget EventStore.Client.Embedded
 
 nuget Argu
+
+nuget Topshelf.FSharp

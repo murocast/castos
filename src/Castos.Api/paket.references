@@ -10,3 +10,5 @@ EventStore.Client
 EventStore.Client.Embedded
 
 Argu
+
+Topshelf.FSharp
