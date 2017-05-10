@@ -72,15 +72,9 @@ let getSmapiMethod c =
         | "setPlayedSeconds" -> ok(SetPlayedSeconds(rawFormString c))
         | _ -> fail(sprintf "Method not implemented %s" m)
 
-
-let podcasts =
-    GetPodcasts()
-    |> List.ofSeq
-    |> Seq.ofList
-
 let playEpisodeEvents = createGetEventStoreEventStore<EpisodeEventData, Error>(Error.VersionConflict "Version conflict")
 
-let processSmapiMethod m =
+let processSmapiMethod podcasts m =
     match m with
     | GetMetadata s -> processGetMetadata podcasts (GetMetadataRequest.Parse s)
     | GetMediaMetadata s -> processGetMediaMetadata podcasts (GetMediaMetadataRequest.Parse s)
@@ -94,17 +88,17 @@ let processSmapiMethod m =
     | SetPlayedSeconds s -> ok("")
     | _ -> fail "blubber"
 
-let smapiImp c =
+let smapiImp c podcasts =
     getSmapiMethod c
-     >>= processSmapiMethod
+     >>= (processSmapiMethod podcasts)
 
 let toLines (strings) =
     List.fold (+) "" strings
 
-let processSmapiRequest =
+let processSmapiRequest podcasts=
     fun context ->
         async{
-            let result = smapiImp context
+            let result = smapiImp context podcasts
             return! match result with
                     | Success (content) -> OK content context
                     | Failure (content) -> BAD_REQUEST (content) context
@@ -140,8 +134,8 @@ let playerRoutes =
           pathScan "/api/players/%s"
           <| fun player -> choose [ GET >=> OK(sprintf "TODO: Show information about player %s" player) ] ]
 
-let smapiRoutes =
-    choose [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest)] ]
+let smapiRoutes podcasts=
+    choose [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest podcasts)] ]
 
 
 
@@ -149,39 +143,45 @@ let smapiRoutes =
 [<EntryPoint>]
 let main argv =
     let parser = ArgumentParser.Create<Arguments>(programName = "Castos.Api.exe")
-    let results = parser.Parse()
-    baseurl <- results.GetResult  (<@ BaseUrl @>, defaultValue = baseurl)
-
-    let logger = Targets.create Debug [||]
-    let loggedWebApp context = async {
-        logger.debug (
-            eventX "Received request {method} {url} {form}"
-                >> setField "method" context.request.``method``
-                >> setField "url" context.request.url
-                >> setField "form" (rawFormString context))
-        let! response = (choose [ podcastRoutes; playRoutes; playerRoutes; smapiRoutes ]) context
-        match response with
-        | Some context ->
-            match context.response.content with
-            | Bytes c -> logger.debug (eventX "Send response {form}"
-                            >> setField "form" (System.Text.Encoding.UTF8.GetString c))
-            | _ -> ()
-        | _ -> ()
-        return response }
-    let mimeTypes =
-        Writers.defaultMimeTypesMap
-            @@ (function | ".mp3" -> Writers.createMimeType "audio/mp3" false | _ -> None)
+    let results = parser.ParseConfiguration (ConfigurationReader.DefaultReader())
+    baseurl <- results.GetResult  (<@ BaseUrl @>, defaultValue = baseurl)    
+       
     let cts = new CancellationTokenSource()
-    let cfg =
-        { defaultConfig with
-            bindings = [ HttpBinding.create HTTP IPAddress.Any 80us ]
-            logger = logger
-            mimeTypesMap = mimeTypes
-            cancellationToken = cts.Token
-        }
-    let listening, server = startWebServerAsync cfg loggedWebApp
-
+    
     let start hc =
+        let podcasts =
+            GetPodcasts()
+            |> List.ofSeq
+            |> Seq.ofList
+
+        let logger = Targets.create Debug [||]
+        let loggedWebApp context = async {
+            logger.debug (
+                eventX "Received request {method} {url} {form}"
+                    >> setField "method" context.request.``method``
+                    >> setField "url" context.request.url
+                    >> setField "form" (rawFormString context))
+            let! response = (choose [ podcastRoutes; playRoutes; playerRoutes; smapiRoutes podcasts ]) context
+            match response with
+            | Some context ->
+                match context.response.content with
+                | Bytes c -> logger.debug (eventX "Send response {form}"
+                                >> setField "form" (System.Text.Encoding.UTF8.GetString c))
+                | _ -> ()
+            | _ -> ()
+            return response }
+        let mimeTypes =
+            Writers.defaultMimeTypesMap
+                @@ (function | ".mp3" -> Writers.createMimeType "audio/mp3" false | _ -> None)        
+        let cfg =
+            { defaultConfig with
+                bindings = [ HttpBinding.create HTTP IPAddress.Any 80us ]
+                logger = logger
+                mimeTypesMap = mimeTypes
+                cancellationToken = cts.Token
+            }
+
+        let listening, server = startWebServerAsync cfg loggedWebApp
         Async.Start(server, cts.Token)
         true
 
