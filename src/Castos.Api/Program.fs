@@ -134,8 +134,8 @@ let playerRoutes =
           pathScan "/api/players/%s"
           <| fun player -> choose [ GET >=> OK(sprintf "TODO: Show information about player %s" player) ] ]
 
-let smapiRoutes podcasts=
-    choose [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest podcasts)] ]
+let smapiRoutes getPodcasts =
+    choose [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest (getPodcasts()))] ]
 
 
 
@@ -149,11 +149,6 @@ let main argv =
     let cts = new CancellationTokenSource()
     
     let start hc =
-        let podcasts =
-            GetPodcasts()
-            |> List.ofSeq
-            |> Seq.ofList
-
         let logger = Targets.create Debug [||]
         let loggedWebApp context = async {
             logger.debug (
@@ -161,7 +156,7 @@ let main argv =
                     >> setField "method" context.request.``method``
                     >> setField "url" context.request.url
                     >> setField "form" (rawFormString context))
-            let! response = (choose [ podcastRoutes; playRoutes; playerRoutes; smapiRoutes podcasts ]) context
+            let! response = (choose [ podcastRoutes; playRoutes; playerRoutes; smapiRoutes GetPodcasts ]) context
             match response with
             | Some context ->
                 match context.response.content with

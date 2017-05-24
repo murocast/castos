@@ -65,13 +65,24 @@ module Podcasts =
         |> Seq.filter (fun x -> not (x.Substring(basePath.Length + 1).StartsWith(".")))
         |> Seq.map (fun x -> x.Substring(basePath.Length + 1))        
 
-    let podcasts =
+    let readPodcasts() =
         categories
         |> Seq.collect (fun x -> podcastsOfCategory basePath x)
-
-    let GetPodcasts() =
+        |> List.ofSeq
+        |> Seq.ofList
+    
+    let mutable podcasts = readPodcasts()
+    let watcher = new FileSystemWatcher(Path = basePath, EnableRaisingEvents = true, IncludeSubdirectories = true)    
+    let rec loop() = 
+        async { 
+            let! _ = Async.AwaitEvent watcher.Changed
+            podcasts <- readPodcasts()
+            return! loop()
+        }
+    Async.Start (loop())
+    
+    let GetPodcasts() =              
         podcasts
-
     let GetPathFromId (id:string) =
         let splitted = id.Split([|"___"|], System.StringSplitOptions.RemoveEmptyEntries)
         sprintf @"%s\%s\%s\%s" basePath splitted.[0] splitted.[1] splitted.[2]
