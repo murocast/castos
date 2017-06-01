@@ -69,7 +69,6 @@ module Podcasts =
         categories
         |> Seq.collect (fun x -> podcastsOfCategory basePath x)
         |> List.ofSeq
-        |> Seq.ofList
     
     let mutable podcasts = readPodcasts()
     let watcher = new FileSystemWatcher(Path = basePath, EnableRaisingEvents = true, IncludeSubdirectories = true)    

@@ -135,7 +135,7 @@ let playerRoutes =
           <| fun player -> choose [ GET >=> OK(sprintf "TODO: Show information about player %s" player) ] ]
 
 let smapiRoutes getPodcasts =
-    choose [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest (getPodcasts()))] ]
+    choose [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest (getPodcasts() |> Seq.ofList))] ]
 
 
 
@@ -183,6 +183,9 @@ let main argv =
     let stop hc = 
         cts.Cancel()
         true
+    
+    //PreLoad Podcasts in Memory
+    GetPodcasts() |> ignore
 
     Service.Default
     |> service_name "Castos"
