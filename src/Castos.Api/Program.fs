@@ -144,10 +144,10 @@ let smapiRoutes getPodcasts =
 let main argv =
     let parser = ArgumentParser.Create<Arguments>(programName = "Castos.Api.exe")
     let results = parser.ParseConfiguration (ConfigurationReader.DefaultReader())
-    baseurl <- results.GetResult  (<@ BaseUrl @>, defaultValue = baseurl)    
-       
+    baseurl <- results.GetResult  (<@ BaseUrl @>, defaultValue = baseurl)
+
     let cts = new CancellationTokenSource()
-    
+
     let start hc =
         let logger = Targets.create Debug [||]
         let loggedWebApp context = async {
@@ -167,7 +167,7 @@ let main argv =
             return response }
         let mimeTypes =
             Writers.defaultMimeTypesMap
-                @@ (function | ".mp3" -> Writers.createMimeType "audio/mp3" false | _ -> None)        
+                @@ (function | ".mp3" -> Writers.createMimeType "audio/mp3" false | _ -> None)
         let cfg =
             { defaultConfig with
                 bindings = [ HttpBinding.create HTTP IPAddress.Any 80us ]
@@ -180,10 +180,10 @@ let main argv =
         Async.Start(server, cts.Token)
         true
 
-    let stop hc = 
+    let stop hc =
         cts.Cancel()
         true
-    
+
     //PreLoad Podcasts in Memory
     GetPodcasts() |> ignore
 
