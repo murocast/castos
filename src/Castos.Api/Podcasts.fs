@@ -26,16 +26,16 @@ module Podcasts =
 
     let basePath = @"\\le-nas\brase\music\podcasts"
 
-    let getTagFile filepath = 
+    let getTagFile filepath =
         let name = Path.GetFileName(filepath)
         use stream = File.OpenRead(filepath)
-        let tagFile = TagLib.File.Create(StreamFileAbstraction(name, stream,stream))        
+        let tagFile = TagLib.File.Create(StreamFileAbstraction(name, stream,stream))
         tagFile
 
     let episodes path category podcast =
         let files =
             Directory.GetFiles(path)
-            |> Seq.map (fun x ->                   
+            |> Seq.map (fun x ->
                    let fileName = Path.GetFileName(x)
                    let tagFile = getTagFile x
                    { Id = sprintf "%s___%s___%s" category podcast fileName
@@ -63,24 +63,24 @@ module Podcasts =
     let categories =
         Directory.GetDirectories(basePath)
         |> Seq.filter (fun x -> not (x.Substring(basePath.Length + 1).StartsWith(".")))
-        |> Seq.map (fun x -> x.Substring(basePath.Length + 1))        
+        |> Seq.map (fun x -> x.Substring(basePath.Length + 1))
 
     let readPodcasts() =
         categories
         |> Seq.collect (fun x -> podcastsOfCategory basePath x)
         |> List.ofSeq
-    
+
     let mutable podcasts = readPodcasts()
-    let watcher = new FileSystemWatcher(Path = basePath, EnableRaisingEvents = true, IncludeSubdirectories = true)    
-    let rec loop() = 
-        async { 
+    let watcher = new FileSystemWatcher(Path = basePath, EnableRaisingEvents = true, IncludeSubdirectories = true)
+    let rec loop() =
+        async {
             let! _ = Async.AwaitEvent watcher.Changed
             podcasts <- readPodcasts()
             return! loop()
         }
     Async.Start (loop())
-    
-    let GetPodcasts() =              
+
+    let GetPodcasts() =
         podcasts
     let GetPathFromId (id:string) =
         let splitted = id.Split([|"___"|], System.StringSplitOptions.RemoveEmptyEntries)
