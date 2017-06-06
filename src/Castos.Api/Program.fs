@@ -13,7 +13,6 @@ open Suave.SuaveConfig
 
 open Castos
 open Castos.Podcasts
-open Castos.Players
 open Castos.Events
 
 open Castos.Smapi
@@ -127,13 +126,6 @@ let playRoutes =
         [ pathScan "/play/%s"
           <| fun id -> choose [GET >=> Files.file (Podcasts.GetPathFromId id) ]]
 
-let playerRoutes =
-    choose
-        [ path "/api/players" >=> choose [GET >=> warbler (fun c -> processFormAsync GetPlayers) ]
-
-          pathScan "/api/players/%s"
-          <| fun player -> choose [ GET >=> OK(sprintf "TODO: Show information about player %s" player) ] ]
-
 let smapiRoutes getPodcasts =
     choose [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest (getPodcasts() |> Seq.ofList))] ]
 
@@ -156,7 +148,7 @@ let main argv =
                     >> setField "method" context.request.``method``
                     >> setField "url" context.request.url
                     >> setField "form" (rawFormString context))
-            let! response = (choose [ podcastRoutes; playRoutes; playerRoutes; smapiRoutes GetPodcasts ]) context
+            let! response = (choose [ podcastRoutes; playRoutes; smapiRoutes GetPodcasts ]) context
             match response with
             | Some context ->
                 match context.response.content with
