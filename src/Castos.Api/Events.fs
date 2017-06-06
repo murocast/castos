@@ -13,6 +13,16 @@ and PlayEpisodeStopped = {
         Id: PodcastId
         Position: int }
 
+type SubscriptionEventData =
+    | SubscriptionAdded of SubscriptionAdded
+    | SubscriptionDeleted of SubscriptionDeleted
+and SubscriptionAdded = {
+    Id: SubscriptionId
+    Url: string 
+    Name: string }
+and SubscriptionDeleted = { Id: SubscriptionId }
+and SubscriptionId = System.Guid
+
 type Error =
     | NotImplemented of string
     | VersionConflict of string
