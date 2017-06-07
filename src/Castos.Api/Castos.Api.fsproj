@@ -36,19 +36,51 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <Choose>
-    <When Condition="'$(VisualStudioVersion)' == '11.0'">
-      <PropertyGroup Condition=" '$(FSharpTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets') ">
-        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets</FSharpTargetsPath>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup Condition=" '$(FSharpTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets') ">
-        <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets</FSharpTargetsPath>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
   <Import Project="$(FSharpTargetsPath)" />
+  <ItemGroup>
+    <Content Include="any\netstandard1.6\FSharp.Core.optdata">
+      <Paket>True</Paket>
+    </Content>
+    <Content Include="any\netstandard1.6\FSharp.Core.sigdata">
+      <Paket>True</Paket>
+    </Content>
+    <None Include="Samples/zones.json" />
+    <EmbeddedResource Include="Samples/GetMetadataRequest.xml" />
+    <EmbeddedResource Include="Samples/GetMediaMetadataRequest.xml" />
+    <EmbeddedResource Include="Samples/GetMediaURIRequest.xml" />
+    <EmbeddedResource Include="Samples/GetLastUpdateRequest.xml" />
+    <EmbeddedResource Include="Samples/GetExtendedMetadataRequest.xml" />
+    <EmbeddedResource Include="Samples/GetExtendedMetadataTextRequest.xml" />
+    <EmbeddedResource Include="Samples/ReportPlaySecondsRequest.xml" />
+    <EmbeddedResource Include="Samples/ReportPlayStatusRequest.xml" />
+    <EmbeddedResource Include="Samples/SetPlayedSecondsRequest.xml" />
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Json.fs" />
+    <Compile Include="ErrorHandling.fs" />
+    <Compile Include="EventStore.fs" />
+    <Compile Include="Podcasts.fs" />
+    <Compile Include="Events.fs" />
+    <Compile Include="Smapi.fs" />
+    <Compile Include="Subscriptions.fs" />
+    <Compile Include="Program.fs" />
+    <None Include="App.config" />
+    <None Include="paket.references" />
+    <None Include="EventStore.fsx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="FSharp.Data.DesignTime">
+      <HintPath>..\..\packages\FSharp.Data\lib\portable-net45+netcore45\FSharp.Data.DesignTime.dll</HintPath>
+    </Reference>
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <ProjectReference Include="..\Smapi\Smapi.fsproj">
+      <Name>Smapi</Name>
+      <Project>{f5068b69-90d4-474f-9643-8e8a6ac57827}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And $(TargetFrameworkVersion) == 'v3.5'">
       <ItemGroup>
@@ -1962,47 +1994,4 @@
     </When>
   </Choose>
   <Import Project="..\..\packages\EventStore.Client.Embedded\build\EventStore.Client.Embedded.targets" Condition="Exists('..\..\packages\EventStore.Client.Embedded\build\EventStore.Client.Embedded.targets')" Label="Paket" />
-  <ItemGroup>
-    <Content Include="any\netstandard1.6\FSharp.Core.optdata">
-      <Paket>True</Paket>
-    </Content>
-    <Content Include="any\netstandard1.6\FSharp.Core.sigdata">
-      <Paket>True</Paket>
-    </Content>
-    <None Include="Samples/zones.json" />
-    <EmbeddedResource Include="Samples/GetMetadataRequest.xml" />
-    <EmbeddedResource Include="Samples/GetMediaMetadataRequest.xml" />
-    <EmbeddedResource Include="Samples/GetMediaURIRequest.xml" />
-    <EmbeddedResource Include="Samples/GetLastUpdateRequest.xml" />
-    <EmbeddedResource Include="Samples/GetExtendedMetadataRequest.xml" />
-    <EmbeddedResource Include="Samples/GetExtendedMetadataTextRequest.xml" />
-    <EmbeddedResource Include="Samples/ReportPlaySecondsRequest.xml" />
-    <EmbeddedResource Include="Samples/ReportPlayStatusRequest.xml" />
-    <EmbeddedResource Include="Samples/SetPlayedSecondsRequest.xml" />
-    <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Json.fs" />
-    <Compile Include="ErrorHandling.fs" />
-    <Compile Include="EventStore.fs" />
-    <Compile Include="Podcasts.fs" />
-    <Compile Include="Events.fs" />
-    <Compile Include="Smapi.fs" />
-    <Compile Include="Program.fs" />
-    <None Include="App.config" />
-    <None Include="paket.references" />
-    <None Include="EventStore.fsx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="FSharp.Data.DesignTime">
-      <HintPath>..\..\packages\FSharp.Data\lib\portable-net45+netcore45\FSharp.Data.DesignTime.dll</HintPath>
-    </Reference>
-    <Reference Include="mscorlib" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
-    <ProjectReference Include="..\Smapi\Smapi.fsproj">
-      <Name>Smapi</Name>
-      <Project>{f5068b69-90d4-474f-9643-8e8a6ac57827}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
 </Project>

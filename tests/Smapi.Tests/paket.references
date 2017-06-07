@@ -1,3 +1,5 @@
 Expecto
 Expecto.BenchmarkDotNet
 Expecto.FsCheck
+
+FSharp.Compiler.Tools
