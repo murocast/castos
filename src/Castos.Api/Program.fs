@@ -71,7 +71,20 @@ let getSmapiMethod c =
         | "setPlayedSeconds" -> ok(SetPlayedSeconds(rawFormString c))
         | _ -> fail(sprintf "Method not implemented %s" m)
 
-let playEpisodeEvents = createGetEventStoreEventStore<EpisodeEventData, Error>(Error.VersionConflict "Version conflict")
+let playEpisodeEvents = createGetEventStoreEventStore<EpisodeEventData, Error>(VersionConflict "Version conflict")
+let subscriptionEvents = createGetEventStoreEventStore<SubscriptionEventData, Error>(VersionConflict "Version conflict")
+
+let storeSubscriptionEvent (subscriptionId:SubscriptionId) event =
+    let streamId id = StreamId (sprintf "subscription-%A" id)
+    subscriptionEvents.SaveEvents (streamId subscriptionId) (StreamVersion 0) [event]
+
+let addSubscriptionComposition name url =
+    let subscriptionId = function
+                         | SubscriptionAdded s -> s.Id
+                         | SubscriptionDeleted s -> s.Id
+
+    let event = Castos.SubscriptionSource.addSubscription name url
+    storeSubscriptionEvent (subscriptionId event) event
 
 let processSmapiMethod podcasts m =
     match m with
