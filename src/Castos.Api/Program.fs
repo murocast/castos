@@ -71,15 +71,15 @@ let getSmapiMethod c =
         | "setPlayedSeconds" -> ok(SetPlayedSeconds(rawFormString c))
         | _ -> fail(sprintf "Method not implemented %s" m)
 
-let playEpisodeEvents = createGetEventStoreEventStore<EpisodeEventData, Error>(VersionConflict "Version conflict")
-let subscriptionEvents = createGetEventStoreEventStore<SubscriptionEventData, Error>(VersionConflict "Version conflict")
+let eventStore = createGetEventStoreEventStore<CastosEventData, Error>(VersionConflict "Version conflict")
 
 let storeSubscriptionEvent version event =
     let subscriptionId = function
                          | SubscriptionAdded s -> s.Id
                          | SubscriptionDeleted s -> s.Id
+                         | _ -> failwith "not an subscription event"
     let streamId event = StreamId (sprintf "subscription-%A" (subscriptionId event))
-    subscriptionEvents.SaveEvents (streamId event) version [event]
+    eventStore.SaveEvents (streamId event) version [event]
 
 let addSubscriptionComposition name url =   
     Castos.SubscriptionSource.addSubscription name url
@@ -90,9 +90,9 @@ let processSmapiMethod podcasts m =
     | GetMetadata s -> processGetMetadata podcasts (GetMetadataRequest.Parse s)
     | GetMediaMetadata s -> processGetMediaMetadata podcasts (GetMediaMetadataRequest.Parse s)
     | GetLastUpdate s -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
-    | GetMediaURI s -> processGetMediaURI playEpisodeEvents s (podcastFileBasePath())
+    | GetMediaURI s -> processGetMediaURI eventStore s (podcastFileBasePath())
     | ReportPlaySeconds s ->
-        processReportPlaySecondsRequest playEpisodeEvents s
+        processReportPlaySecondsRequest eventStore
         |> ignore
         ok("")
     | ReportPlayStatus s -> ok("")
@@ -178,7 +178,7 @@ let main argv =
                 logger = logger
                 mimeTypesMap = mimeTypes
                 cancellationToken = cts.Token
-            }
+            }        
 
         let listening, server = startWebServerAsync cfg loggedWebApp
         Async.Start(server, cts.Token)

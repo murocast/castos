@@ -3,19 +3,18 @@ module Castos.Events
 
 open Castos.Podcasts
 
-type EpisodeEventData =
+type CastosEventData =
     | PlaySecondsReported of PlaySecondsReported
     | PlayEpisodeStopped of PlayEpisodeStopped
+    
+    | SubscriptionAdded of SubscriptionAdded
+    | SubscriptionDeleted of SubscriptionDeleted
 and PlaySecondsReported = {
         Id: PodcastId
         Position: int }
 and PlayEpisodeStopped = {
         Id: PodcastId
         Position: int }
-
-type SubscriptionEventData =
-    | SubscriptionAdded of SubscriptionAdded
-    | SubscriptionDeleted of SubscriptionDeleted
 and SubscriptionAdded = {
     Id: SubscriptionId
     Url: string 
