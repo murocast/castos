@@ -74,17 +74,16 @@ let getSmapiMethod c =
 let playEpisodeEvents = createGetEventStoreEventStore<EpisodeEventData, Error>(VersionConflict "Version conflict")
 let subscriptionEvents = createGetEventStoreEventStore<SubscriptionEventData, Error>(VersionConflict "Version conflict")
 
-let storeSubscriptionEvent (subscriptionId:SubscriptionId) event =
-    let streamId id = StreamId (sprintf "subscription-%A" id)
-    subscriptionEvents.SaveEvents (streamId subscriptionId) (StreamVersion 0) [event]
-
-let addSubscriptionComposition name url =
+let storeSubscriptionEvent version event =
     let subscriptionId = function
                          | SubscriptionAdded s -> s.Id
                          | SubscriptionDeleted s -> s.Id
+    let streamId event = StreamId (sprintf "subscription-%A" (subscriptionId event))
+    subscriptionEvents.SaveEvents (streamId event) version [event]
 
-    let event = Castos.SubscriptionSource.addSubscription name url
-    storeSubscriptionEvent (subscriptionId event) event
+let addSubscriptionComposition name url =   
+    Castos.SubscriptionSource.addSubscription name url
+    |> storeSubscriptionEvent (StreamVersion 0)
 
 let processSmapiMethod podcasts m =
     match m with
