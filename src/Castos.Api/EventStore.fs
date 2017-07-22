@@ -128,8 +128,11 @@ module EventStore =
             let path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
             let nodeBuilder = EmbeddedVNodeBuilder
                                                 .AsSingleNode()
-                                                .OnDefaultEndpoints()
+                                                .RunProjections(EventStore.Common.Options.ProjectionType.All)
+                                                .StartStandardProjections()
+                                                .OnDefaultEndpoints()                                                
                                                 .RunOnDisk(Path.Combine(path, "castos", "data"))
+                                                
             let node = nodeBuilder.Build();
             node.Start()
 
@@ -163,7 +166,7 @@ module EventStore =
         let getEvents (store:IEventStoreConnection) streamId = //TODO: Tail recursion
             let rec readStreamEvents (store:IEventStoreConnection) streamId start count =
                 let readStreamEventsForward (store:IEventStoreConnection) streamId start count = async{
-                    let! a = store.ReadStreamEventsForwardAsync(streamId, start, count, false)
+                    let! a = store.ReadStreamEventsForwardAsync(streamId, start, count, false)                    
                     return a
                 }
                 let slice = readStreamEventsForward store streamId start count |> Async.RunSynchronously
