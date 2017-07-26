@@ -21,11 +21,23 @@ module SubscriptionSource =
                                                Name = ev.Name
                                                Active = true }
         | SubscriptionDeleted ev -> { state with Active = false }
+        | _ -> failwith("Unknown event")
 
-    let rec private evolve state events =
-        match events with
-        | head :: rest -> evolve (apply state head) rest
-        | [] -> state
+    let private evolve state events =
+        events
+        |> List.fold apply state
+
+    let private eventId event = 
+        match event with
+        | SubscriptionAdded data -> data.Id
+        | SubscriptionDeleted data -> data.Id
+        | _ -> failwith("Unknown event")
+
+    let getSubscriptions events = 
+        events
+        |> List.groupBy eventId
+        |> List.map (fun ev -> evolve initialSubscriptionState (snd ev))
+                                 
 
     let addSubscription name url =        
         SubscriptionAdded { Id = System.Guid.NewGuid()
