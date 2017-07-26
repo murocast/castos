@@ -27,15 +27,15 @@ module SubscriptionSource =
         events
         |> List.fold apply state
 
-    let private eventId event = 
-        match event with
+    let subscriptionId = 
+        function
         | SubscriptionAdded data -> data.Id
         | SubscriptionDeleted data -> data.Id
         | _ -> failwith("Unknown event")
 
     let getSubscriptions events = 
         events
-        |> List.groupBy eventId
+        |> List.groupBy subscriptionId
         |> List.map (fun ev -> evolve initialSubscriptionState (snd ev))
                                  
 
