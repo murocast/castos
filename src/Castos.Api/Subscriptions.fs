@@ -13,7 +13,7 @@ module SubscriptionSource =
           Url = ""
           Name = ""
           Active = false }
-          
+
     let private apply state event =
         match event with
         | SubscriptionAdded ev -> { state with Id = ev.Id
@@ -27,19 +27,19 @@ module SubscriptionSource =
         events
         |> List.fold apply state
 
-    let subscriptionId = 
+    let subscriptionId =
         function
         | SubscriptionAdded data -> data.Id
         | SubscriptionDeleted data -> data.Id
         | _ -> failwith("Unknown event")
 
-    let getSubscriptions events = 
+    let getSubscriptions events =
         events
         |> List.groupBy subscriptionId
         |> List.map (fun ev -> evolve initialSubscriptionState (snd ev))
-                                 
 
-    let addSubscription name url =        
+
+    let addSubscription name url =
         SubscriptionAdded { Id = System.Guid.NewGuid()
                             Name = name
                             Url = url }

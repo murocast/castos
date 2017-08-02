@@ -117,24 +117,6 @@ let processSmapiRequest podcasts=
                     | Failure (content) -> BAD_REQUEST (content) context
         }
 
-let podcastRoutes =
-    choose
-        [ path "/api/podcasts" >=> choose [ GET >=> warbler (fun context -> processAsync (fun() -> Castos.ErrorHandling.ok GetPodcasts)) ]
-
-          path "/api/podcasts/categories/" >=> choose [ GET >=> OK "TODO: All categories" ]
-
-          pathScan "/api/podcasts/categories/%s"
-          <| fun category -> choose [ GET >=> OK(sprintf "TODO: Show all podcasts of category '%s'" category) ]
-
-          pathScan "/api/podcasts/%s"
-          <| fun podcast -> choose [ GET >=> OK(sprintf "TODO: Show information about podcast '%s'" podcast) ]
-
-          pathScan "/api/podcasts/%s/episodes"
-          <| fun podcast -> choose [ GET >=> OK(sprintf "TODO: Show episodes of '%s'" podcast) ]
-
-          pathScan "/api/podcasts/%s/episodes/%s"
-          <| fun (podcast, episode) ->
-              choose [ GET >=> OK(sprintf "TODO: Show information about episode '%s' of podcast '%s'" podcast episode) ] ]
 let playRoutes =
     choose
         [ pathScan "/play/%s"
@@ -165,7 +147,7 @@ let main argv =
                     >> setField "method" context.request.``method``
                     >> setField "url" context.request.url
                     >> setField "form" (rawFormString context))
-            let! response = (choose [ podcastRoutes; playRoutes; smapiRoutes GetPodcasts; subscriptionRoutes ]) context
+            let! response = (choose [ playRoutes; smapiRoutes GetPodcasts; subscriptionRoutes ]) context
             match response with
             | Some context ->
                 match context.response.content with
