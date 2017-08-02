@@ -77,7 +77,7 @@ let storeSubscriptionEvent version event =
     let streamId event = StreamId (sprintf "subscription-%A" (Castos.SubscriptionSource.subscriptionId event))
     eventStore.SaveEvents (streamId event) version [event]
 
-let addSubscriptionComposition name url =   
+let addSubscriptionComposition name url =
     Castos.SubscriptionSource.addSubscription name url
     |> storeSubscriptionEvent (StreamVersion 0)
 
@@ -143,7 +143,10 @@ let playRoutes =
 let smapiRoutes getPodcasts =
     choose [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest (getPodcasts() |> Seq.ofList))] ]
 
-
+let subscriptionRoutes =
+    choose [ path "/api/subscriptions"
+                    >=> choose [ GET >=> warbler ( fun context -> processAsync (fun() -> getSubscriptionsComposition()))
+                                 POST >=> OK "OK" ] ]
 
 
 [<EntryPoint>]
@@ -162,7 +165,7 @@ let main argv =
                     >> setField "method" context.request.``method``
                     >> setField "url" context.request.url
                     >> setField "form" (rawFormString context))
-            let! response = (choose [ podcastRoutes; playRoutes; smapiRoutes GetPodcasts ]) context
+            let! response = (choose [ podcastRoutes; playRoutes; smapiRoutes GetPodcasts; subscriptionRoutes ]) context
             match response with
             | Some context ->
                 match context.response.content with
@@ -180,7 +183,7 @@ let main argv =
                 logger = logger
                 mimeTypesMap = mimeTypes
                 cancellationToken = cts.Token
-            }        
+            }
 
         let listening, server = startWebServerAsync cfg loggedWebApp
         Async.Start(server, cts.Token)

@@ -130,9 +130,9 @@ module EventStore =
                                                 .AsSingleNode()
                                                 .RunProjections(EventStore.Common.Options.ProjectionType.All)
                                                 .StartStandardProjections()
-                                                .OnDefaultEndpoints()                                                
+                                                .OnDefaultEndpoints()
                                                 .RunOnDisk(Path.Combine(path, "castos", "data"))
-                                                
+
             let node = nodeBuilder.Build();
             node.Start()
 
@@ -166,7 +166,7 @@ module EventStore =
         let getEvents (store:IEventStoreConnection) streamId = //TODO: Tail recursion
             let rec readStreamEvents (store:IEventStoreConnection) streamId start count =
                 let readStreamEventsForward (store:IEventStoreConnection) streamId start count = async{
-                    let! a = store.ReadStreamEventsForwardAsync(streamId, start, count, false)                    
+                    let! a = store.ReadStreamEventsForwardAsync(streamId, start, count, true)
                     return a
                 }
                 let slice = readStreamEventsForward store streamId start count |> Async.RunSynchronously
@@ -178,7 +178,6 @@ module EventStore =
             let events = readStreamEvents store id (int64 0) 200
                          |> List.map (fun ev ->
                                             let json = (Text.Encoding.UTF8.GetString ev.Event.Data)
-                                            let evType = Type.GetType(ev.Event.EventType)
                                             unjson json)
             (Some events, store)
 
