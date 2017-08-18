@@ -128,7 +128,15 @@ let smapiRoutes getPodcasts =
 let subscriptionRoutes =
     choose [ path "/api/subscriptions"
                     >=> choose [ GET >=> warbler ( fun context -> processAsync (fun() -> getSubscriptionsComposition()))
-                                 POST >=> OK "OK" ] ]
+                                 POST >=> OK "OK" ]
+             pathScan "/apo/subscriptions/%A"
+             <| fun id -> choose [ GET >=> OK (sprintf "Metadata of subscription %A" id)
+                                   DELETE >=> OK (sprintf "Deleted subscription %A" id) ]
+             pathScan "/app/subscriptions/%A/episodes"
+             <| fun id -> choose [ GET >=> OK (sprintf "List Episodes of suscription %A" id)
+                                   POST >=> OK (sprintf "Add episode to subscription %A" id) ]
+             pathScan "/app/subscriptions/%A/episodes/%i" 
+             <| fun (subscriptionId, episodeId) -> choose [ GET >=> OK (sprintf "Metadata of Episode %i of subscription %A" episodeId subscriptionId)]]
 
 
 [<EntryPoint>]
