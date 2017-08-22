@@ -7,6 +7,11 @@ type Subscription = {
     Active: bool
 }
 
+type AddSubscriptionRendition = {
+    Name: string
+    Url: string
+}
+
 module SubscriptionSource =
     let private initialSubscriptionState =
         { Id = System.Guid.Empty
@@ -39,8 +44,8 @@ module SubscriptionSource =
         |> List.map (fun ev -> evolve initialSubscriptionState (snd ev))
 
 
-    let addSubscription name url =
+    let addSubscription rendition =
         SubscriptionAdded { Id = System.Guid.NewGuid()
-                            Name = name
-                            Url = url }
+                            Name = rendition.Name
+                            Url = rendition.Url }
 

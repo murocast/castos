@@ -77,8 +77,11 @@ let storeSubscriptionEvent version event =
     let streamId event = StreamId (sprintf "subscription-%A" (Castos.SubscriptionSource.subscriptionId event))
     eventStore.SaveEvents (streamId event) version [event]
 
-let addSubscriptionComposition name url =
-    Castos.SubscriptionSource.addSubscription name url
+let addSubscriptionComposition form =
+    //TODO: Validation
+    let (rendition:AddSubscriptionRendition) = unjson form
+    Castos.SubscriptionSource.addSubscription {Name = rendition.Name
+                                               Url = rendition.Url}
     |> storeSubscriptionEvent (StreamVersion 0)
 
 let getSubscriptionsComposition() =
@@ -128,14 +131,14 @@ let smapiRoutes getPodcasts =
 let subscriptionRoutes =
     choose [ path "/api/subscriptions"
                     >=> choose [ GET >=> warbler ( fun context -> processAsync (fun() -> getSubscriptionsComposition()))
-                                 POST >=> OK "OK" ]
+                                 POST >=> warbler( fun context ->  processFormAsync addSubscriptionComposition) ]
              pathScan "/apo/subscriptions/%A"
              <| fun id -> choose [ GET >=> OK (sprintf "Metadata of subscription %A" id)
                                    DELETE >=> OK (sprintf "Deleted subscription %A" id) ]
              pathScan "/app/subscriptions/%A/episodes"
              <| fun id -> choose [ GET >=> OK (sprintf "List Episodes of suscription %A" id)
                                    POST >=> OK (sprintf "Add episode to subscription %A" id) ]
-             pathScan "/app/subscriptions/%A/episodes/%i" 
+             pathScan "/app/subscriptions/%A/episodes/%i"
              <| fun (subscriptionId, episodeId) -> choose [ GET >=> OK (sprintf "Metadata of Episode %i of subscription %A" episodeId subscriptionId)]]
 
 
