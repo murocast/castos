@@ -43,6 +43,9 @@ module SubscriptionSource =
         |> List.groupBy subscriptionId
         |> List.map (fun ev -> evolve initialSubscriptionState (snd ev))
 
+    let getSubscription events =
+        events
+        |> evolve initialSubscriptionState
 
     let addSubscription rendition =
         SubscriptionAdded { Id = System.Guid.NewGuid()

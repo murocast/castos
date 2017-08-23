@@ -90,6 +90,12 @@ let getSubscriptionsComposition() =
     | Success (streamVersion, events) -> ok (Castos.SubscriptionSource.getSubscriptions events)
     | _ -> failwith "bla"
 
+let getSubscriptionComposition id =
+    let result = eventStore.GetEvents (StreamId(sprintf "subscription-%s" id))
+    match result with
+    | Success (version, events) -> ok (Castos.SubscriptionSource.getSubscription events)
+    | _ -> failwith "stream not found"
+
 let processSmapiMethod podcasts m =
     match m with
     | GetMetadata s -> processGetMetadata podcasts (GetMetadataRequest.Parse s)
@@ -130,15 +136,15 @@ let smapiRoutes getPodcasts =
 
 let subscriptionRoutes =
     choose [ path "/api/subscriptions"
-                    >=> choose [ GET >=> warbler ( fun context -> processAsync (fun() -> getSubscriptionsComposition()))
+                    >=> choose [ GET >=> warbler ( fun context -> processAsync getSubscriptionsComposition)
                                  POST >=> warbler( fun context ->  processFormAsync addSubscriptionComposition) ]
-             pathScan "/apo/subscriptions/%A"
-             <| fun id -> choose [ GET >=> OK (sprintf "Metadata of subscription %A" id)
+             pathScan "/api/subscriptions/%s"
+             <| fun id -> choose [ GET >=> warbler ( fun context -> processAsync (fun () -> getSubscriptionComposition id))
                                    DELETE >=> OK (sprintf "Deleted subscription %A" id) ]
-             pathScan "/app/subscriptions/%A/episodes"
+             pathScan "/api/subscriptions/%s/episodes"
              <| fun id -> choose [ GET >=> OK (sprintf "List Episodes of suscription %A" id)
                                    POST >=> OK (sprintf "Add episode to subscription %A" id) ]
-             pathScan "/app/subscriptions/%A/episodes/%i"
+             pathScan "/api/subscriptions/%s/episodes/%i"
              <| fun (subscriptionId, episodeId) -> choose [ GET >=> OK (sprintf "Metadata of Episode %i of subscription %A" episodeId subscriptionId)]]
 
 
