@@ -52,3 +52,4 @@ and EpisodeId = int
 type Error =
     | NotImplemented of string
     | VersionConflict of string
+    | NotFound of string

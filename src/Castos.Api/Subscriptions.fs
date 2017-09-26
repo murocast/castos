@@ -48,7 +48,12 @@ module SubscriptionSource =
         |> evolve initialSubscriptionState
 
     let addSubscription rendition =
-        SubscriptionAdded { Id = System.Guid.NewGuid()
-                            Name = rendition.Name
-                            Url = rendition.Url }
+        (StreamVersion 0, SubscriptionAdded { Id = System.Guid.NewGuid()
+                                              Name = rendition.Name
+                                              Url = rendition.Url })
 
+    let deleteSubscription (version, events) =
+        let state = getSubscription events
+        match state.Active with
+        | true -> ok (version, SubscriptionDeleted { Id = state.Id })
+        | _ -> fail (NotFound "")

@@ -73,7 +73,7 @@ let getSmapiMethod c =
 
 let eventStore = createGetEventStoreEventStore<CastosEventData, Error>(VersionConflict "Version conflict")
 
-let storeSubscriptionEvent version event =
+let storeSubscriptionEvent (version, event) =
     let streamId event = StreamId (sprintf "subscription-%A" (Castos.SubscriptionSource.subscriptionId event))
     eventStore.SaveEvents (streamId event) version [event]
 
@@ -82,7 +82,16 @@ let addSubscriptionComposition form =
     let (rendition:AddSubscriptionRendition) = unjson form
     Castos.SubscriptionSource.addSubscription {Name = rendition.Name
                                                Url = rendition.Url}
-    |> storeSubscriptionEvent (StreamVersion 0)
+    |> storeSubscriptionEvent
+
+let deleteSubscriptionComposition id =
+    let result = eventStore.GetEvents (StreamId(sprintf "subscription-%s" id))
+                 >>= Castos.SubscriptionSource.deleteSubscription
+                 >>= storeSubscriptionEvent
+    match result with
+    | Success _ -> ok (sprintf "Deleted %s" id)
+    | Failure m -> fail m
+
 
 let getSubscriptionsComposition() =
     let result = eventStore.GetEvents (StreamId("$ce-subscription"))
@@ -140,7 +149,7 @@ let subscriptionRoutes =
                                  POST >=> warbler( fun context ->  processFormAsync addSubscriptionComposition) ]
              pathScan "/api/subscriptions/%s"
              <| fun id -> choose [ GET >=> warbler ( fun context -> processAsync (fun () -> getSubscriptionComposition id))
-                                   DELETE >=> OK (sprintf "Deleted subscription %A" id) ]
+                                   DELETE >=> warbler (fun context -> processAsync (fun () -> deleteSubscriptionComposition id)) ]
              pathScan "/api/subscriptions/%s/episodes"
              <| fun id -> choose [ GET >=> OK (sprintf "List Episodes of suscription %A" id)
                                    POST >=> OK (sprintf "Add episode to subscription %A" id) ]
