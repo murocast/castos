@@ -1,5 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\brase\.Rider2017.2\system\resharper-host\local\Transient\ReSharperHost\v10\SolutionCaches\_castos.1505116309.00" t="ExcludeRecursive" />
+    <e p="C:\Users\brase\code\fs\podcasts\castos" t="IncludeFlat">
+      <e p=".paket" t="Include" />
+      <e p="castos.sln" t="IncludeFlat" />
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="paket.dependencies" t="Include" />
+      <e p="paket.lock" t="Include" />
+      <e p="src\Castos.Api" t="IncludeRecursive">
+        <e p="any" t="Include">
+          <e p="netstandard1.6" t="Include">
+            <e p="FSharp.Core.optdata" t="Include" />
+            <e p="FSharp.Core.sigdata" t="Include" />
+          </e>
+        </e>
+        <e p="App.config" t="Include" />
+        <e p="AssemblyInfo.fs" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Castos.Api.fsproj" t="IncludeRecursive" />
+        <e p="ErrorHandling.fs" t="Include" />
+        <e p="Events.fs" t="Include" />
+        <e p="EventStore.fs" t="Include" />
+        <e p="EventStore.fsx" t="Include" />
+        <e p="Json.fs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="paket.references" t="Include" />
+        <e p="Podcasts.fs" t="Include" />
+        <e p="Program.fs" t="Include" />
+        <e p="Samples" t="Include">
+          <e p="GetExtendedMetadataRequest.xml" t="Include" />
+          <e p="GetExtendedMetadataTextRequest.xml" t="Include" />
+          <e p="GetLastUpdateRequest.xml" t="Include" />
+          <e p="GetMediaMetadataRequest.xml" t="Include" />
+          <e p="GetMediaURIRequest.xml" t="Include" />
+          <e p="GetMetadataRequest.xml" t="Include" />
+          <e p="ReportPlaySecondsRequest.xml" t="Include" />
+          <e p="ReportPlayStatusRequest.xml" t="Include" />
+          <e p="SetPlayedSecondsRequest.xml" t="Include" />
+          <e p="zones.json" t="Include" />
+        </e>
+        <e p="Smapi.fs" t="Include" />
+        <e p="Subscriptions.fs" t="Include" />
+      </e>
+      <e p="src\Smapi" t="IncludeRecursive">
+        <e p="any" t="Include">
+          <e p="netstandard1.6" t="Include">
+            <e p="FSharp.Core.optdata" t="Include" />
+            <e p="FSharp.Core.sigdata" t="Include" />
+          </e>
+        </e>
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="GetLastUpdate.fs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="Script.fsx" t="Include" />
+        <e p="Smapi.fs" t="Include" />
+        <e p="Smapi.fsproj" t="IncludeRecursive" />
+      </e>
+      <e p="tests\Smapi.Tests" t="IncludeRecursive">
+        <e p="any" t="Include">
+          <e p="netstandard1.6" t="Include">
+            <e p="FSharp.Core.optdata" t="Include" />
+            <e p="FSharp.Core.sigdata" t="Include" />
+          </e>
+        </e>
+        <e p="App.config" t="Include" />
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="Smapi.Tests.fs" t="Include" />
+        <e p="Smapi.Tests.fsproj" t="IncludeRecursive" />
+      </e>
+    </e>
+  </component>
   <component name="RiderRiderContentModelStore">
     <excludedPaths />
   </component>

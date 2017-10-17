@@ -1,20 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="RIDER_MODULE" version="4">
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$/../..">
-      <sourceFolder url="file://$MODULE_DIR$/../../paket.dependencies" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../paket.lock" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../src/Castos.Api" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../src/Smapi" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/../../tests/Smapi.Tests" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/../../packages" />
-      <excludeFolder url="file://$MODULE_DIR$/../../src/Castos.Api/bin" />
-      <excludeFolder url="file://$MODULE_DIR$/../../src/Castos.Api/obj" />
-      <excludeFolder url="file://$MODULE_DIR$/../../src/Smapi/bin" />
-      <excludeFolder url="file://$MODULE_DIR$/../../src/Smapi/obj" />
-      <excludeFolder url="file://$MODULE_DIR$/../../tests/Smapi.Tests/bin" />
-      <excludeFolder url="file://$MODULE_DIR$/../../tests/Smapi.Tests/obj" />
-    </content>
+    <content url="file://$MODULE_DIR$/../.." />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>
