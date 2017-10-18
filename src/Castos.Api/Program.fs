@@ -80,8 +80,7 @@ let storeSubscriptionEvent (version, event) =
 let addSubscriptionComposition form =
     //TODO: Validation
     let (rendition:AddSubscriptionRendition) = unjson form
-    Castos.SubscriptionSource.addSubscription {Name = rendition.Name
-                                               Url = rendition.Url}
+    Castos.SubscriptionSource.addSubscription rendition
     |> storeSubscriptionEvent
 
 let deleteSubscriptionComposition id =
@@ -104,6 +103,15 @@ let getSubscriptionComposition id =
     match result with
     | Success (version, events) -> ok (Castos.SubscriptionSource.getSubscription events)
     | _ -> failwith "stream not found"
+
+let addEpisodeComposition form =
+    let (rendition:AddEpisodeRendition) = unjson form
+    let result = eventStore.GetEvents (StreamId(sprintf "subscription-%s" (rendition.SubscriptionId)))
+                    >>= (Castos.SubscriptionSource.addEpisode rendition)
+                    >>= storeSubscriptionEvent
+    match result with
+    | Success _ -> ok ("added episode")
+    | Failure m -> fail m
 
 let processSmapiMethod podcasts m =
     match m with
