@@ -153,16 +153,16 @@ let smapiRoutes getPodcasts =
 
 let subscriptionRoutes =
     choose [ path "/api/subscriptions"
-                    >=> choose [ GET >=> warbler ( fun context -> processAsync getSubscriptionsComposition)
-                                 POST >=> warbler( fun context ->  processFormAsync addSubscriptionComposition) ]
-             pathScan "/api/subscriptions/%s"
-             <| fun id -> choose [ GET >=> warbler ( fun context -> processAsync (fun () -> getSubscriptionComposition id))
-                                   DELETE >=> warbler (fun context -> processAsync (fun () -> deleteSubscriptionComposition id)) ]
-             pathScan "/api/subscriptions/%s/episodes"
-             <| fun id -> choose [ GET >=> OK (sprintf "List Episodes of suscription %A" id)
-                                   POST >=> OK (sprintf "Add episode to subscription %A" id) ]
+                >=> choose [ GET >=> warbler ( fun context -> processAsync getSubscriptionsComposition)
+                             POST >=> warbler( fun context ->  processFormAsync addSubscriptionComposition) ]
              pathScan "/api/subscriptions/%s/episodes/%i"
-             <| fun (subscriptionId, episodeId) -> choose [ GET >=> OK (sprintf "Metadata of Episode %i of subscription %A" episodeId subscriptionId)]]
+                <| fun (subscriptionId, episodeId) -> choose [ GET >=> OK (sprintf "Metadata of Episode %i of subscription %A" episodeId subscriptionId)]
+             pathScan "/api/subscriptions/%s/episodes"
+                <| fun id -> choose [ GET >=> OK (sprintf "List Episodes of suscription %A" id)
+                                      POST >=> OK (sprintf "Add episode to subscription %A" id) ]
+             pathScan "/api/subscriptions/%s"
+                <| fun id -> choose [ GET >=> warbler ( fun context -> processAsync (fun () -> getSubscriptionComposition id))
+                                      DELETE >=> warbler (fun context -> processAsync (fun () -> deleteSubscriptionComposition id)) ]]
 
 
 [<EntryPoint>]
