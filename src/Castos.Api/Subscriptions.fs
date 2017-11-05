@@ -99,3 +99,7 @@ module SubscriptionSource =
         getSubscriptions events
         |> List.map (fun s -> s.Category)
         |> List.distinct
+
+    let getSubscriptionsOfCategory category events =
+        getSubscriptions events
+        |> List.filter (fun s -> s.Category = category)
