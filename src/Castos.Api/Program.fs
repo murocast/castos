@@ -111,6 +111,12 @@ let addEpisodeComposition subscriptionId form =
     | Success _ -> ok ("added episode")
     | Failure m -> fail m
 
+let getCategoriesComposition() =
+    let result = eventStore.GetEvents (StreamId("$ce-subscription"))
+    match result with
+    | Success (_, events) -> ok (Castos.SubscriptionSource.getCategories events)
+    | _ -> failwith "bla"
+
 let processSmapiMethod podcasts m =
     match m with
     | GetMetadata s -> processGetMetadata podcasts (GetMetadataRequest.Parse s)
@@ -153,6 +159,8 @@ let subscriptionRoutes =
     choose [ path "/api/subscriptions"
                 >=> choose [ GET >=> warbler ( fun _ -> processAsync getSubscriptionsComposition)
                              POST >=> warbler( fun _ ->  processFormAsync addSubscriptionComposition) ]
+             path "/api/subscriptions/categories"
+                >=> GET >=> warbler (fun _ -> processAsync getCategoriesComposition)
              pathScan "/api/subscriptions/%s/episodes/%i"
                 <| fun (subscriptionId, episodeId) -> choose [ GET >=> OK (sprintf "Metadata of Episode %i of subscription %A" episodeId subscriptionId)]
              pathScan "/api/subscriptions/%s/episodes"

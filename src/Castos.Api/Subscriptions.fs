@@ -11,6 +11,7 @@ type Subscription = {
     Id: SubscriptionId
     Url: string
     Name: string
+    Category: string
     Active: bool
     Episodes: Episode list
 }
@@ -18,6 +19,7 @@ type Subscription = {
 type AddSubscriptionRendition = {
     Name: string
     Url: string
+    Category: string
 }
 
 type AddEpisodeRendition = {
@@ -31,6 +33,7 @@ module SubscriptionSource =
         { Id = System.Guid.Empty
           Url = ""
           Name = ""
+          Category = ""
           Active = false
           Episodes = [] }
 
@@ -39,6 +42,7 @@ module SubscriptionSource =
         | SubscriptionAdded ev -> { state with Id = ev.Id
                                                Url = ev.Url
                                                Name = ev.Name
+                                               Category = ev.Category
                                                Active = true }
         | SubscriptionDeleted _ -> { state with Active = false }
         | EpisodeAdded ev ->    let newEpisode = { Id = ev.Id
@@ -71,6 +75,7 @@ module SubscriptionSource =
     let addSubscription rendition =
         (StreamVersion 0, SubscriptionAdded { Id = System.Guid.NewGuid()
                                               Name = rendition.Name
+                                              Category = rendition.Category
                                               Url = rendition.Url })
 
     let deleteSubscription (version, events) =
@@ -89,3 +94,8 @@ module SubscriptionSource =
                                      MediaUrl = rendition.Url
                                      Title = rendition.Title
                                      ReleaseDate = rendition.ReleaseDate }))
+
+    let getCategories events =
+        getSubscriptions events
+        |> List.map (fun s -> s.Category)
+        |> List.distinct

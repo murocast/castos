@@ -19,7 +19,8 @@ type CastosEventData =
 and SubscriptionAdded = {
     Id: SubscriptionId
     Url: string
-    Name: string }
+    Name: string
+    Category: string }
 and SubscriptionDeleted = { Id: SubscriptionId }
 and EpisodeAdded = {
     Id: EpisodeId
