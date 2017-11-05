@@ -99,6 +99,7 @@ module SubscriptionSource =
         getSubscriptions events
         |> List.map (fun s -> s.Category)
         |> List.distinct
+        |> List.filter (fun c -> not (System.String.IsNullOrWhiteSpace(c)))
 
     let getSubscriptionsOfCategory category events =
         getSubscriptions events
