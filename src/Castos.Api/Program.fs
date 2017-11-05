@@ -13,8 +13,6 @@ open Suave.SuaveConfig
 
 open Castos
 open Castos.Podcasts
-open Castos.Events
-
 open Castos.Smapi
 
 open Argu
@@ -57,7 +55,7 @@ let processAsync f =
 let getSmapiMethod c =
         let m = match "SOAPAction" |> c.request.header with
                 | Choice1Of2 m -> extractSmapiMethod m
-                | Choice2Of2 e -> failwith "No method in request"
+                | Choice2Of2 _ -> failwith "No method in request"
 
         match m with
         | "getMetadata" -> ok (GetMetadata (rawFormString c))
@@ -95,19 +93,19 @@ let deleteSubscriptionComposition id =
 let getSubscriptionsComposition() =
     let result = eventStore.GetEvents (StreamId("$ce-subscription"))
     match result with
-    | Success (streamVersion, events) -> ok (Castos.SubscriptionSource.getSubscriptions events)
+    | Success (_, events) -> ok (Castos.SubscriptionSource.getSubscriptions events)
     | _ -> failwith "bla"
 
 let getSubscriptionComposition id =
     let result = eventStore.GetEvents (StreamId(sprintf "subscription-%s" id))
     match result with
-    | Success (version, events) -> ok (Castos.SubscriptionSource.getSubscription events)
+    | Success (_, events) -> ok (Castos.SubscriptionSource.getSubscription events)
     | _ -> failwith "stream not found"
 
-let addEpisodeComposition form =
+let addEpisodeComposition subscriptionId form =
     let (rendition:AddEpisodeRendition) = unjson form
-    let result = eventStore.GetEvents (StreamId(sprintf "subscription-%s" (rendition.SubscriptionId)))
-                    >>= (Castos.SubscriptionSource.addEpisode rendition)
+    let result = eventStore.GetEvents (StreamId(sprintf "subscription-%s" (subscriptionId)))
+                    >>= (Castos.SubscriptionSource.addEpisode subscriptionId rendition)
                     >>= storeSubscriptionEvent
     match result with
     | Success _ -> ok ("added episode")
@@ -119,12 +117,12 @@ let processSmapiMethod podcasts m =
     | GetMediaMetadata s -> processGetMediaMetadata podcasts (GetMediaMetadataRequest.Parse s)
     | GetLastUpdate s -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
     | GetMediaURI s -> processGetMediaURI eventStore s (podcastFileBasePath())
-    | ReportPlaySeconds s ->
+    | ReportPlaySeconds _ ->
         processReportPlaySecondsRequest eventStore
         |> ignore
         ok("")
-    | ReportPlayStatus s -> ok("")
-    | SetPlayedSeconds s -> ok("")
+    | ReportPlayStatus _ -> ok("")
+    | SetPlayedSeconds _ -> ok("")
     | _ -> fail "blubber"
 
 let smapiImp c podcasts =
@@ -149,31 +147,31 @@ let playRoutes =
           <| fun id -> choose [GET >=> Files.file (Podcasts.GetPathFromId id) ]]
 
 let smapiRoutes getPodcasts =
-    choose [ path "/smapi" >=> choose [POST >=> warbler (fun c -> processSmapiRequest (getPodcasts() |> Seq.ofList))] ]
+    choose [ path "/smapi" >=> choose [POST >=> warbler (fun _ -> processSmapiRequest (getPodcasts() |> Seq.ofList))] ]
 
 let subscriptionRoutes =
     choose [ path "/api/subscriptions"
-                >=> choose [ GET >=> warbler ( fun context -> processAsync getSubscriptionsComposition)
-                             POST >=> warbler( fun context ->  processFormAsync addSubscriptionComposition) ]
+                >=> choose [ GET >=> warbler ( fun _ -> processAsync getSubscriptionsComposition)
+                             POST >=> warbler( fun _ ->  processFormAsync addSubscriptionComposition) ]
              pathScan "/api/subscriptions/%s/episodes/%i"
                 <| fun (subscriptionId, episodeId) -> choose [ GET >=> OK (sprintf "Metadata of Episode %i of subscription %A" episodeId subscriptionId)]
              pathScan "/api/subscriptions/%s/episodes"
                 <| fun id -> choose [ GET >=> OK (sprintf "List Episodes of suscription %A" id)
-                                      POST >=> OK (sprintf "Add episode to subscription %A" id) ]
+                                      POST >=> warbler (fun _ -> processFormAsync (addEpisodeComposition id)) ]
              pathScan "/api/subscriptions/%s"
-                <| fun id -> choose [ GET >=> warbler ( fun context -> processAsync (fun () -> getSubscriptionComposition id))
-                                      DELETE >=> warbler (fun context -> processAsync (fun () -> deleteSubscriptionComposition id)) ]]
+                <| fun id -> choose [ GET >=> warbler ( fun _ -> processAsync (fun () -> getSubscriptionComposition id))
+                                      DELETE >=> warbler (fun _ -> processAsync (fun () -> deleteSubscriptionComposition id)) ]]
 
 
 [<EntryPoint>]
-let main argv =
+let main _ =
     let parser = ArgumentParser.Create<Arguments>(programName = "Castos.Api.exe")
     let results = parser.ParseConfiguration (ConfigurationReader.DefaultReader())
     baseurl <- results.GetResult  (<@ BaseUrl @>, defaultValue = baseurl)
 
     let cts = new CancellationTokenSource()
 
-    let start hc =
+    let start _ =
         let logger = Targets.create Debug [||]
         let loggedWebApp context = async {
             logger.debug (
@@ -201,16 +199,16 @@ let main argv =
                 cancellationToken = cts.Token
             }
 
-        let listening, server = startWebServerAsync cfg loggedWebApp
+        let _, server = startWebServerAsync cfg loggedWebApp
         Async.Start(server, cts.Token)
         true
 
-    let stop hc =
+    let stop _ =
         cts.Cancel()
         true
 
     //PreLoad Podcasts in Memory
-    GetPodcasts() |> ignore
+    //GetPodcasts() |> ignore
 
     Service.Default
     |> service_name "Castos"

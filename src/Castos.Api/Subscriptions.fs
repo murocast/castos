@@ -23,7 +23,6 @@ type AddSubscriptionRendition = {
 type AddEpisodeRendition = {
     Title: string
     Url: string
-    SubscriptionId: string
     ReleaseDate: System.DateTime
 }
 
@@ -41,7 +40,7 @@ module SubscriptionSource =
                                                Url = ev.Url
                                                Name = ev.Name
                                                Active = true }
-        | SubscriptionDeleted ev -> { state with Active = false }
+        | SubscriptionDeleted _ -> { state with Active = false }
         | EpisodeAdded ev ->    let newEpisode = { Id = ev.Id
                                                    MediaUrl = ev.MediaUrl
                                                    Title = ev.Title
@@ -57,6 +56,7 @@ module SubscriptionSource =
         function
         | SubscriptionAdded data -> data.Id
         | SubscriptionDeleted data -> data.Id
+        | EpisodeAdded data -> data.SubscriptionId
         | _ -> failwith("Unknown event")
 
     let getSubscriptions events =
@@ -79,10 +79,13 @@ module SubscriptionSource =
         | true -> ok (version, SubscriptionDeleted { Id = state.Id })
         | _ -> fail (NotFound "")
 
-    let addEpisode rendition (version, events) =
+    let addEpisode (subscriptionId:string) rendition (version, events) =
         let state = getSubscription events
-        ok ((version, EpisodeAdded { Id = 1
-                                     SubscriptionId = SubscriptionId rendition.SubscriptionId
+        let lastEpisodeId = match List.length state.Episodes with
+                            | 0 -> 0
+                            | _ -> (List.maxBy (fun (e:Episode) -> e.Id) state.Episodes).Id
+        ok ((version, EpisodeAdded { Id = lastEpisodeId + 1
+                                     SubscriptionId = SubscriptionId subscriptionId
                                      MediaUrl = rendition.Url
                                      Title = rendition.Title
                                      ReleaseDate = rendition.ReleaseDate }))
