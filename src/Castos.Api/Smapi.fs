@@ -57,6 +57,11 @@ module Smapi =
         else
           None
 
+    let (|MediaMetadataId|_|) str =
+        let idPattern = "(.+)___(d+)"
+        let m = Regex.Match(str, idPattern)
+        if(m.Success) then Some ((System.Guid.Parse(m.Groups.[1].Value)), System.Int32.Parse(m.Groups.[2].Value)) else None
+
     let getRootCollections =
         [ MediaCollection { Id = LibraryId
                             ItemType = Collection
@@ -155,9 +160,13 @@ module Smapi =
 
     let processGetMediaURI eventstore s httpBasePath =
         let req = GetMediaURIRequest.Parse s
-        let id = req.Body.GetMediaUri.Id        
-        let path = httpBasePath + id
-        let encodedPath = path.Replace(" ", "%20")
+        let id = req.Body.GetMediaUri.Id
+        let episode = match id with
+                      | MediaMetadataId (subscriptionId, podcastId) -> getEpisodeOfSubscriptionComposition eventstore subscriptionId podcastId
+                      | _ -> failwithf "Wrong Id: %s" id
+
+        let path = episode.MediaUrl
+        //let encodedPath = path.Replace(" ", "%20")
 
         let position = match eventstore.GetEvents (StreamId id) with
                        | Success (_ , events) -> match lastPlayEpisodeStopped events with
@@ -166,7 +175,7 @@ module Smapi =
                                                  | _ -> None
                        | _ -> None
 
-        let response = Smapi.Respond.getMediaUriResponse encodedPath id position
+        let response = Smapi.Respond.getMediaUriResponse path id position
         ok response
 
     let processGetLastUpdate s =

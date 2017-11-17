@@ -94,6 +94,13 @@ module SubscriptionCompositions =
         | Success (_, events) -> ok (getEpisodes events)
         | _ -> failwith "bla"
 
+    let getEpisodeOfSubscriptionComposition eventStore subscriptionId episodeId =
+        let result = subscriptionEvents eventStore (string id)
+        match result with
+        | Success (_, events) -> (getEpisodes events)
+                                 |> List.find (fun x -> x.Id = episodeId)
+        | _ -> failwith("bla")
+
     let subscriptionRoutes eventStore =
         choose [ path "/api/subscriptions"
                     >=> choose [ GET >=> warbler ( fun _ -> processAsync getSubscriptionsComposition eventStore)
