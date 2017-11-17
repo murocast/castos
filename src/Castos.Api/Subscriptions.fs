@@ -104,3 +104,7 @@ module SubscriptionSource =
     let getSubscriptionsOfCategory category events =
         getSubscriptions events
         |> List.filter (fun s -> s.Category = category)
+
+    let getEpisodes events =
+        let subscription = getSubscription events
+        subscription.Episodes

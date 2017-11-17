@@ -52,7 +52,10 @@ module Smapi =
     let (|Podcast|_|) str =
         let podcastPattern = "__podcast_(.*)"
         let m = Regex.Match(str, podcastPattern)
-        if (m.Success) then Some m.Groups.[1].Value else None
+        if (m.Success) then
+          Some (System.Guid.Parse(m.Groups.[1].Value))
+        else
+          None
 
     let getRootCollections =
         [ MediaCollection { Id = LibraryId
@@ -83,7 +86,7 @@ module Smapi =
         let result = getSubscriptionsOfCategoryComposition eventStore c
         match result with
         | Success (subscriptions) -> subscriptions
-                                     |> List.map (fun p -> MediaCollection { Id = "__podcast_" + p.Name
+                                     |> List.map (fun p -> MediaCollection { Id = "__podcast_" + string p.Id
                                                                              ItemType = Collection
                                                                              Title = p.Name
                                                                              CanPlay = false })
@@ -95,19 +98,21 @@ module Smapi =
         |> List.ofSeq
         |> List.pick (fun p -> if (p.Name = pname) then Some p else None)
 
-    let getEpisodesOfPodcast podcasts pname =
-        let podcast = getPodcast podcasts pname
-        podcast.Episodes
-        |> List.sortByDescending (fun e -> e.Name)
-        |> List.map (fun e -> MediaMetadata { Id = e.Id
-                                              ItemType = Track
-                                              Title = e.Name
-                                              MimeType = "audio/mp3"
-                                              ItemMetadata = TrackMetadata { Artist = "Artist"
-                                                                             Duration = int e.Length.TotalSeconds
-                                                                             CanResume = true }})
-        |> List.truncate 100
-        |> Seq.ofList
+    let getEpisodesOfPodcast eventStore id =
+        let result = getEpisodesOfSubscriptionComposition eventStore id
+        match result with
+        | Success (episodes) -> episodes
+                                |> List.sortByDescending (fun e -> e.Id)
+                                |> List.map (fun e -> MediaMetadata { Id = (string e.Id)
+                                                                      ItemType = Track
+                                                                      Title = e.Title
+                                                                      MimeType = "audio/mp3"
+                                                                      ItemMetadata = TrackMetadata { Artist = "Artist"
+                                                                                                     Duration = 100 //int e.Length.TotalSeconds
+                                                                                                     CanResume = true }})
+                                |> List.truncate 100
+                                |> Seq.ofList
+        | _ -> failwith("bla")
 
     let processGetMetadata eventStore (s:GetMetadataRequest.Envelope) =
         let id = s.Body.GetMetadata.Id
@@ -115,7 +120,7 @@ module Smapi =
                     | RootId -> getRootCollections
                     | LibraryId -> getCategories eventStore
                     | Category c -> getPodcastsOfCategory eventStore c
-                    | Podcast p -> failwith("blupp")//getEpisodesOfPodcast eventStore p
+                    | Podcast p -> getEpisodesOfPodcast eventStore p
                     | CurrentId
                     | RecentId
                     | _ -> failwithf "unknown id %s" id
