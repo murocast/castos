@@ -2,6 +2,7 @@
 
 type Episode = {
     Id: EpisodeId
+    SubscriptionId: SubscriptionId
     MediaUrl: string
     Title: string
     ReleaseDate: System.DateTime
@@ -46,6 +47,7 @@ module SubscriptionSource =
                                                Active = true }
         | SubscriptionDeleted _ -> { state with Active = false }
         | EpisodeAdded ev ->    let newEpisode = { Id = ev.Id
+                                                   SubscriptionId = ev.SubscriptionId
                                                    MediaUrl = ev.MediaUrl
                                                    Title = ev.Title
                                                    ReleaseDate = ev.ReleaseDate }

@@ -103,7 +103,7 @@ module Smapi =
         match result with
         | Success (episodes) -> episodes
                                 |> List.sortByDescending (fun e -> e.Id)
-                                |> List.map (fun e -> MediaMetadata { Id = (string e.Id)
+                                |> List.map (fun e -> MediaMetadata { Id = sprintf "%A___%i" e.SubscriptionId e.Id
                                                                       ItemType = Track
                                                                       Title = e.Title
                                                                       MimeType = "audio/mp3"
