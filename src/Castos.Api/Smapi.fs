@@ -157,7 +157,7 @@ module Smapi =
         | true -> None
         | false -> Some (List.reduce (fun _ i -> i) filteredLs)
 
-    let processGetMediaURI eventstore s httpBasePath =
+    let processGetMediaURI eventstore s =
         let req = GetMediaURIRequest.Parse s
         let id = req.Body.GetMediaUri.Id
         let episode = match id with

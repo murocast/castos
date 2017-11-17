@@ -12,7 +12,6 @@ open Suave.WebPart
 open Suave.SuaveConfig
 
 open Castos
-open Castos.Podcasts
 open Castos.Smapi
 open Castos.SubscriptionCompositions
 
@@ -21,18 +20,7 @@ open Argu
 open Topshelf
 open Time
 
-type Arguments =
-    | BaseUrl of string
-with
-    interface IArgParserTemplate with
-        member s.Usage =
-            match s with
-            | BaseUrl _ -> "Url smapi listens on"
-
 let rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
-
-let mutable baseurl = "http://127.0.0.1"
-let podcastFileBasePath() = baseurl + "/play/"
 
 let eventStore = createGetEventStoreEventStore<CastosEventData, Error>(VersionConflict "Version conflict")
 
@@ -58,7 +46,7 @@ let processSmapiMethod m =
     | GetMetadata s -> processGetMetadata eventStore (GetMetadataRequest.Parse s)
     | GetMediaMetadata s -> processGetMediaMetadata eventStore (GetMediaMetadataRequest.Parse s)
     | GetLastUpdate s -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
-    | GetMediaURI s -> processGetMediaURI eventStore s (podcastFileBasePath())
+    | GetMediaURI s -> processGetMediaURI eventStore s
     | ReportPlaySeconds _ ->
         processReportPlaySecondsRequest eventStore
         |> ignore
@@ -94,10 +82,6 @@ let smapiRoutes =
 
 [<EntryPoint>]
 let main _ =
-    let parser = ArgumentParser.Create<Arguments>(programName = "Castos.Api.exe")
-    let results = parser.ParseConfiguration (ConfigurationReader.DefaultReader())
-    baseurl <- results.GetResult  (<@ BaseUrl @>, defaultValue = baseurl)
-
     let cts = new CancellationTokenSource()
 
     let start _ =
@@ -135,9 +119,6 @@ let main _ =
     let stop _ =
         cts.Cancel()
         true
-
-    //PreLoad Podcasts in Memory
-    //GetPodcasts() |> ignore
 
     Service.Default
     |> service_name "Castos"
