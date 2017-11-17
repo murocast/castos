@@ -58,7 +58,7 @@ module Smapi =
           None
 
     let (|MediaMetadataId|_|) str =
-        let idPattern = "(.+)___(d+)"
+        let idPattern = "(.+)___(\\d+)"
         let m = Regex.Match(str, idPattern)
         if(m.Success) then Some ((System.Guid.Parse(m.Groups.[1].Value)), System.Int32.Parse(m.Groups.[2].Value)) else None
 
@@ -133,18 +133,17 @@ module Smapi =
         let response = getMetadataResponse items
         ok response
 
-    let processGetMediaMetadata podcasts (s:GetMediaMetadataRequest.Envelope) =
+    let processGetMediaMetadata eventStore (s:GetMediaMetadataRequest.Envelope) =
         let id = s.Body.GetMediaMetadata.Id
-        let splitted = id.Split([|"___"|], System.StringSplitOptions.RemoveEmptyEntries)
-        let podcast = getPodcast podcasts splitted.[1]
-        let e = podcast.Episodes
-                      |> List.pick (fun e -> if (e.Id = id) then Some e else None)
+        let e = match id with
+                      | MediaMetadataId (subscriptionId, podcastId) -> getEpisodeOfSubscriptionComposition eventStore subscriptionId podcastId
+                      | _ -> failwithf "Wrong Id: %s" id
         let metadata = { Id = id
                          ItemType = Track
-                         Title = e.Name
+                         Title = e.Title
                          MimeType = "audio/mp3"
                          ItemMetadata = TrackMetadata { Artist = "Artist"
-                                                        Duration = int e.Length.TotalSeconds
+                                                        Duration = 100 //int e.Length.TotalSeconds
                                                         CanResume = true  }}
         let response = Smapi.Respond.getMediaMetadataRepnose metadata
         ok response

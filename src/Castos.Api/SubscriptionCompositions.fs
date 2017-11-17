@@ -95,7 +95,7 @@ module SubscriptionCompositions =
         | _ -> failwith "bla"
 
     let getEpisodeOfSubscriptionComposition eventStore subscriptionId episodeId =
-        let result = subscriptionEvents eventStore (string id)
+        let result = subscriptionEvents eventStore (string subscriptionId)
         match result with
         | Success (_, events) -> (getEpisodes events)
                                  |> List.find (fun x -> x.Id = episodeId)
