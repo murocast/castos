@@ -53,7 +53,7 @@ let getSmapiMethod c =
         | "setPlayedSeconds" -> ok(SetPlayedSeconds(rawFormString c))
         | _ -> fail(sprintf "Method not implemented %s" m)
 
-let processSmapiMethod podcasts m =
+let processSmapiMethod m =
     match m with
     | GetMetadata s -> processGetMetadata eventStore (GetMetadataRequest.Parse s)
     | GetMediaMetadata s -> processGetMediaMetadata eventStore (GetMediaMetadataRequest.Parse s)
@@ -67,17 +67,17 @@ let processSmapiMethod podcasts m =
     | SetPlayedSeconds _ -> ok("")
     | _ -> fail "blubber"
 
-let smapiImp c podcasts =
+let smapiImp c =
     getSmapiMethod c
-     >>= (processSmapiMethod podcasts)
+     >>= (processSmapiMethod)
 
 let toLines (strings) =
     List.fold (+) "" strings
 
-let processSmapiRequest podcasts=
+let processSmapiRequest() =
     fun context ->
         async{
-            let result = smapiImp context podcasts
+            let result = smapiImp context
             return! match result with
                     | Success (content) -> OK content context
                     | Failure (content) -> BAD_REQUEST (content) context
@@ -88,8 +88,8 @@ let playRoutes =
         [ pathScan "/play/%s"
           <| fun id -> choose [GET >=> Files.file (Podcasts.GetPathFromId id) ]]
 
-let smapiRoutes getPodcasts =
-    choose [ path "/smapi" >=> choose [POST >=> warbler (fun _ -> processSmapiRequest (getPodcasts() |> Seq.ofList))] ]
+let smapiRoutes =
+    choose [ path "/smapi" >=> choose [POST >=> warbler (fun _ -> processSmapiRequest()) ] ]
 
 
 [<EntryPoint>]
@@ -108,7 +108,7 @@ let main _ =
                     >> setField "method" context.request.``method``
                     >> setField "url" context.request.url
                     >> setField "form" (rawFormString context))
-            let! response = (choose [ playRoutes; smapiRoutes GetPodcasts; subscriptionRoutes eventStore ]) context
+            let! response = (choose [ playRoutes; smapiRoutes; subscriptionRoutes eventStore ]) context
             match response with
             | Some context ->
                 match context.response.content with
