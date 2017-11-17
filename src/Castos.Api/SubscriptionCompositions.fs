@@ -1,17 +1,22 @@
 namespace Castos
 
-open Castos
-
 open Suave
 open Suave.Filters
 open Suave.Operators
 open Suave.RequestErrors
 open Suave.Successful
 
+open Castos
 open Castos.ErrorHandling
+open SubscriptionSource
 
 module SubscriptionCompositions =
     let private rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
+
+    let private allSubscriptionsEvents eventStore =
+        eventStore.GetEvents (StreamId("$ce-subscription"))
+    let private subscriptionEvents eventStore id =
+        eventStore.GetEvents (StreamId(sprintf "subscription-%s" id))
 
     let private processAsync f eventStore =
         fun context ->
@@ -33,19 +38,19 @@ module SubscriptionCompositions =
             }
 
     let private storeSubscriptionEvent eventStore (version, event) =
-        let streamId event = StreamId (sprintf "subscription-%A" (Castos.SubscriptionSource.subscriptionId event))
+        let streamId event = StreamId (sprintf "subscription-%A" (subscriptionId event))
         eventStore.SaveEvents (streamId event) version [event]
 
     let getCategoriesComposition eventStore =
-        let result = eventStore.GetEvents (StreamId("$ce-subscription"))
+        let result = allSubscriptionsEvents eventStore
         match result with
-        | Success (_, events) -> ok (Castos.SubscriptionSource.getCategories events)
+        | Success (_, events) -> ok (getCategories events)
         | _ -> failwith "bla"
 
     let addEpisodeComposition eventStore subscriptionId form =
         let (rendition:AddEpisodeRendition) = unjson form
-        let result = eventStore.GetEvents (StreamId(sprintf "subscription-%s" (subscriptionId)))
-                        >>= (Castos.SubscriptionSource.addEpisode subscriptionId rendition)
+        let result = subscriptionEvents eventStore subscriptionId
+                        >>= (addEpisode subscriptionId rendition)
                         >>= storeSubscriptionEvent eventStore
         match result with
         | Success _ -> ok ("added episode")
@@ -54,33 +59,33 @@ module SubscriptionCompositions =
     let addSubscriptionComposition eventStore form =
         //TODO: Validation
         let (rendition:AddSubscriptionRendition) = unjson form
-        Castos.SubscriptionSource.addSubscription rendition
+        addSubscription rendition
         |> storeSubscriptionEvent eventStore
 
     let deleteSubscriptionComposition eventStore id =
-        let result = eventStore.GetEvents (StreamId(sprintf "subscription-%s" id))
-                        >>= Castos.SubscriptionSource.deleteSubscription
+        let result = subscriptionEvents eventStore id
+                        >>= deleteSubscription
                         >>= storeSubscriptionEvent eventStore
         match result with
         | Success _ -> ok (sprintf "Deleted %s" id)
         | Failure m -> fail m
 
     let getSubscriptionsComposition eventStore =
-        let result = eventStore.GetEvents (StreamId("$ce-subscription"))
+        let result = allSubscriptionsEvents eventStore
         match result with
-        | Success (_, events) -> ok (Castos.SubscriptionSource.getSubscriptions events)
+        | Success (_, events) -> ok (getSubscriptions events)
         | _ -> failwith "bla"
 
     let getSubscriptionComposition eventStore id =
-        let result = eventStore.GetEvents (StreamId(sprintf "subscription-%s" id))
+        let result = subscriptionEvents eventStore id
         match result with
-        | Success (_, events) -> ok (Castos.SubscriptionSource.getSubscription events)
+        | Success (_, events) -> ok (getSubscription events)
         | _ -> failwith "stream not found"
 
     let getSubscriptionsOfCategoryComposition eventStore category =
-        let result = eventStore.GetEvents (StreamId("$ce-subscription"))
+        let result = allSubscriptionsEvents eventStore
         match result with
-        | Success (_, events) -> ok (Castos.SubscriptionSource.getSubscriptionsOfCategory category events)
+        | Success (_, events) -> ok (getSubscriptionsOfCategory category events)
         | _ -> failwith "bla"
 
     let subscriptionRoutes eventStore =

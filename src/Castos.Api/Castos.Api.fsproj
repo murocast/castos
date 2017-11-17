@@ -76,6 +76,8 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Smapi\Smapi.fsproj">
       <Name>Smapi</Name>
       <Project>{f5068b69-90d4-474f-9643-8e8a6ac57827}</Project>
