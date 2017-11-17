@@ -8,6 +8,7 @@ open FSharp.Data
 open System.Text.RegularExpressions
 
 open Podcasts
+open SubscriptionCompositions
 
 type SmapiMethod =
     | GetMetadata of string
@@ -67,21 +68,27 @@ module Smapi =
                             Title = "Recent"
                             CanPlay = false }]
         |> Seq.ofList
-    let getCategories podcasts =
-        podcasts
-        |> Seq.groupBy (fun x -> x.Category)
-        |> Seq.map (fun (category, _) -> MediaCollection { Id = "__category_" + category
-                                                           ItemType = Collection
-                                                           Title = category
-                                                           CanPlay = false })
+    let getCategories eventStore =
+        let result = getCategoriesComposition eventStore
+        match result with
+        | Success (categories) -> categories
+                                  |> List.map (fun (category) -> MediaCollection { Id = "__category_" + category
+                                                                                   ItemType = Collection
+                                                                                   Title = category
+                                                                                   CanPlay = false })
+                                  |> Seq.ofList
+        | _ -> failwith("bla")
 
-    let getPodcastsOfCategory podcasts c =
-        podcasts
-        |> Seq.where (fun p -> p.Category = c)
-        |> Seq.map (fun p -> MediaCollection { Id = "__podcast_" + p.Name
-                                               ItemType = Collection
-                                               Title = p.Name
-                                               CanPlay = false })
+    let getPodcastsOfCategory eventStore c =
+        let result = getSubscriptionsOfCategoryComposition eventStore c
+        match result with
+        | Success (subscriptions) -> subscriptions
+                                     |> List.map (fun p -> MediaCollection { Id = "__podcast_" + p.Name
+                                                                             ItemType = Collection
+                                                                             Title = p.Name
+                                                                             CanPlay = false })
+                                     |> Seq.ofList
+        | _ -> failwith("bla")
 
     let getPodcast podcasts pname =
         podcasts
@@ -102,13 +109,13 @@ module Smapi =
         |> List.truncate 100
         |> Seq.ofList
 
-    let processGetMetadata podcasts (s:GetMetadataRequest.Envelope) =
+    let processGetMetadata eventStore (s:GetMetadataRequest.Envelope) =
         let id = s.Body.GetMetadata.Id
         let items = match id with
                     | RootId -> getRootCollections
-                    | LibraryId -> getCategories podcasts
-                    | Category c -> getPodcastsOfCategory podcasts c
-                    | Podcast p -> getEpisodesOfPodcast podcasts p
+                    | LibraryId -> getCategories eventStore
+                    | Category c -> getPodcastsOfCategory eventStore c
+                    | Podcast p -> failwith("blupp")//getEpisodesOfPodcast eventStore p
                     | CurrentId
                     | RecentId
                     | _ -> failwithf "unknown id %s" id
