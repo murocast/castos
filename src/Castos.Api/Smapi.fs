@@ -7,7 +7,6 @@ open Smapi.GetLastUpdate
 open FSharp.Data
 open System.Text.RegularExpressions
 
-open Podcasts
 open SubscriptionCompositions
 
 type SmapiMethod =
@@ -40,7 +39,7 @@ module Smapi =
     type ReportPlaySecondsRequest = XmlProvider<"Samples/ReportPlaySecondsRequest.xml">
     type ReportPlayStatusRequest = XmlProvider<"Samples/ReportPlayStatusRequest.xml">
     type SetPlayedSecondsRequest = XmlProvider<"Samples/SetPlayedSecondsRequest.xml">
-    
+
     let extractSmapiMethod (m:string) =
         m.Trim('"').[34..] //cut until #: http://www.sonos.com/Services/1.1#getMetadata
 
