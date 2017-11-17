@@ -61,6 +61,7 @@
     <Compile Include="Podcasts.fs" />
     <Compile Include="Events.fs" />
     <Compile Include="Subscriptions.fs" />
+    <Compile Include="SubscriptionCompositions.fs" />
     <Compile Include="Smapi.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />

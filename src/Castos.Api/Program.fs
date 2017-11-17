@@ -14,6 +14,7 @@ open Suave.SuaveConfig
 open Castos
 open Castos.Podcasts
 open Castos.Smapi
+open Castos.SubscriptionCompositions
 
 open Argu
 
@@ -33,24 +34,7 @@ let rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
 let mutable baseurl = "http://127.0.0.1"
 let podcastFileBasePath() = baseurl + "/play/"
 
-let processFormAsync f =
-    fun context ->
-        async{
-            let data = rawFormString context
-            let result = f data
-            return! match result with
-                    | Success (a) -> OK (mkjson a) context
-                    | Failure (_) -> BAD_REQUEST "Error" context
-        }
-
-let processAsync f =
-    fun context ->
-        async{
-            let result = f()
-            return! match result with
-                    | Success (a) -> OK (mkjson a) context
-                    | Failure (_) -> BAD_REQUEST "Error" context
-        }
+let eventStore = createGetEventStoreEventStore<CastosEventData, Error>(VersionConflict "Version conflict")
 
 let getSmapiMethod c =
         let m = match "SOAPAction" |> c.request.header with
@@ -68,60 +52,6 @@ let getSmapiMethod c =
         | "reportPlayStatus" -> ok(ReportPlayStatus(rawFormString c))
         | "setPlayedSeconds" -> ok(SetPlayedSeconds(rawFormString c))
         | _ -> fail(sprintf "Method not implemented %s" m)
-
-let eventStore = createGetEventStoreEventStore<CastosEventData, Error>(VersionConflict "Version conflict")
-
-let storeSubscriptionEvent (version, event) =
-    let streamId event = StreamId (sprintf "subscription-%A" (Castos.SubscriptionSource.subscriptionId event))
-    eventStore.SaveEvents (streamId event) version [event]
-
-let addSubscriptionComposition form =
-    //TODO: Validation
-    let (rendition:AddSubscriptionRendition) = unjson form
-    Castos.SubscriptionSource.addSubscription rendition
-    |> storeSubscriptionEvent
-
-let deleteSubscriptionComposition id =
-    let result = eventStore.GetEvents (StreamId(sprintf "subscription-%s" id))
-                 >>= Castos.SubscriptionSource.deleteSubscription
-                 >>= storeSubscriptionEvent
-    match result with
-    | Success _ -> ok (sprintf "Deleted %s" id)
-    | Failure m -> fail m
-
-
-let getSubscriptionsComposition() =
-    let result = eventStore.GetEvents (StreamId("$ce-subscription"))
-    match result with
-    | Success (_, events) -> ok (Castos.SubscriptionSource.getSubscriptions events)
-    | _ -> failwith "bla"
-
-let getSubscriptionComposition id =
-    let result = eventStore.GetEvents (StreamId(sprintf "subscription-%s" id))
-    match result with
-    | Success (_, events) -> ok (Castos.SubscriptionSource.getSubscription events)
-    | _ -> failwith "stream not found"
-
-let addEpisodeComposition subscriptionId form =
-    let (rendition:AddEpisodeRendition) = unjson form
-    let result = eventStore.GetEvents (StreamId(sprintf "subscription-%s" (subscriptionId)))
-                    >>= (Castos.SubscriptionSource.addEpisode subscriptionId rendition)
-                    >>= storeSubscriptionEvent
-    match result with
-    | Success _ -> ok ("added episode")
-    | Failure m -> fail m
-
-let getCategoriesComposition() =
-    let result = eventStore.GetEvents (StreamId("$ce-subscription"))
-    match result with
-    | Success (_, events) -> ok (Castos.SubscriptionSource.getCategories events)
-    | _ -> failwith "bla"
-
-let getSubscriptionsOfCategoryComposition category =
-    let result = eventStore.GetEvents (StreamId("$ce-subscription"))
-    match result with
-    | Success (_, events) -> ok (Castos.SubscriptionSource.getSubscriptionsOfCategory category events)
-    | _ -> failwith "bla"
 
 let processSmapiMethod podcasts m =
     match m with
@@ -161,23 +91,6 @@ let playRoutes =
 let smapiRoutes getPodcasts =
     choose [ path "/smapi" >=> choose [POST >=> warbler (fun _ -> processSmapiRequest (getPodcasts() |> Seq.ofList))] ]
 
-let subscriptionRoutes =
-    choose [ path "/api/subscriptions"
-                >=> choose [ GET >=> warbler ( fun _ -> processAsync getSubscriptionsComposition)
-                             POST >=> warbler( fun _ ->  processFormAsync addSubscriptionComposition) ]
-             path "/api/subscriptions/categories"
-                >=> GET >=> warbler (fun _ -> processAsync getCategoriesComposition)
-             pathScan "/api/subscriptions/categories/%s"
-                <| fun (category) -> choose [GET >=> warbler (fun _ -> processAsync (fun () -> getSubscriptionsOfCategoryComposition category))]
-             pathScan "/api/subscriptions/%s/episodes/%i"
-                <| fun (subscriptionId, episodeId) -> choose [ GET >=> OK (sprintf "Metadata of Episode %i of subscription %A" episodeId subscriptionId)]
-             pathScan "/api/subscriptions/%s/episodes"
-                <| fun id -> choose [ GET >=> OK (sprintf "List Episodes of suscription %A" id)
-                                      POST >=> warbler (fun _ -> processFormAsync (addEpisodeComposition id)) ]
-             pathScan "/api/subscriptions/%s"
-                <| fun id -> choose [ GET >=> warbler ( fun _ -> processAsync (fun () -> getSubscriptionComposition id))
-                                      DELETE >=> warbler (fun _ -> processAsync (fun () -> deleteSubscriptionComposition id)) ]]
-
 
 [<EntryPoint>]
 let main _ =
@@ -195,7 +108,7 @@ let main _ =
                     >> setField "method" context.request.``method``
                     >> setField "url" context.request.url
                     >> setField "form" (rawFormString context))
-            let! response = (choose [ playRoutes; smapiRoutes GetPodcasts; subscriptionRoutes ]) context
+            let! response = (choose [ playRoutes; smapiRoutes GetPodcasts; subscriptionRoutes eventStore ]) context
             match response with
             | Some context ->
                 match context.response.content with
