@@ -71,11 +71,6 @@ let processSmapiRequest() =
                     | Failure (content) -> BAD_REQUEST (content) context
         }
 
-let playRoutes =
-    choose
-        [ pathScan "/play/%s"
-          <| fun id -> choose [GET >=> Files.file (Podcasts.GetPathFromId id) ]]
-
 let smapiRoutes =
     choose [ path "/smapi" >=> choose [POST >=> warbler (fun _ -> processSmapiRequest()) ] ]
 
@@ -92,7 +87,7 @@ let main _ =
                     >> setField "method" context.request.``method``
                     >> setField "url" context.request.url
                     >> setField "form" (rawFormString context))
-            let! response = (choose [ playRoutes; smapiRoutes; subscriptionRoutes eventStore ]) context
+            let! response = (choose [ smapiRoutes; subscriptionRoutes eventStore ]) context
             match response with
             | Some context ->
                 match context.response.content with

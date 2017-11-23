@@ -1,8 +1,6 @@
 ﻿[<AutoOpen>]
 module Castos.Events
 
-open Castos.Podcasts
-
 type CastosEventData =
     //Stream per subscription
     | SubscriptionAdded of SubscriptionAdded
@@ -31,15 +29,18 @@ and EpisodeAdded = {
 }
 and PlayEpisodeStarted = {
     Id: EpisodeId
+    SubscriptionId: SubscriptionId
     TimeStamp: System.DateTime
     Position: int
     Player: string
 }
 and PlaySecondsReported = {
-    Id: PodcastId //TODO: EpisodeId
+    Id: EpisodeId
+    SubscriptionId: SubscriptionId
     Position: int }
 and PlayEpisodeStopped = {
-    Id: PodcastId //TODO: EpisodeId
+    Id: EpisodeId
+    SubscriptionId: SubscriptionId
     Position: int }
 and Subscribed = {
     SubscriptionId: SubscriptionId

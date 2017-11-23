@@ -8,6 +8,8 @@ open FSharp.Data
 open System.Text.RegularExpressions
 
 open SubscriptionCompositions
+open SubscriptionSource
+open EventStore.ClientAPI
 
 type SmapiMethod =
     | GetMetadata of string
@@ -48,16 +50,16 @@ module Smapi =
         let m = Regex.Match(str, categoryPattern)
         if (m.Success) then Some m.Groups.[1].Value else None
 
-    let (|Podcast|_|) str =
-        let podcastPattern = "__podcast_(.*)"
-        let m = Regex.Match(str, podcastPattern)
+    let (|Subscription|_|) str =
+        let subscriptionPattern = "__subscription_(.*)"
+        let m = Regex.Match(str, subscriptionPattern)
         if (m.Success) then
           Some (System.Guid.Parse(m.Groups.[1].Value))
         else
           None
 
     let (|MediaMetadataId|_|) str =
-        let idPattern = "(.+)___(\\d+)"
+        let idPattern = "([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})___(\\d+)"
         let m = Regex.Match(str, idPattern)
         if(m.Success) then Some ((System.Guid.Parse(m.Groups.[1].Value)), System.Int32.Parse(m.Groups.[2].Value)) else None
 
@@ -90,7 +92,7 @@ module Smapi =
         let result = getSubscriptionsOfCategoryComposition eventStore c
         match result with
         | Success (subscriptions) -> subscriptions
-                                     |> List.map (fun p -> MediaCollection { Id = "__podcast_" + string p.Id
+                                     |> List.map (fun p -> MediaCollection { Id = "__subscription_" + string p.Id
                                                                              ItemType = Collection
                                                                              Title = p.Name
                                                                              CanPlay = false })
@@ -102,7 +104,7 @@ module Smapi =
         |> List.ofSeq
         |> List.pick (fun p -> if (p.Name = pname) then Some p else None)
 
-    let getEpisodesOfPodcast eventStore id =
+    let getEpisodesOfSubscription eventStore id =
         let result = getEpisodesOfSubscriptionComposition eventStore id
         match result with
         | Success (episodes) -> episodes
@@ -124,7 +126,7 @@ module Smapi =
                     | RootId -> getRootCollections
                     | LibraryId -> getCategories eventStore
                     | Category c -> getPodcastsOfCategory eventStore c
-                    | Podcast p -> getEpisodesOfPodcast eventStore p
+                    | Subscription s -> getEpisodesOfSubscription eventStore s
                     | CurrentId
                     | RecentId
                     | _ -> failwithf "unknown id %s" id
@@ -160,7 +162,7 @@ module Smapi =
         let req = GetMediaURIRequest.Parse s
         let id = req.Body.GetMediaUri.Id
         let episode = match id with
-                      | MediaMetadataId (subscriptionId, podcastId) -> getEpisodeOfSubscriptionComposition eventstore subscriptionId podcastId
+                      | MediaMetadataId (subscriptionId, episodeId) -> getEpisodeOfSubscriptionComposition eventstore subscriptionId episodeId
                       | _ -> failwithf "Wrong Id: %s" id
 
         let path = episode.MediaUrl
@@ -188,8 +190,11 @@ module Smapi =
         let id = req.Body.ReportPlaySeconds.Id
         let position = req.Body.ReportPlaySeconds.OffsetMillis
 
-        let ev = PlaySecondsReported { Id = id
-                                       Position = position }
+        let ev = match id with
+                 | MediaMetadataId (subscriptionId, episodeId) -> PlaySecondsReported { Id = episodeId
+                                                                                        SubscriptionId = subscriptionId
+                                                                                        Position = position }
+                 | _ -> failwithf "unknown Id for play seconds reported: %s" id
 
         let version = match eventstore.GetEvents (StreamId id) with
                       | Success (version, _) -> version

@@ -58,7 +58,6 @@
     <Compile Include="Json.fs" />
     <Compile Include="ErrorHandling.fs" />
     <Compile Include="EventStore.fs" />
-    <Compile Include="Podcasts.fs" />
     <Compile Include="Events.fs" />
     <Compile Include="Subscriptions.fs" />
     <Compile Include="SubscriptionCompositions.fs" />
