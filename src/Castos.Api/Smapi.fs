@@ -105,7 +105,7 @@ module Smapi =
         |> List.pick (fun p -> if (p.Name = pname) then Some p else None)
 
     let getEpisodesOfSubscription eventStore id =
-        let result = getEpisodesOfSubscriptionComposition eventStore id
+        let result = getEpisodesOfSubscriptionComposition eventStore (string id)
         match result with
         | Success (episodes) -> episodes
                                 |> List.sortByDescending (fun e -> e.Id)

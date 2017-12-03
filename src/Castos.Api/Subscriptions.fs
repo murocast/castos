@@ -17,6 +17,14 @@ type Subscription = {
     Episodes: Episode list
 }
 
+type SubscriptionListItemRendition = {
+    Id: SubscriptionId
+    Url: string
+    Name: string
+    Category: string
+    EpidsodesAmount: int
+}
+
 type AddSubscriptionRendition = {
     Name: string
     Url: string
@@ -65,10 +73,17 @@ module SubscriptionSource =
         | EpisodeAdded data -> data.SubscriptionId
         | _ -> failwith("Unknown event")
 
+    let subscriptionRendition (subscription:Subscription) =
+        { Id = subscription.Id
+          Url = subscription.Url
+          Name = subscription.Name
+          Category = subscription.Category
+          EpidsodesAmount = List.length subscription.Episodes}
+
     let getSubscriptions events =
         events
         |> List.groupBy subscriptionId
-        |> List.map (fun ev -> evolve initialSubscriptionState (snd ev))
+        |> List.map ((fun ev -> evolve initialSubscriptionState (snd ev)) >> subscriptionRendition)
 
     let getSubscription events =
         events

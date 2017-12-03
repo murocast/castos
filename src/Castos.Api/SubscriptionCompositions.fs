@@ -112,7 +112,7 @@ module SubscriptionCompositions =
                  pathScan "/api/subscriptions/%s/episodes/%i"
                     <| fun (subscriptionId, episodeId) -> choose [ GET >=> OK (sprintf "Metadata of Episode %i of subscription %A" episodeId subscriptionId)]
                  pathScan "/api/subscriptions/%s/episodes"
-                    <| fun id -> choose [ GET >=> OK (sprintf "List Episodes of suscription %A" id)
+                    <| fun id -> choose [ GET >=> warbler (fun _ -> processAsync (fun eventStore -> getEpisodesOfSubscriptionComposition eventStore id) eventStore)
                                           POST >=> warbler (fun _ -> processFormAsync (fun eventStore -> addEpisodeComposition eventStore id) eventStore) ]
                  pathScan "/api/subscriptions/%s"
                     <| fun id -> choose [ GET >=> warbler ( fun _ -> processAsync (fun eventStore -> getSubscriptionComposition eventStore id) eventStore)
