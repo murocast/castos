@@ -23,8 +23,11 @@ and SubscriptionDeleted = { Id: SubscriptionId }
 and EpisodeAdded = {
     Id: EpisodeId
     SubscriptionId: SubscriptionId
+    Guid: string
+    Url: string
     MediaUrl: string
     Title: string
+    Length: int
     ReleaseDate: System.DateTime
 }
 and PlayEpisodeStarted = {

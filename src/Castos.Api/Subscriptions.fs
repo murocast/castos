@@ -2,9 +2,12 @@
 
 type Episode = {
     Id: EpisodeId
+    Guid: string
     SubscriptionId: SubscriptionId
+    Url: string
     MediaUrl: string
     Title: string
+    Length: int
     ReleaseDate: System.DateTime
 }
 
@@ -33,8 +36,11 @@ type AddSubscriptionRendition = {
 
 type AddEpisodeRendition = {
     Title: string
+    Guid: string
     Url: string
     ReleaseDate: System.DateTime
+    MediaUrl: string
+    Length: int
 }
 
 module SubscriptionSource =
@@ -56,9 +62,12 @@ module SubscriptionSource =
         | SubscriptionDeleted _ -> { state with Active = false }
         | EpisodeAdded ev ->    let newEpisode = { Id = ev.Id
                                                    SubscriptionId = ev.SubscriptionId
+                                                   Guid = ev.Guid
+                                                   Url = ev.Url
                                                    MediaUrl = ev.MediaUrl
                                                    Title = ev.Title
-                                                   ReleaseDate = ev.ReleaseDate }
+                                                   ReleaseDate = ev.ReleaseDate
+                                                   Length = ev.Length }
                                 { state with Episodes = newEpisode :: state.Episodes }
         | _ -> failwith("Unknown event")
 
@@ -108,8 +117,11 @@ module SubscriptionSource =
                             | _ -> (List.maxBy (fun (e:Episode) -> e.Id) state.Episodes).Id
         ok ((version, EpisodeAdded { Id = lastEpisodeId + 1
                                      SubscriptionId = SubscriptionId subscriptionId
-                                     MediaUrl = rendition.Url
+                                     Guid = rendition.Guid
+                                     Url = rendition.Url
+                                     MediaUrl = rendition.MediaUrl
                                      Title = rendition.Title
+                                     Length = rendition.Length
                                      ReleaseDate = rendition.ReleaseDate }))
 
     let getCategories events =

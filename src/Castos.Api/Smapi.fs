@@ -108,13 +108,13 @@ module Smapi =
         let result = getEpisodesOfSubscriptionComposition eventStore (string id)
         match result with
         | Success (episodes) -> episodes
-                                |> List.sortByDescending (fun e -> e.Id)
+                                |> List.sortByDescending (fun e -> e.ReleaseDate)
                                 |> List.map (fun e -> MediaMetadata { Id = sprintf "%A___%i" e.SubscriptionId e.Id
                                                                       ItemType = Track
                                                                       Title = e.Title
                                                                       MimeType = "audio/mp3"
                                                                       ItemMetadata = TrackMetadata { Artist = "Artist"
-                                                                                                     Duration = 100 //int e.Length.TotalSeconds
+                                                                                                     Duration = e.Length
                                                                                                      CanResume = true }})
                                 |> List.truncate 100
                                 |> Seq.ofList
@@ -144,7 +144,7 @@ module Smapi =
                          Title = e.Title
                          MimeType = "audio/mp3"
                          ItemMetadata = TrackMetadata { Artist = "Artist"
-                                                        Duration = 100 //int e.Length.TotalSeconds
+                                                        Duration = e.Length
                                                         CanResume = true  }}
         let response = Smapi.Respond.getMediaMetadataRepnose metadata
         ok response
@@ -166,7 +166,6 @@ module Smapi =
                       | _ -> failwithf "Wrong Id: %s" id
 
         let path = episode.MediaUrl
-        //let encodedPath = path.Replace(" ", "%20")
 
         let position = match eventstore.GetEvents (StreamId id) with
                        | Success (_ , events) -> match lastPlayEpisodeStopped events with
