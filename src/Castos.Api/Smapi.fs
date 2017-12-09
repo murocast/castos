@@ -81,6 +81,7 @@ module Smapi =
         let result = getCategoriesComposition eventStore
         match result with
         | Success (categories) -> categories
+                                  |> List.sort
                                   |> List.map (fun (category) -> MediaCollection { Id = "__category_" + category
                                                                                    ItemType = Collection
                                                                                    Title = category
