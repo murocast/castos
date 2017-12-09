@@ -93,6 +93,7 @@ module Smapi =
         let result = getSubscriptionsOfCategoryComposition eventStore c
         match result with
         | Success (subscriptions) -> subscriptions
+                                     |> List.sortBy (fun s -> s.Name)
                                      |> List.map (fun p -> MediaCollection { Id = "__subscription_" + string p.Id
                                                                              ItemType = Collection
                                                                              Title = p.Name
