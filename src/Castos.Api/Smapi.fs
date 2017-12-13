@@ -10,6 +10,8 @@ open System.Text.RegularExpressions
 open SubscriptionCompositions
 open SubscriptionSource
 open EventStore.ClientAPI
+open YoLo.Regex
+open System.Net.NetworkInformation
 
 type SmapiMethod =
     | GetMetadata of string
@@ -153,8 +155,8 @@ module Smapi =
 
     let lastPlayEpisodeStopped ls =
         let filteredLs = List.filter (fun x -> match x with
-                                               | PlaySecondsReported data -> true
-                                               | PlayEpisodeStopped data -> true
+                                               | PlaySecondsReported _ -> true
+                                               | PlayEpisodeStopped _ -> true
                                                | _ -> false) ls
         match List.isEmpty filteredLs with
         | true -> None
@@ -169,10 +171,20 @@ module Smapi =
 
         let path = episode.MediaUrl
 
-        let position = match eventstore.GetEvents (StreamId id) with
+        let (|IsNeededPlaySecondsReported|_|) (episodeId:EpisodeId) event =
+            match event with
+            | Some (PlaySecondsReported data) -> if data.Id = episodeId then Some (data.Position) else None
+            | _ -> None
+
+        let (|IsNeededPlayEpisodeStopped|_|) (episodeId:EpisodeId) event =
+            match event with
+            | Some (PlayEpisodeStopped data) -> if data.Id = episodeId then Some (data.Position) else None
+            | _ -> None
+
+        let position = match eventstore.GetEvents (StreamId (string episode.SubscriptionId)) with
                        | Success (_ , events) -> match lastPlayEpisodeStopped events with
-                                                 | Some (PlaySecondsReported data) -> Some data.Position
-                                                 | Some (PlayEpisodeStopped data) -> Some data.Position
+                                                 | IsNeededPlaySecondsReported episode.Id  position -> Some position
+                                                 | IsNeededPlayEpisodeStopped episode.Id position -> Some position
                                                  | _ -> None
                        | _ -> None
 
