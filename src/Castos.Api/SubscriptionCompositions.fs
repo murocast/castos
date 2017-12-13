@@ -15,8 +15,12 @@ module SubscriptionCompositions =
 
     let private allSubscriptionsEvents eventStore =
         eventStore.GetEvents (StreamId("$ce-subscription"))
-    let private subscriptionEvents eventStore id =
-        eventStore.GetEvents (StreamId(sprintf "subscription-%s" id))
+
+    let getSubscriptionStreamId id =
+        (StreamId(sprintf "subscription-%s" id))
+
+    let subscriptionEvents eventStore id =
+        eventStore.GetEvents (getSubscriptionStreamId id)
 
     let private processAsync f eventStore =
         fun context ->

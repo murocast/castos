@@ -69,6 +69,8 @@ module SubscriptionSource =
                                                    ReleaseDate = ev.ReleaseDate
                                                    Length = ev.Length }
                                 { state with Episodes = newEpisode :: state.Episodes }
+        | PlaySecondsReported  _ -> state
+        | PlayEpisodeStopped _ -> state
         | _ -> failwith("Unknown event")
 
     let private evolve state events =
@@ -80,6 +82,8 @@ module SubscriptionSource =
         | SubscriptionAdded data -> data.Id
         | SubscriptionDeleted data -> data.Id
         | EpisodeAdded data -> data.SubscriptionId
+        | PlaySecondsReported  data -> data.SubscriptionId
+        | PlayEpisodeStopped data -> data.SubscriptionId
         | _ -> failwith("Unknown event")
 
     let subscriptionRendition (subscription:Subscription) =

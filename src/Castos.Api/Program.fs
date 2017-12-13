@@ -1,6 +1,9 @@
 ﻿open System.Net
 open System.Threading
 
+open Topshelf
+open Time
+
 open Suave
 open Suave.Filters
 open Suave.Logging
@@ -16,9 +19,6 @@ open Castos.Smapi
 open Castos.SubscriptionCompositions
 
 open Argu
-
-open Topshelf
-open Time
 
 let rawFormString x = System.Text.Encoding.UTF8.GetString x.request.rawForm
 
@@ -47,9 +47,8 @@ let processSmapiMethod m =
     | GetMediaMetadata s -> processGetMediaMetadata eventStore (GetMediaMetadataRequest.Parse s)
     | GetLastUpdate s -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
     | GetMediaURI s -> processGetMediaURI eventStore s
-    | ReportPlaySeconds _ ->
-        processReportPlaySecondsRequest eventStore
-        |> ignore
+    | ReportPlaySeconds s ->
+        processReportPlaySecondsRequest eventStore s
         ok("")
     | ReportPlayStatus _ -> ok("")
     | SetPlayedSeconds _ -> ok("")
@@ -73,7 +72,6 @@ let processSmapiRequest() =
 
 let smapiRoutes =
     choose [ path "/smapi" >=> choose [POST >=> warbler (fun _ -> processSmapiRequest()) ] ]
-
 
 [<EntryPoint>]
 let main _ =

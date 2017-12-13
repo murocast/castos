@@ -12,6 +12,8 @@ open SubscriptionSource
 open EventStore.ClientAPI
 open YoLo.Regex
 open System.Net.NetworkInformation
+open SubscriptionSource
+open SubscriptionSource
 
 type SmapiMethod =
     | GetMetadata of string
@@ -171,22 +173,22 @@ module Smapi =
 
         let path = episode.MediaUrl
 
-        let (|IsNeededPlaySecondsReported|_|) (episodeId:EpisodeId) event =
+        let (|IsNeededPlaySecondsReported|_|) episodeId event =
             match event with
             | Some (PlaySecondsReported data) -> if data.Id = episodeId then Some (data.Position) else None
             | _ -> None
 
-        let (|IsNeededPlayEpisodeStopped|_|) (episodeId:EpisodeId) event =
+        let (|IsNeededPlayEpisodeStopped|_|) episodeId event =
             match event with
             | Some (PlayEpisodeStopped data) -> if data.Id = episodeId then Some (data.Position) else None
             | _ -> None
 
-        let position = match eventstore.GetEvents (StreamId (string episode.SubscriptionId)) with
+        let position = match subscriptionEvents eventstore (string episode.SubscriptionId) with
                        | Success (_ , events) -> match lastPlayEpisodeStopped events with
-                                                 | IsNeededPlaySecondsReported episode.Id  position -> Some position
+                                                 | IsNeededPlaySecondsReported episode.Id position -> Some position
                                                  | IsNeededPlayEpisodeStopped episode.Id position -> Some position
                                                  | _ -> None
-                       | _ -> None
+                       | Failure (e:Error) -> failwithf "Get Events for position faild. Error: %s for Episode %i in Subscription %O" (string e) episode.Id episode.SubscriptionId
 
         let response = Smapi.Respond.getMediaUriResponse path id position
         ok response
@@ -203,16 +205,20 @@ module Smapi =
         let id = req.Body.ReportPlaySeconds.Id
         let position = req.Body.ReportPlaySeconds.OffsetMillis
 
-        let ev = match id with
-                 | MediaMetadataId (subscriptionId, episodeId) -> PlaySecondsReported { Id = episodeId
-                                                                                        SubscriptionId = subscriptionId
-                                                                                        Position = position }
-                 | _ -> failwithf "unknown Id for play seconds reported: %s" id
-
-        let version = match eventstore.GetEvents (StreamId id) with
+        let (episodeId, subscriptionId) = match id with
+                                          | MediaMetadataId (subscriptionId, episodeId) -> (episodeId, subscriptionId)
+                                          | _ -> failwithf "unknown Id for play seconds reported: %s" id
+        let streamId = (getSubscriptionStreamId (string subscriptionId))
+        let version = match eventstore.GetEvents streamId with
                       | Success (version, _) -> version
                       | _ -> StreamVersion 0
-        eventstore.SaveEvents (StreamId id) version [ev]
+
+        let ev = PlaySecondsReported { Id = episodeId
+                                       SubscriptionId = subscriptionId
+                                       Position = position }
+        match eventstore.SaveEvents streamId version [ev] with
+        | Success _ -> ()
+        | Failure (error:Error) -> failwith (string error)
 
     let processGetExtendedMetadata s =
         let req = GetExtendedMetadataRequest.Parse s
