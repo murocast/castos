@@ -3,13 +3,15 @@ namespace Castos
 [<AutoOpen>]
 module Json =
     open Newtonsoft.Json
+    open Newtonsoft.Json.FSharp
 
-    let private converter = Fable.JsonConverter()
+    let settings = JsonSerializerSettings()
+                            |> Serialisation.extend
 
-    let unjson<'T> json =
-            let a = JsonConvert.DeserializeObject(json, typeof<'T>, converter) :?> 'T
+    let inline unjson<'T> json =
+            let a = JsonConvert.DeserializeObject<'T>(json, settings)
             a
 
-    let mkjson a =
-            let json = JsonConvert.SerializeObject(a, converter)
+    let inline mkjson a =
+            let json = JsonConvert.SerializeObject(a, settings)
             json

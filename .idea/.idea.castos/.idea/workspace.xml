@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="903bc500-df4a-4ca4-b59b-23db2cbaf8cd" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.castos/.idea/contentModel.xml" afterPath="$PROJECT_DIR$/.idea/.idea.castos/.idea/contentModel.xml" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.castos/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/.idea.castos/.idea/workspace.xml" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -13,151 +14,100 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Program.fs" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Program.fs" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Castos.Api/Program.fs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1296">
-              <caret line="83" column="42" lean-forward="false" selection-start-line="83" selection-start-column="42" selection-end-line="83" selection-end-column="42" />
+            <state relative-caret-position="1836">
+              <caret line="113" column="16" lean-forward="true" selection-start-line="113" selection-start-column="16" selection-end-line="113" selection-end-column="16" />
               <folding>
-                <marker date="1512772876118" expanded="false" signature="44:224" ph="..." />
-                <marker date="1512772876118" expanded="false" signature="231:292" ph="..." />
-                <marker date="1512772876118" expanded="false" signature="310:328" ph="..." />
-                <marker date="1512772876118" expanded="true" signature="535:1444" ph=" = ..." />
-                <marker date="1512772876118" expanded="true" signature="551:718" ph=" = match &quot;SOAPAction&quot; |&gt; c.request.header with ..." />
-                <marker date="1512772876118" expanded="true" signature="740:1444" ph=" ..." />
-                <marker date="1512772876118" expanded="true" signature="1470:2009" ph=" = ..." />
-                <marker date="1512772876118" expanded="true" signature="1489:2009" ph=" ..." />
-                <marker date="1512772876118" expanded="true" signature="1826:1913" ph=" -&gt; ..." />
-                <marker date="1512772876118" expanded="true" signature="2025:2078" ph=" = ..." />
-                <marker date="1512772876118" expanded="true" signature="2101:2132" ph=" = ..." />
-                <marker date="1512772876118" expanded="true" signature="2159:2420" ph=" = ..." />
-                <marker date="1512772876118" expanded="true" signature="2177:2420" ph=" -&gt; ..." />
-                <marker date="1512772876118" expanded="true" signature="2195:2419" ph=" ..." />
-                <marker date="1512772876118" expanded="true" signature="2250:2410" ph="return! match result with ..." />
-                <marker date="1512772876118" expanded="true" signature="2437:2532" ph=" = ..." />
-                <marker date="1512772876118" expanded="true" signature="2560:4202" ph=" = ..." />
-                <marker date="1512772876118" expanded="true" signature="2623:3976" ph=" = ..." />
-                <marker date="1512772876118" expanded="true" signature="2705:3445" ph=" = async { ..." />
-                <marker date="1512772876118" expanded="true" signature="3120:3415" ph=" ..." />
-                <marker date="1512772876118" expanded="true" signature="3147:3393" ph=" -&gt; ..." />
-                <marker date="1512772876118" expanded="true" signature="3228:3367" ph=" -&gt; logger.debug (eventX &quot;Send response {form}&quot; ..." />
-                <marker date="1512772876118" expanded="true" signature="3467:3604" ph=" = ..." />
-                <marker date="1512772876118" expanded="true" signature="3620:3862" ph=" = ..." />
-                <marker date="1512772876118" expanded="true" signature="3636:3861" ph=" defaultConfig with ..." />
-                <marker date="1512772876118" expanded="true" signature="3992:4028" ph=" = ..." />
+                <marker date="1511470578996" expanded="true" signature="0:4203" ph="open System.Net ..." />
+                <marker date="1511470578996" expanded="false" signature="44:224" ph="..." />
+                <marker date="1511470578996" expanded="false" signature="231:292" ph="..." />
+                <marker date="1511470578996" expanded="false" signature="310:328" ph="..." />
+                <marker date="1511470578996" expanded="true" signature="535:1444" ph=" = ..." />
+                <marker date="1511470578996" expanded="true" signature="551:718" ph=" = match &quot;SOAPAction&quot; |&gt; c.request.header with ..." />
+                <marker date="1511470578996" expanded="true" signature="740:1444" ph=" ..." />
+                <marker date="1511470578996" expanded="true" signature="1470:2009" ph=" = ..." />
+                <marker date="1511470578996" expanded="true" signature="1489:2009" ph=" ..." />
+                <marker date="1511470578996" expanded="true" signature="1826:1913" ph=" -&gt; ..." />
+                <marker date="1511470578996" expanded="true" signature="2025:2078" ph=" = ..." />
+                <marker date="1511470578996" expanded="true" signature="2101:2132" ph=" = ..." />
+                <marker date="1511470578996" expanded="true" signature="2159:2420" ph=" = ..." />
+                <marker date="1511470578996" expanded="true" signature="2177:2420" ph=" -&gt; ..." />
+                <marker date="1511470578996" expanded="true" signature="2195:2419" ph=" ..." />
+                <marker date="1511470578996" expanded="true" signature="2250:2410" ph="return! match result with ..." />
+                <marker date="1511470578996" expanded="true" signature="2437:2532" ph=" = ..." />
+                <marker date="1511470578996" expanded="true" signature="2560:4202" ph=" = ..." />
+                <marker date="1511470578996" expanded="true" signature="2623:3976" ph=" = ..." />
+                <marker date="1511470578996" expanded="true" signature="2705:3445" ph=" = async { ..." />
+                <marker date="1511470578996" expanded="true" signature="3120:3415" ph=" ..." />
+                <marker date="1511470578996" expanded="true" signature="3147:3393" ph=" -&gt; ..." />
+                <marker date="1511470578996" expanded="true" signature="3228:3367" ph=" -&gt; logger.debug (eventX &quot;Send response {form}&quot; ..." />
+                <marker date="1511470578996" expanded="true" signature="3467:3604" ph=" = ..." />
+                <marker date="1511470578996" expanded="true" signature="3620:3862" ph=" = ..." />
+                <marker date="1511470578996" expanded="true" signature="3636:3861" ph=" defaultConfig with ..." />
+                <marker date="1511470578996" expanded="true" signature="3992:4028" ph=" = ..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Smapi.fs" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Smapi.fs" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Castos.Api/Smapi.fs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3438">
-              <caret line="196" column="0" lean-forward="false" selection-start-line="196" selection-start-column="0" selection-end-line="197" selection-end-column="0" />
+            <state relative-caret-position="-2520">
+              <caret line="33" column="0" lean-forward="true" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
               <folding>
-                <marker date="1513198576080" expanded="false" signature="23:72" ph="..." />
-                <marker date="1513198576080" expanded="false" signature="79:126" ph="..." />
-                <marker date="1513198576080" expanded="false" signature="133:207" ph="..." />
-                <marker date="1513198576080" expanded="true" signature="8967:9035" ph=" -&gt; match lastPlayEpisodeStopped events with ..." />
-                <marker date="1513198576080" expanded="true" signature="8967:9070" ph=" = match eventstore.GetEvents (StreamId id) with ..." />
-                <marker date="1513198576080" expanded="true" signature="8967:9165" ph=" = ..." />
-                <marker date="1513198576080" expanded="true" signature="9197:9426" ph=" = ..." />
-                <marker date="1513198576080" expanded="true" signature="9218:9390" ph=" = { AutoRefreshEnabled = false ..." />
-                <marker date="1513198576080" expanded="true" signature="9480:10315" ph=" = ..." />
-                <marker date="1513198576080" expanded="true" signature="9659:10088" ph=" = match id with ..." />
-                <marker date="1513198576080" expanded="true" signature="9738:10008" ph=" -&gt; PlaySecondsReported { Id = episodeId ..." />
-                <marker date="1513198576080" expanded="true" signature="10109:10258" ph=" = match eventstore.GetEvents (StreamId id) with ..." />
-                <marker date="1513198576080" expanded="true" signature="10353:10432" ph=" = ..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SubscriptionCompositions.fs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Castos.Api/SubscriptionCompositions.fs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <marker date="1512772876146" expanded="false" signature="23:178" ph="..." />
-                <marker date="1512772876146" expanded="true" signature="211:5609" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="352:414" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="463:535" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="578:852" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="600:852" ph=" -&gt; ..." />
-                <marker date="1512772876146" expanded="true" signature="622:851" ph=" ..." />
-                <marker date="1512772876146" expanded="true" signature="681:838" ph="return! match result with ..." />
-                <marker date="1512772876146" expanded="true" signature="899:1227" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="921:1227" ph=" -&gt; ..." />
-                <marker date="1512772876146" expanded="true" signature="943:1226" ph=" ..." />
-                <marker date="1512772876146" expanded="true" signature="1056:1213" ph="return! match result with ..." />
-                <marker date="1512772876146" expanded="true" signature="1295:1449" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="1494:1666" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="1577:1666" ph=" ..." />
-                <marker date="1512772876146" expanded="true" signature="1728:2082" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="1807:1982" ph=" = subscriptionEvents eventStore subscriptionId ..." />
-                <marker date="1512772876146" expanded="true" signature="2008:2082" ph=" ..." />
-                <marker date="1512772876146" expanded="true" signature="2134:2305" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="2358:2631" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="2379:2523" ph=" = subscriptionEvents eventStore id ..." />
-                <marker date="1512772876146" expanded="true" signature="2549:2631" ph=" ..." />
-                <marker date="1512772876146" expanded="true" signature="2679:2854" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="2762:2854" ph=" ..." />
-                <marker date="1512772876146" expanded="true" signature="2904:3090" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="2986:3090" ph=" ..." />
-                <marker date="1512772876146" expanded="true" signature="3157:3351" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="3240:3351" ph=" ..." />
-                <marker date="1512772876146" expanded="true" signature="3411:3589" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="3502:3589" ph=" ..." />
-                <marker date="1512772876146" expanded="true" signature="3670:3932" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="3773:3932" ph=" ..." />
-                <marker date="1512772876146" expanded="true" signature="3803:3901" ph=" -&gt; (getEpisodes events) ..." />
-                <marker date="1512772876146" expanded="true" signature="3971:5609" ph=" = ..." />
-                <marker date="1512772876146" expanded="true" signature="3988:5609" ph=" [ path &quot;/api/subscriptions&quot; ..." />
-                <marker date="1512772876146" expanded="true" signature="4047:4248" ph=" [ GET &gt;=&gt; warbler ( fun _ -&gt; processAsync getSubscriptionsComposition eventStore) ..." />
-                <marker date="1512772876146" expanded="true" signature="4951:5241" ph=" -&gt; choose [ GET &gt;=&gt; warbler (fun _ -&gt; processAsync (fun eventStore -&gt; getEpisodesOfSubscriptionComposition eventStore id) eventStore) ..." />
-                <marker date="1512772876146" expanded="true" signature="5321:5608" ph=" -&gt; choose [ GET &gt;=&gt; warbler ( fun _ -&gt; processAsync (fun eventStore -&gt; getSubscriptionComposition eventStore id) eventStore) ..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Subscriptions.fs" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/Castos.Api/Subscriptions.fs">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <marker date="1512772876149" expanded="true" signature="31:210" ph="= { ..." />
-                <marker date="1512772876149" expanded="true" signature="230:356" ph="= { ..." />
-                <marker date="1512772876149" expanded="true" signature="393:500" ph="= { ..." />
-                <marker date="1512772876149" expanded="true" signature="532:591" ph="= { ..." />
-                <marker date="1512772876149" expanded="true" signature="618:744" ph="= { ..." />
-                <marker date="1512772876149" expanded="true" signature="771:4800" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="814:963" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="826:962" ph=" Id = System.Guid.Empty ..." />
-                <marker date="1512772876149" expanded="true" signature="998:2103" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="1025:2103" ph=" ..." />
-                <marker date="1512772876149" expanded="true" signature="1056:1338" ph=" -&gt; { state with Id = ev.Id ..." />
-                <marker date="1512772876149" expanded="true" signature="1429:2062" ph=" -&gt;    let newEpisode = { Id = ev.Id ..." />
-                <marker date="1512772876149" expanded="true" signature="2140:2190" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="2214:2415" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="2233:2415" ph=" ..." />
-                <marker date="1512772876149" expanded="true" signature="2474:2681" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="2486:2680" ph=" Id = subscription.Id ..." />
-                <marker date="1512772876149" expanded="true" signature="2714:2870" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="2902:2962" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="2997:3285" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="3009:3284" ph="StreamVersion 0, SubscriptionAdded { Id = System.Guid.NewGuid() ..." />
-                <marker date="1512772876149" expanded="true" signature="3331:3512" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="3408:3512" ph=" ..." />
-                <marker date="1512772876149" expanded="true" signature="3584:4352" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="3655:3824" ph=" = match List.length state.Episodes with ..." />
-                <marker date="1512772876149" expanded="true" signature="3835:4352" ph=" ((version, EpisodeAdded { Id = lastEpisodeId + 1 ..." />
-                <marker date="1512772876149" expanded="true" signature="4382:4548" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="4600:4690" ph=" = ..." />
-                <marker date="1512772876149" expanded="true" signature="4718:4800" ph=" = ..." />
+                <marker date="1511470111686" expanded="false" signature="23:72" ph="..." />
+                <marker date="1511470111686" expanded="false" signature="79:126" ph="..." />
+                <marker date="1511470111686" expanded="false" signature="133:207" ph="..." />
+                <marker date="1511470111686" expanded="true" signature="226:522" ph="= ..." />
+                <marker date="1511470111686" expanded="true" signature="232:522" ph="| GetMetadata of string ..." />
+                <marker date="1511470111686" expanded="true" signature="536:9950" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="1524:1553" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="1642:1804" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="1836:2059" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="1971:2059" ph=" then ..." />
+                <marker date="1511470111686" expanded="true" signature="2094:2377" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="2405:2983" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="2417:2960" ph=" MediaCollection { Id = LibraryId ..." />
+                <marker date="1511470111686" expanded="true" signature="2618:2777" ph=" { Id = CurrentId ..." />
+                <marker date="1511470111686" expanded="true" signature="2803:2960" ph=" { Id = RecentId ..." />
+                <marker date="1511470111686" expanded="true" signature="3016:3645" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="3101:3645" ph=" ..." />
+                <marker date="1511470111686" expanded="true" signature="3132:3614" ph=" -&gt; categories ..." />
+                <marker date="1511470111686" expanded="true" signature="3208:3565" ph=" -&gt; MediaCollection { Id = &quot;__category_&quot; + category ..." />
+                <marker date="1511470111686" expanded="true" signature="3689:4323" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="3789:4323" ph=" ..." />
+                <marker date="1511470111686" expanded="true" signature="3823:4292" ph=" -&gt; subscriptions ..." />
+                <marker date="1511470111686" expanded="true" signature="3896:4240" ph=" -&gt; MediaCollection { Id = &quot;__subscription_&quot; + string p.Id ..." />
+                <marker date="1511470111686" expanded="true" signature="4358:4473" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="4522:5632" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="4622:5632" ph=" ..." />
+                <marker date="1511470111686" expanded="true" signature="4651:5601" ph=" -&gt; episodes ..." />
+                <marker date="1511470111686" expanded="true" signature="4787:5501" ph=" -&gt; MediaMetadata { Id = sprintf &quot;%A___%i&quot; e.SubscriptionId e.Id ..." />
+                <marker date="1511470111686" expanded="true" signature="5216:5500" ph=" { Artist = &quot;Artist&quot; ..." />
+                <marker date="1511470111686" expanded="true" signature="5703:6228" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="5762:6158" ph=" = match id with ..." />
+                <marker date="1511470111686" expanded="true" signature="6309:7089" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="6369:6585" ph=" = match id with ..." />
+                <marker date="1511470111686" expanded="true" signature="6606:6999" ph=" = { Id = id ..." />
+                <marker date="1511470111686" expanded="true" signature="6803:6998" ph=" { Artist = &quot;Artist&quot; ..." />
+                <marker date="1511470111686" expanded="true" signature="7124:7543" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="7149:7413" ph=" = List.filter (fun x -&gt; match x with ..." />
+                <marker date="1511470111686" expanded="true" signature="7456:7543" ph=" ..." />
+                <marker date="1511470111686" expanded="true" signature="7584:8558" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="7692:7908" ph=" = match id with ..." />
+                <marker date="1511470111686" expanded="true" signature="8020:8463" ph=" = match eventstore.GetEvents (StreamId id) with ..." />
+                <marker date="1511470111686" expanded="true" signature="8114:8428" ph=" -&gt; match lastPlayEpisodeStopped events with ..." />
+                <marker date="1511470111686" expanded="true" signature="8590:8819" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="8611:8783" ph=" = { AutoRefreshEnabled = false ..." />
+                <marker date="1511470111686" expanded="true" signature="8873:9708" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="9052:9481" ph=" = match id with ..." />
+                <marker date="1511470111686" expanded="true" signature="9131:9401" ph=" -&gt; PlaySecondsReported { Id = episodeId ..." />
+                <marker date="1511470111686" expanded="true" signature="9502:9651" ph=" = match eventstore.GetEvents (StreamId id) with ..." />
+                <marker date="1511470111686" expanded="true" signature="9746:9825" ph=" = ..." />
+                <marker date="1511470111686" expanded="true" signature="9867:9950" ph=" = ..." />
               </folding>
             </state>
           </provider>
@@ -169,9 +119,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/src/Castos.Api/Subscriptions.fs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Castos.Api/Smapi.fs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/Castos.Api/SubscriptionCompositions.fs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/Castos.Api/Program.fs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
@@ -351,12 +299,11 @@
       <workItem from="1506714078015" duration="625000" />
       <workItem from="1506887767926" duration="657000" />
       <workItem from="1511514650643" duration="153000" />
-      <workItem from="1513199636202" duration="72000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1593000" />
+    <option name="totallyTimeSpent" value="1521000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -374,17 +321,17 @@
       <window_info id="Errors In Solution" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32963854" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Unit Tests" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29751334" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="NuGet" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14216867" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Build" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294849" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39964476" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -402,6 +349,20 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/src/Castos.Api/Program.fs</url>
+          <line>79</line>
+          <properties documentPath="$PROJECT_DIR$/src/Castos.Api/Program.fs">
+            <startOffsets>
+              <startOffset value="2567" />
+            </startOffsets>
+            <endOffsets>
+              <endOffset value="2606" />
+            </endOffsets>
+          </properties>
+        </line-breakpoint>
+      </breakpoints>
       <option name="time" value="1" />
     </breakpoint-manager>
     <watches-manager />
@@ -412,301 +373,200 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1512772876118" expanded="false" signature="44:224" ph="..." />
-            <marker date="1512772876118" expanded="false" signature="231:292" ph="..." />
-            <marker date="1512772876118" expanded="false" signature="310:328" ph="..." />
-            <marker date="1512772876118" expanded="true" signature="535:1444" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="551:718" ph=" = match &quot;SOAPAction&quot; |&gt; c.request.header with ..." />
-            <marker date="1512772876118" expanded="true" signature="740:1444" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="1470:2009" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="1489:2009" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="1826:1913" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="2025:2078" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2101:2132" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2159:2420" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2177:2420" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="2195:2419" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="2250:2410" ph="return! match result with ..." />
-            <marker date="1512772876118" expanded="true" signature="2437:2532" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2560:4202" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2623:3976" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2705:3445" ph=" = async { ..." />
-            <marker date="1512772876118" expanded="true" signature="3120:3415" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="3147:3393" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="3228:3367" ph=" -&gt; logger.debug (eventX &quot;Send response {form}&quot; ..." />
-            <marker date="1512772876118" expanded="true" signature="3467:3604" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="3620:3862" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="3636:3861" ph=" defaultConfig with ..." />
-            <marker date="1512772876118" expanded="true" signature="3992:4028" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="0:4203" ph="open System.Net ..." />
+            <marker date="1511470578996" expanded="false" signature="44:224" ph="..." />
+            <marker date="1511470578996" expanded="false" signature="231:292" ph="..." />
+            <marker date="1511470578996" expanded="false" signature="310:328" ph="..." />
+            <marker date="1511470578996" expanded="true" signature="535:1444" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="551:718" ph=" = match &quot;SOAPAction&quot; |&gt; c.request.header with ..." />
+            <marker date="1511470578996" expanded="true" signature="740:1444" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="1470:2009" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="1489:2009" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="1826:1913" ph=" -&gt; ..." />
+            <marker date="1511470578996" expanded="true" signature="2025:2078" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2101:2132" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2159:2420" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2177:2420" ph=" -&gt; ..." />
+            <marker date="1511470578996" expanded="true" signature="2195:2419" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="2250:2410" ph="return! match result with ..." />
+            <marker date="1511470578996" expanded="true" signature="2437:2532" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2560:4202" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2623:3976" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2705:3445" ph=" = async { ..." />
+            <marker date="1511470578996" expanded="true" signature="3120:3415" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="3147:3393" ph=" -&gt; ..." />
+            <marker date="1511470578996" expanded="true" signature="3228:3367" ph=" -&gt; logger.debug (eventX &quot;Send response {form}&quot; ..." />
+            <marker date="1511470578996" expanded="true" signature="3467:3604" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="3620:3862" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="3636:3861" ph=" defaultConfig with ..." />
+            <marker date="1511470578996" expanded="true" signature="3992:4028" ph=" = ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Castos.Api/Program.fs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1511470578996" expanded="true" signature="0:4203" ph="open System.Net ..." />
+            <marker date="1511470578996" expanded="false" signature="44:224" ph="..." />
+            <marker date="1511470578996" expanded="false" signature="231:292" ph="..." />
+            <marker date="1511470578996" expanded="false" signature="310:328" ph="..." />
+            <marker date="1511470578996" expanded="true" signature="535:1444" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="551:718" ph=" = match &quot;SOAPAction&quot; |&gt; c.request.header with ..." />
+            <marker date="1511470578996" expanded="true" signature="740:1444" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="1470:2009" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="1489:2009" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="1826:1913" ph=" -&gt; ..." />
+            <marker date="1511470578996" expanded="true" signature="2025:2078" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2101:2132" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2159:2420" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2177:2420" ph=" -&gt; ..." />
+            <marker date="1511470578996" expanded="true" signature="2195:2419" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="2250:2410" ph="return! match result with ..." />
+            <marker date="1511470578996" expanded="true" signature="2437:2532" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2560:4202" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2623:3976" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2705:3445" ph=" = async { ..." />
+            <marker date="1511470578996" expanded="true" signature="3120:3415" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="3147:3393" ph=" -&gt; ..." />
+            <marker date="1511470578996" expanded="true" signature="3228:3367" ph=" -&gt; logger.debug (eventX &quot;Send response {form}&quot; ..." />
+            <marker date="1511470578996" expanded="true" signature="3467:3604" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="3620:3862" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="3636:3861" ph=" defaultConfig with ..." />
+            <marker date="1511470578996" expanded="true" signature="3992:4028" ph=" = ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Castos.Api/Program.fs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <marker date="1511470578996" expanded="true" signature="0:4203" ph="open System.Net ..." />
+            <marker date="1511470578996" expanded="false" signature="44:224" ph="..." />
+            <marker date="1511470578996" expanded="false" signature="231:292" ph="..." />
+            <marker date="1511470578996" expanded="false" signature="310:328" ph="..." />
+            <marker date="1511470578996" expanded="true" signature="535:1444" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="551:718" ph=" = match &quot;SOAPAction&quot; |&gt; c.request.header with ..." />
+            <marker date="1511470578996" expanded="true" signature="740:1444" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="1470:2009" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="1489:2009" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="1826:1913" ph=" -&gt; ..." />
+            <marker date="1511470578996" expanded="true" signature="2025:2078" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2101:2132" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2159:2420" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2177:2420" ph=" -&gt; ..." />
+            <marker date="1511470578996" expanded="true" signature="2195:2419" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="2250:2410" ph="return! match result with ..." />
+            <marker date="1511470578996" expanded="true" signature="2437:2532" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2560:4202" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2623:3976" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2705:3445" ph=" = async { ..." />
+            <marker date="1511470578996" expanded="true" signature="3120:3415" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="3147:3393" ph=" -&gt; ..." />
+            <marker date="1511470578996" expanded="true" signature="3228:3367" ph=" -&gt; logger.debug (eventX &quot;Send response {form}&quot; ..." />
+            <marker date="1511470578996" expanded="true" signature="3467:3604" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="3620:3862" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="3636:3861" ph=" defaultConfig with ..." />
+            <marker date="1511470578996" expanded="true" signature="3992:4028" ph=" = ..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Castos.Api/Smapi.fs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
+        <state relative-caret-position="-2520">
           <caret line="33" column="0" lean-forward="true" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
           <folding>
-            <marker date="1513198576080" expanded="false" signature="23:72" ph="..." />
-            <marker date="1513198576080" expanded="false" signature="79:126" ph="..." />
-            <marker date="1513198576080" expanded="false" signature="133:207" ph="..." />
-            <marker date="1513198576080" expanded="true" signature="8967:9035" ph=" -&gt; match lastPlayEpisodeStopped events with ..." />
-            <marker date="1513198576080" expanded="true" signature="8967:9070" ph=" = match eventstore.GetEvents (StreamId id) with ..." />
-            <marker date="1513198576080" expanded="true" signature="8967:9165" ph=" = ..." />
-            <marker date="1513198576080" expanded="true" signature="9197:9426" ph=" = ..." />
-            <marker date="1513198576080" expanded="true" signature="9218:9390" ph=" = { AutoRefreshEnabled = false ..." />
-            <marker date="1513198576080" expanded="true" signature="9480:10315" ph=" = ..." />
-            <marker date="1513198576080" expanded="true" signature="9659:10088" ph=" = match id with ..." />
-            <marker date="1513198576080" expanded="true" signature="9738:10008" ph=" -&gt; PlaySecondsReported { Id = episodeId ..." />
-            <marker date="1513198576080" expanded="true" signature="10109:10258" ph=" = match eventstore.GetEvents (StreamId id) with ..." />
-            <marker date="1513198576080" expanded="true" signature="10353:10432" ph=" = ..." />
+            <marker date="1511470111686" expanded="false" signature="23:72" ph="..." />
+            <marker date="1511470111686" expanded="false" signature="79:126" ph="..." />
+            <marker date="1511470111686" expanded="false" signature="133:207" ph="..." />
+            <marker date="1511470111686" expanded="true" signature="226:522" ph="= ..." />
+            <marker date="1511470111686" expanded="true" signature="232:522" ph="| GetMetadata of string ..." />
+            <marker date="1511470111686" expanded="true" signature="536:9950" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="1524:1553" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="1642:1804" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="1836:2059" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="1971:2059" ph=" then ..." />
+            <marker date="1511470111686" expanded="true" signature="2094:2377" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="2405:2983" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="2417:2960" ph=" MediaCollection { Id = LibraryId ..." />
+            <marker date="1511470111686" expanded="true" signature="2618:2777" ph=" { Id = CurrentId ..." />
+            <marker date="1511470111686" expanded="true" signature="2803:2960" ph=" { Id = RecentId ..." />
+            <marker date="1511470111686" expanded="true" signature="3016:3645" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="3101:3645" ph=" ..." />
+            <marker date="1511470111686" expanded="true" signature="3132:3614" ph=" -&gt; categories ..." />
+            <marker date="1511470111686" expanded="true" signature="3208:3565" ph=" -&gt; MediaCollection { Id = &quot;__category_&quot; + category ..." />
+            <marker date="1511470111686" expanded="true" signature="3689:4323" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="3789:4323" ph=" ..." />
+            <marker date="1511470111686" expanded="true" signature="3823:4292" ph=" -&gt; subscriptions ..." />
+            <marker date="1511470111686" expanded="true" signature="3896:4240" ph=" -&gt; MediaCollection { Id = &quot;__subscription_&quot; + string p.Id ..." />
+            <marker date="1511470111686" expanded="true" signature="4358:4473" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="4522:5632" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="4622:5632" ph=" ..." />
+            <marker date="1511470111686" expanded="true" signature="4651:5601" ph=" -&gt; episodes ..." />
+            <marker date="1511470111686" expanded="true" signature="4787:5501" ph=" -&gt; MediaMetadata { Id = sprintf &quot;%A___%i&quot; e.SubscriptionId e.Id ..." />
+            <marker date="1511470111686" expanded="true" signature="5216:5500" ph=" { Artist = &quot;Artist&quot; ..." />
+            <marker date="1511470111686" expanded="true" signature="5703:6228" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="5762:6158" ph=" = match id with ..." />
+            <marker date="1511470111686" expanded="true" signature="6309:7089" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="6369:6585" ph=" = match id with ..." />
+            <marker date="1511470111686" expanded="true" signature="6606:6999" ph=" = { Id = id ..." />
+            <marker date="1511470111686" expanded="true" signature="6803:6998" ph=" { Artist = &quot;Artist&quot; ..." />
+            <marker date="1511470111686" expanded="true" signature="7124:7543" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="7149:7413" ph=" = List.filter (fun x -&gt; match x with ..." />
+            <marker date="1511470111686" expanded="true" signature="7456:7543" ph=" ..." />
+            <marker date="1511470111686" expanded="true" signature="7584:8558" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="7692:7908" ph=" = match id with ..." />
+            <marker date="1511470111686" expanded="true" signature="8020:8463" ph=" = match eventstore.GetEvents (StreamId id) with ..." />
+            <marker date="1511470111686" expanded="true" signature="8114:8428" ph=" -&gt; match lastPlayEpisodeStopped events with ..." />
+            <marker date="1511470111686" expanded="true" signature="8590:8819" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="8611:8783" ph=" = { AutoRefreshEnabled = false ..." />
+            <marker date="1511470111686" expanded="true" signature="8873:9708" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="9052:9481" ph=" = match id with ..." />
+            <marker date="1511470111686" expanded="true" signature="9131:9401" ph=" -&gt; PlaySecondsReported { Id = episodeId ..." />
+            <marker date="1511470111686" expanded="true" signature="9502:9651" ph=" = match eventstore.GetEvents (StreamId id) with ..." />
+            <marker date="1511470111686" expanded="true" signature="9746:9825" ph=" = ..." />
+            <marker date="1511470111686" expanded="true" signature="9867:9950" ph=" = ..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Castos.Api/Program.fs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="1836">
+          <caret line="113" column="16" lean-forward="true" selection-start-line="113" selection-start-column="16" selection-end-line="113" selection-end-column="16" />
           <folding>
-            <marker date="1512772876118" expanded="false" signature="44:224" ph="..." />
-            <marker date="1512772876118" expanded="false" signature="231:292" ph="..." />
-            <marker date="1512772876118" expanded="false" signature="310:328" ph="..." />
-            <marker date="1512772876118" expanded="true" signature="535:1444" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="551:718" ph=" = match &quot;SOAPAction&quot; |&gt; c.request.header with ..." />
-            <marker date="1512772876118" expanded="true" signature="740:1444" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="1470:2009" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="1489:2009" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="1826:1913" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="2025:2078" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2101:2132" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2159:2420" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2177:2420" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="2195:2419" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="2250:2410" ph="return! match result with ..." />
-            <marker date="1512772876118" expanded="true" signature="2437:2532" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2560:4202" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2623:3976" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2705:3445" ph=" = async { ..." />
-            <marker date="1512772876118" expanded="true" signature="3120:3415" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="3147:3393" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="3228:3367" ph=" -&gt; logger.debug (eventX &quot;Send response {form}&quot; ..." />
-            <marker date="1512772876118" expanded="true" signature="3467:3604" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="3620:3862" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="3636:3861" ph=" defaultConfig with ..." />
-            <marker date="1512772876118" expanded="true" signature="3992:4028" ph=" = ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Castos.Api/Program.fs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <marker date="1512772876118" expanded="false" signature="44:224" ph="..." />
-            <marker date="1512772876118" expanded="false" signature="231:292" ph="..." />
-            <marker date="1512772876118" expanded="false" signature="310:328" ph="..." />
-            <marker date="1512772876118" expanded="true" signature="535:1444" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="551:718" ph=" = match &quot;SOAPAction&quot; |&gt; c.request.header with ..." />
-            <marker date="1512772876118" expanded="true" signature="740:1444" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="1470:2009" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="1489:2009" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="1826:1913" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="2025:2078" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2101:2132" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2159:2420" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2177:2420" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="2195:2419" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="2250:2410" ph="return! match result with ..." />
-            <marker date="1512772876118" expanded="true" signature="2437:2532" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2560:4202" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2623:3976" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2705:3445" ph=" = async { ..." />
-            <marker date="1512772876118" expanded="true" signature="3120:3415" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="3147:3393" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="3228:3367" ph=" -&gt; logger.debug (eventX &quot;Send response {form}&quot; ..." />
-            <marker date="1512772876118" expanded="true" signature="3467:3604" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="3620:3862" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="3636:3861" ph=" defaultConfig with ..." />
-            <marker date="1512772876118" expanded="true" signature="3992:4028" ph=" = ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Castos.Api/Program.fs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <marker date="1512772876118" expanded="false" signature="44:224" ph="..." />
-            <marker date="1512772876118" expanded="false" signature="231:292" ph="..." />
-            <marker date="1512772876118" expanded="false" signature="310:328" ph="..." />
-            <marker date="1512772876118" expanded="true" signature="535:1444" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="551:718" ph=" = match &quot;SOAPAction&quot; |&gt; c.request.header with ..." />
-            <marker date="1512772876118" expanded="true" signature="740:1444" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="1470:2009" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="1489:2009" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="1826:1913" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="2025:2078" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2101:2132" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2159:2420" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2177:2420" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="2195:2419" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="2250:2410" ph="return! match result with ..." />
-            <marker date="1512772876118" expanded="true" signature="2437:2532" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2560:4202" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2623:3976" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2705:3445" ph=" = async { ..." />
-            <marker date="1512772876118" expanded="true" signature="3120:3415" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="3147:3393" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="3228:3367" ph=" -&gt; logger.debug (eventX &quot;Send response {form}&quot; ..." />
-            <marker date="1512772876118" expanded="true" signature="3467:3604" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="3620:3862" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="3636:3861" ph=" defaultConfig with ..." />
-            <marker date="1512772876118" expanded="true" signature="3992:4028" ph=" = ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Castos.Api/Program.fs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1296">
-          <caret line="83" column="42" lean-forward="false" selection-start-line="83" selection-start-column="42" selection-end-line="83" selection-end-column="42" />
-          <folding>
-            <marker date="1512772876118" expanded="false" signature="44:224" ph="..." />
-            <marker date="1512772876118" expanded="false" signature="231:292" ph="..." />
-            <marker date="1512772876118" expanded="false" signature="310:328" ph="..." />
-            <marker date="1512772876118" expanded="true" signature="535:1444" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="551:718" ph=" = match &quot;SOAPAction&quot; |&gt; c.request.header with ..." />
-            <marker date="1512772876118" expanded="true" signature="740:1444" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="1470:2009" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="1489:2009" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="1826:1913" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="2025:2078" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2101:2132" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2159:2420" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2177:2420" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="2195:2419" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="2250:2410" ph="return! match result with ..." />
-            <marker date="1512772876118" expanded="true" signature="2437:2532" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2560:4202" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2623:3976" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="2705:3445" ph=" = async { ..." />
-            <marker date="1512772876118" expanded="true" signature="3120:3415" ph=" ..." />
-            <marker date="1512772876118" expanded="true" signature="3147:3393" ph=" -&gt; ..." />
-            <marker date="1512772876118" expanded="true" signature="3228:3367" ph=" -&gt; logger.debug (eventX &quot;Send response {form}&quot; ..." />
-            <marker date="1512772876118" expanded="true" signature="3467:3604" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="3620:3862" ph=" = ..." />
-            <marker date="1512772876118" expanded="true" signature="3636:3861" ph=" defaultConfig with ..." />
-            <marker date="1512772876118" expanded="true" signature="3992:4028" ph=" = ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Castos.Api/Subscriptions.fs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <marker date="1512772876149" expanded="true" signature="31:210" ph="= { ..." />
-            <marker date="1512772876149" expanded="true" signature="230:356" ph="= { ..." />
-            <marker date="1512772876149" expanded="true" signature="393:500" ph="= { ..." />
-            <marker date="1512772876149" expanded="true" signature="532:591" ph="= { ..." />
-            <marker date="1512772876149" expanded="true" signature="618:744" ph="= { ..." />
-            <marker date="1512772876149" expanded="true" signature="771:4800" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="814:963" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="826:962" ph=" Id = System.Guid.Empty ..." />
-            <marker date="1512772876149" expanded="true" signature="998:2103" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="1025:2103" ph=" ..." />
-            <marker date="1512772876149" expanded="true" signature="1056:1338" ph=" -&gt; { state with Id = ev.Id ..." />
-            <marker date="1512772876149" expanded="true" signature="1429:2062" ph=" -&gt;    let newEpisode = { Id = ev.Id ..." />
-            <marker date="1512772876149" expanded="true" signature="2140:2190" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="2214:2415" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="2233:2415" ph=" ..." />
-            <marker date="1512772876149" expanded="true" signature="2474:2681" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="2486:2680" ph=" Id = subscription.Id ..." />
-            <marker date="1512772876149" expanded="true" signature="2714:2870" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="2902:2962" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="2997:3285" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="3009:3284" ph="StreamVersion 0, SubscriptionAdded { Id = System.Guid.NewGuid() ..." />
-            <marker date="1512772876149" expanded="true" signature="3331:3512" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="3408:3512" ph=" ..." />
-            <marker date="1512772876149" expanded="true" signature="3584:4352" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="3655:3824" ph=" = match List.length state.Episodes with ..." />
-            <marker date="1512772876149" expanded="true" signature="3835:4352" ph=" ((version, EpisodeAdded { Id = lastEpisodeId + 1 ..." />
-            <marker date="1512772876149" expanded="true" signature="4382:4548" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="4600:4690" ph=" = ..." />
-            <marker date="1512772876149" expanded="true" signature="4718:4800" ph=" = ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Castos.Api/SubscriptionCompositions.fs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <marker date="1512772876146" expanded="false" signature="23:178" ph="..." />
-            <marker date="1512772876146" expanded="true" signature="211:5609" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="352:414" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="463:535" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="578:852" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="600:852" ph=" -&gt; ..." />
-            <marker date="1512772876146" expanded="true" signature="622:851" ph=" ..." />
-            <marker date="1512772876146" expanded="true" signature="681:838" ph="return! match result with ..." />
-            <marker date="1512772876146" expanded="true" signature="899:1227" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="921:1227" ph=" -&gt; ..." />
-            <marker date="1512772876146" expanded="true" signature="943:1226" ph=" ..." />
-            <marker date="1512772876146" expanded="true" signature="1056:1213" ph="return! match result with ..." />
-            <marker date="1512772876146" expanded="true" signature="1295:1449" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="1494:1666" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="1577:1666" ph=" ..." />
-            <marker date="1512772876146" expanded="true" signature="1728:2082" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="1807:1982" ph=" = subscriptionEvents eventStore subscriptionId ..." />
-            <marker date="1512772876146" expanded="true" signature="2008:2082" ph=" ..." />
-            <marker date="1512772876146" expanded="true" signature="2134:2305" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="2358:2631" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="2379:2523" ph=" = subscriptionEvents eventStore id ..." />
-            <marker date="1512772876146" expanded="true" signature="2549:2631" ph=" ..." />
-            <marker date="1512772876146" expanded="true" signature="2679:2854" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="2762:2854" ph=" ..." />
-            <marker date="1512772876146" expanded="true" signature="2904:3090" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="2986:3090" ph=" ..." />
-            <marker date="1512772876146" expanded="true" signature="3157:3351" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="3240:3351" ph=" ..." />
-            <marker date="1512772876146" expanded="true" signature="3411:3589" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="3502:3589" ph=" ..." />
-            <marker date="1512772876146" expanded="true" signature="3670:3932" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="3773:3932" ph=" ..." />
-            <marker date="1512772876146" expanded="true" signature="3803:3901" ph=" -&gt; (getEpisodes events) ..." />
-            <marker date="1512772876146" expanded="true" signature="3971:5609" ph=" = ..." />
-            <marker date="1512772876146" expanded="true" signature="3988:5609" ph=" [ path &quot;/api/subscriptions&quot; ..." />
-            <marker date="1512772876146" expanded="true" signature="4047:4248" ph=" [ GET &gt;=&gt; warbler ( fun _ -&gt; processAsync getSubscriptionsComposition eventStore) ..." />
-            <marker date="1512772876146" expanded="true" signature="4951:5241" ph=" -&gt; choose [ GET &gt;=&gt; warbler (fun _ -&gt; processAsync (fun eventStore -&gt; getEpisodesOfSubscriptionComposition eventStore id) eventStore) ..." />
-            <marker date="1512772876146" expanded="true" signature="5321:5608" ph=" -&gt; choose [ GET &gt;=&gt; warbler ( fun _ -&gt; processAsync (fun eventStore -&gt; getSubscriptionComposition eventStore id) eventStore) ..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Castos.Api/Smapi.fs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3438">
-          <caret line="196" column="0" lean-forward="false" selection-start-line="196" selection-start-column="0" selection-end-line="197" selection-end-column="0" />
-          <folding>
-            <marker date="1513198576080" expanded="false" signature="23:72" ph="..." />
-            <marker date="1513198576080" expanded="false" signature="79:126" ph="..." />
-            <marker date="1513198576080" expanded="false" signature="133:207" ph="..." />
-            <marker date="1513198576080" expanded="true" signature="8967:9035" ph=" -&gt; match lastPlayEpisodeStopped events with ..." />
-            <marker date="1513198576080" expanded="true" signature="8967:9070" ph=" = match eventstore.GetEvents (StreamId id) with ..." />
-            <marker date="1513198576080" expanded="true" signature="8967:9165" ph=" = ..." />
-            <marker date="1513198576080" expanded="true" signature="9197:9426" ph=" = ..." />
-            <marker date="1513198576080" expanded="true" signature="9218:9390" ph=" = { AutoRefreshEnabled = false ..." />
-            <marker date="1513198576080" expanded="true" signature="9480:10315" ph=" = ..." />
-            <marker date="1513198576080" expanded="true" signature="9659:10088" ph=" = match id with ..." />
-            <marker date="1513198576080" expanded="true" signature="9738:10008" ph=" -&gt; PlaySecondsReported { Id = episodeId ..." />
-            <marker date="1513198576080" expanded="true" signature="10109:10258" ph=" = match eventstore.GetEvents (StreamId id) with ..." />
-            <marker date="1513198576080" expanded="true" signature="10353:10432" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="0:4203" ph="open System.Net ..." />
+            <marker date="1511470578996" expanded="false" signature="44:224" ph="..." />
+            <marker date="1511470578996" expanded="false" signature="231:292" ph="..." />
+            <marker date="1511470578996" expanded="false" signature="310:328" ph="..." />
+            <marker date="1511470578996" expanded="true" signature="535:1444" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="551:718" ph=" = match &quot;SOAPAction&quot; |&gt; c.request.header with ..." />
+            <marker date="1511470578996" expanded="true" signature="740:1444" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="1470:2009" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="1489:2009" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="1826:1913" ph=" -&gt; ..." />
+            <marker date="1511470578996" expanded="true" signature="2025:2078" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2101:2132" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2159:2420" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2177:2420" ph=" -&gt; ..." />
+            <marker date="1511470578996" expanded="true" signature="2195:2419" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="2250:2410" ph="return! match result with ..." />
+            <marker date="1511470578996" expanded="true" signature="2437:2532" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2560:4202" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2623:3976" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="2705:3445" ph=" = async { ..." />
+            <marker date="1511470578996" expanded="true" signature="3120:3415" ph=" ..." />
+            <marker date="1511470578996" expanded="true" signature="3147:3393" ph=" -&gt; ..." />
+            <marker date="1511470578996" expanded="true" signature="3228:3367" ph=" -&gt; logger.debug (eventX &quot;Send response {form}&quot; ..." />
+            <marker date="1511470578996" expanded="true" signature="3467:3604" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="3620:3862" ph=" = ..." />
+            <marker date="1511470578996" expanded="true" signature="3636:3861" ph=" defaultConfig with ..." />
+            <marker date="1511470578996" expanded="true" signature="3992:4028" ph=" = ..." />
           </folding>
         </state>
       </provider>

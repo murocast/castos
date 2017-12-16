@@ -1,7 +1,7 @@
 ﻿FSharp.Core
 FSharp.Data
 Suave
-Fable.JsonConverter
+Newtonsoft.Json.FSharp
 FSharp.Compiler.Tools
 
 TagLib.Portable
