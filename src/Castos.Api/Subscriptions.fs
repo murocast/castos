@@ -96,7 +96,9 @@ module SubscriptionSource =
     let getSubscriptions events =
         events
         |> List.groupBy subscriptionId
-        |> List.map ((fun ev -> evolve initialSubscriptionState (snd ev)) >> subscriptionRendition)
+        |> List.map ((fun ev -> evolve initialSubscriptionState (snd ev)))
+        |> List.filter (fun s  -> s.Active)
+        |> List.map subscriptionRendition
 
     let getSubscription events =
         events
