@@ -73,8 +73,9 @@ NUGET
       System.Threading.Thread (>= 4.0) - restriction: && (< net45) (>= netstandard1.6)
       System.Threading.ThreadPool (>= 4.0.10) - restriction: && (< net45) (>= netstandard1.6)
       System.Threading.Timer (>= 4.0.1) - restriction: && (< net45) (>= netstandard1.6)
-    FSharp.Data (2.3.3)
-      Zlib.Portable (>= 1.11) - restriction: || (&& (< net40) (>= portable-net45+win8)) (&& (< net40) (>= portable-net45+win8+sl5) (< portable-net45+win8+wp8+wpa81)) (&& (< net40) (< portable-net45+win8+sl5) (>= portable-net45+win8+wp8+wpa81))
+    FSharp.Data (2.4.3)
+      FSharp.Core (>= 4.0.0.1) - restriction: && (< net40) (< portable-net45+win8+wp8+wpa81)
+      Zlib.Portable (>= 1.11) - restriction: || (&& (< net40) (>= portable-net45+win8)) (&& (< net40) (< portable-net45+win8) (>= portable-net45+win8+wp8+wpa81))
     Libuv (1.9.1) - restriction: >= netcoreapp1.1
       Microsoft.NETCore.Platforms (>= 1.0.1) - restriction: >= netstandard1.0
     Microsoft.CodeAnalysis.Analyzers (1.1) - restriction: || (>= net46) (>= netcoreapp1.1)
@@ -1195,7 +1196,7 @@ NUGET
     Topshelf (4.0.3)
     Topshelf.FSharp (3.0)
       Topshelf (>= 4.0.2)
-    Zlib.Portable (1.11) - restriction: || (&& (< net40) (>= portable-net45+win8)) (&& (< net40) (>= portable-net45+win8+sl5) (< portable-net45+win8+wp8+wpa81)) (&& (< net40) (< portable-net45+win8+sl5) (>= portable-net45+win8+wp8+wpa81))
+    Zlib.Portable (1.11) - restriction: || (&& (< net40) (>= portable-net45+win8)) (&& (< net40) (< portable-net45+win8) (>= portable-net45+win8+wp8+wpa81))
 GITHUB
   remote: fsprojects/Chessie
     src/Chessie/ErrorHandling.fs (f0237b5d23da6dbc33d8aab59c8be947f6878dfb)
