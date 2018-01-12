@@ -42,7 +42,7 @@ NUGET
       FSharp.Core (>= 4.1.18) - restriction: || (>= net461) (>= netstandard1.6)
       NETStandard.Library (>= 1.6.1) - restriction: && (< net461) (>= netstandard1.6) (< netstandard2.0)
       System.ValueTuple (>= 4.4) - restriction: || (>= net461) (&& (>= netstandard1.6) (< netstandard2.0))
-    FAKE (4.58.6)
+    FAKE (4.64.3)
     FsCheck (2.10.6) - restriction: || (>= net461) (>= netstandard1.6)
       FSharp.Core (>= 4.0.0.1) - restriction: || (>= net452) (&& (< netstandard1.6) (>= portable-net45+win8)) (&& (< portable-net45+win8) (>= portable-net45+win8+wp8)) (&& (< portable-net45+win8+wp8) (>= portable-net45+win8+wp8+wpa81))
       FSharp.Core (>= 4.2.3) - restriction: && (< net452) (>= netstandard1.6)
