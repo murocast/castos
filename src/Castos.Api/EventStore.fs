@@ -125,18 +125,19 @@ module EventStore =
         let decontructStreamId = function | StreamId s -> s
 
         let createStore() = async {
-            let path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
-            let nodeBuilder = EmbeddedVNodeBuilder
-                                                .AsSingleNode()
-                                                .RunProjections(EventStore.Common.Options.ProjectionType.All)
-                                                .StartStandardProjections()
-                                                .OnDefaultEndpoints()
-                                                .RunOnDisk(Path.Combine(path, "castos", "data"))
+            // let path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
+            // let nodeBuilder = EmbeddedVNodeBuilder
+            //                                     .AsSingleNode()
+            //                                     .RunProjections(EventStore.Common.Options.ProjectionType.All)
+            //                                     .StartStandardProjections()
+            //                                     .OnDefaultEndpoints()
+            //                                     .RunOnDisk(Path.Combine(path, "castos", "data"))
 
-            let node = nodeBuilder.Build();
-            node.Start()
+            // let node = nodeBuilder.Build();
+            // node.Start()
 
-            use store = EmbeddedEventStoreConnection.Create(node)
+            let connectionString = "ConnectTo=tcp://admin:changeit@localhost:1113"
+            let store = EventStoreConnection.Create(connectionString)
             do! store.ConnectAsync()
 
             return store
