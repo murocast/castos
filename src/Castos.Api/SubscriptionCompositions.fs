@@ -16,6 +16,12 @@ module SubscriptionCompositions =
     let private allSubscriptionsEvents eventStore =
         eventStore.GetEvents (StreamId("$ce-subscription"))
 
+    let private allSubscriptionAddedEvents eventStore =
+        eventStore.GetEvents (StreamId("latest-subscriptions"))
+
+    let private allEpisodeAddedEvents eventStore =
+        eventStore.GetEvents (StreamId("latest-subscriptions"))
+
     let getSubscriptionStreamId id =
         (StreamId(sprintf "subscription-%s" id))
 
