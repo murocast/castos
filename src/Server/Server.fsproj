@@ -16,6 +16,7 @@
     <Compile Include="Subscriptions.fs" />
     <Compile Include="SubscriptionCompositions.fs" />
     <Compile Include="Smapi.fs" />
+    <Compile Include="SmapiComposition.fs" />
     <Compile Include="Server.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
