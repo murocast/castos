@@ -1,16 +1,15 @@
 namespace Castos
 
-
 open Giraffe
 open Saturn
-open FSharp.Control.Tasks.V2
 
 open Castos
-open Castos.ErrorHandling
+open Castos.Http
 open SubscriptionSource
-open Microsoft.AspNetCore.Http
 
 module SubscriptionCompositions =
+    open Castos
+
     let private allSubscriptionsEvents eventStore =
         eventStore.GetEvents (StreamId("$ce-subscription"))
 
@@ -25,28 +24,6 @@ module SubscriptionCompositions =
 
     let subscriptionEvents eventStore id =
         eventStore.GetEvents (getSubscriptionStreamId id)
-    let getJson<'a> (ctx: HttpContext) =
-        ctx.BindJsonAsync<'a>()
-
-    let private processAsync f eventStore =
-        fun next ctx ->
-            task {
-                let result = f eventStore
-                return! match result with
-                        | Success (a) -> Successful.OK a next ctx
-                        | Failure (_) -> RequestErrors.BAD_REQUEST "Error" next ctx
-            }
-
-    let private processFormAsync<'a> (f:EventStore<CastosEventData,Error> -> 'a -> Result<string, Error>) eventStore =
-        let getJson = getJson<'a>
-        fun next ctx ->
-            task {
-                let! data = getJson ctx
-                let result = f eventStore data
-                return! match result with
-                        | Success (a) -> Successful.OK a next ctx
-                        | Failure (_) -> RequestErrors.BAD_REQUEST "Error" next ctx
-            }
 
     let private storeSubscriptionEvent eventStore (version, event) =
         let streamId event = StreamId (sprintf "subscription-%A" (subscriptionId event))
@@ -115,7 +92,7 @@ module SubscriptionCompositions =
 
     let subscriptionsRouter eventStore = router {
         get "/subscriptions"  (processAsync getSubscriptionsComposition eventStore)
-        post "/subscriptions"  (processFormAsync<AddSubscriptionRendition> addSubscriptionComposition eventStore)
+        post "/subscriptions"  (processDataAsync addSubscriptionComposition eventStore)
 
         get "/subscriptions/categories" (processAsync getCategoriesComposition eventStore)
         getf "/subscriptions/categories/%s"  (fun category -> processAsync (fun eventStore -> getSubscriptionsOfCategoryComposition eventStore category) eventStore)
@@ -123,5 +100,5 @@ module SubscriptionCompositions =
         getf "/subscriptions/%s/episodes/%i" (fun (subscriptionId, episodeId) -> text (sprintf "Metadata of Episode %i of subscription %A" episodeId subscriptionId))
 
         getf "/subscriptions/%s/episodes" (fun id -> processAsync (fun eventStore -> getEpisodesOfSubscriptionComposition eventStore id) eventStore)
-        postf "/subscriptions/%s/episodes" (fun id -> processFormAsync<AddEpisodeRendition> (fun eventStore -> addEpisodeComposition eventStore id) eventStore )
+        postf "/subscriptions/%s/episodes" (fun id -> processDataAsync (fun eventStore -> addEpisodeComposition eventStore id) eventStore )
     }

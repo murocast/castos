@@ -9,8 +9,8 @@
   <ItemGroup>
     <Compile Include="../Shared/Shared.fs" />
     <Compile Include="Json.fs" />
-    <Compile Include="Http.fs" />
     <Compile Include="ErrorHandling.fs" />
+    <Compile Include="Http.fs" />
     <Compile Include="EventStore.fs" />
     <Compile Include="Events.fs" />
     <Compile Include="Subscriptions.fs" />

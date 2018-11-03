@@ -9,7 +9,7 @@ open Castos.Smapi
 open Microsoft.AspNetCore.Http
 
 module SmapiCompositions =
-    let getSmapiMethod (c:HttpContext) =
+    let internal getSmapiMethod (c:HttpContext) =
             task{
                 let m = match c.GetRequestHeader "SOAPAction" with
                         | Error msg -> failwith msg
@@ -29,7 +29,7 @@ module SmapiCompositions =
                        | _ -> fail(sprintf "Method not implemented %s" m)
             }
 
-    let processSmapiMethod eventStore m =
+    let internal processSmapiMethod eventStore m =
         match m with
         | GetMetadata s -> processGetMetadata eventStore (GetMetadataRequest.Parse s)
         | GetMediaMetadata s -> processGetMediaMetadata eventStore (GetMediaMetadataRequest.Parse s)
@@ -43,13 +43,13 @@ module SmapiCompositions =
         | _ -> fail "blubber"
 
 
-    let smapiImp eventStore c =
+    let internal smapiImp eventStore c =
         task{
             let! result = getSmapiMethod c
             return result >>= (processSmapiMethod eventStore)
         }
 
-    let processSmapiRequest eventStore=
+    let internal processSmapiRequest eventStore=
         fun next ctx ->
             task {
                 let! result = smapiImp eventStore ctx
