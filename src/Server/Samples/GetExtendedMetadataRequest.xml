@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <getExtendedMetadata xmlns="http://www.sonos.com/Services/1.1">
+      <id>T:123456789</id>
+    </getExtendedMetadata>
+  </soap:Body>
+</soap:Envelope>

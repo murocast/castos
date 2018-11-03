@@ -1,78 +1,132 @@
-// include Fake libs
-#r "./packages/FAKE/tools/FakeLib.dll"
+#r "paket: groupref build //"
+#load "./.fake/build.fsx/intellisense.fsx"
 
-open Fake
+#if !FAKE
+#r "netstandard"
+#r "Facades/netstandard" // https://github.com/ionide/ionide-vscode-fsharp/issues/839#issuecomment-396296095
+#endif
+
 open System
-open System.IO
-open System.Diagnostics
 
-// Directories
-let buildDir  = "./build/"
-let deployDir = "./deploy/"
+open Fake.Core
+open Fake.DotNet
+open Fake.IO
 
+let serverPath = Path.getFullName "./src/Server"
+let clientPath = Path.getFullName "./src/Client"
+let deployDir = Path.getFullName "./deploy"
 
-// Filesets
-let appReferences  =
-    !! "/**/*.csproj"
-      ++ "/**/*.fsproj"
+let platformTool tool winTool =
+    let tool = if Environment.isUnix then tool else winTool
+    match ProcessUtils.tryFindFileOnPath tool with
+    | Some t -> t
+    | _ ->
+        let errorMsg =
+            tool + " was not found in path. " +
+            "Please install it and make sure it's available from your path. " +
+            "See https://safe-stack.github.io/docs/quickstart/#install-pre-requisites for more info"
+        failwith errorMsg
 
-// version info
-let version = "0.1"  // or retrieve from CI server
+let nodeTool = platformTool "node" "node.exe"
+let yarnTool = platformTool "yarn" "yarn.cmd"
 
-let build () = 
-    // compile all projects below src/app/
-    MSBuildDebug buildDir "Build" appReferences
-        |> Log "AppBuild-Output: "
+let runTool cmd args workingDir =
+    let arguments = args |> String.split ' ' |> Arguments.OfArgs
+    Command.RawCommand (cmd, arguments)
+    |> CreateProcess.fromCommand
+    |> CreateProcess.withWorkingDirectory workingDir
+    |> CreateProcess.ensureExitCode
+    |> Proc.run
+    |> ignore
 
-let rec runWebsite() =
-    let codeFolder = FullName "src"
-    use watcher = new FileSystemWatcher(codeFolder, "*.fs")
-    watcher.EnableRaisingEvents <- true
-    watcher.IncludeSubdirectories <- true
-    watcher.Changed.Add(handleWatcherEvents)
-    watcher.Created.Add(handleWatcherEvents)
-    watcher.Renamed.Add(handleWatcherEvents)
-    
-    build()
+let runDotNet cmd workingDir =
+    let result =
+        DotNet.exec (DotNet.Options.withWorkingDirectory workingDir) cmd ""
+    if result.ExitCode <> 0 then failwithf "'dotnet %s' failed in %s" cmd workingDir
 
-    let app = Path.Combine(buildDir, "Castos.Api.exe")
-    let ok = 
-        execProcess (fun info -> 
-            info.FileName <- app
-            info.Arguments <- "") TimeSpan.MaxValue
-    if not ok then tracefn "Website shut down."
-    watcher.Dispose()
+let openBrowser url =
+    //https://github.com/dotnet/corefx/issues/10361
+    Command.ShellCommand url
+    |> CreateProcess.fromCommand
+    |> CreateProcess.ensureExitCodeWithMessage "opening browser failed"
+    |> Proc.run
+    |> ignore
 
-and handleWatcherEvents (e:IO.FileSystemEventArgs) =
-    tracefn "Rebuilding website...."
-
-    let runningWebsites = 
-        Process.GetProcessesByName("Castos.Api")
-        |> Seq.iter (fun p -> p.Kill())
-
-    runWebsite()
-
-// Targets
-Target "Clean" (fun _ ->
-    CleanDirs [buildDir; deployDir]
+Target.create "Clean" (fun _ ->
+    Shell.cleanDirs [deployDir]
 )
 
-Target "Build" (fun _ ->
-    build()
+Target.create "InstallClient" (fun _ ->
+    printfn "Node version:"
+    runTool nodeTool "--version" __SOURCE_DIRECTORY__
+    printfn "Yarn version:"
+    runTool yarnTool "--version" __SOURCE_DIRECTORY__
+    runTool yarnTool "install --frozen-lockfile" __SOURCE_DIRECTORY__
+    runDotNet "restore" clientPath
 )
 
-Target "Watch" (fun _ ->
-    async {
-        Threading.Thread.Sleep(3000)
-        Process.Start(sprintf "http://localhost:%d" 8083) |> ignore }
-    |> Async.Start
-
-    runWebsite()
+Target.create "RestoreServer" (fun _ ->
+    runDotNet "restore" serverPath
 )
+
+Target.create "Build" (fun _ ->
+    runDotNet "build" serverPath
+    runDotNet "fable webpack-cli -- --config src/Client/webpack.config.js -p" clientPath
+)
+
+Target.create "Run" (fun _ ->
+    let server = async {
+        runDotNet "watch run" serverPath
+    }
+    let client = async {
+        runDotNet "fable webpack-dev-server -- --config src/Client/webpack.config.js" clientPath
+    }
+    let browser = async {
+        do! Async.Sleep 5000
+        openBrowser "http://localhost:8080"
+    }
+
+    [ server; client; browser ]
+    |> Async.Parallel
+    |> Async.RunSynchronously
+    |> ignore
+)
+
+Target.create "Bundle" (fun _ ->
+    let serverDir = Path.combine deployDir "Server"
+    let clientDir = Path.combine deployDir "Client"
+    let publicDir = Path.combine clientDir "public"
+
+    let publishArgs = sprintf "publish -c Release -o \"%s\"" serverDir
+    runDotNet publishArgs serverPath
+
+    Shell.copyDir publicDir "src/Client/public" FileFilter.allFiles
+)
+
+let dockerUser = "brase"
+let dockerImageName = "castos"
+let dockerFullName = sprintf "%s/%s" dockerUser dockerImageName
+
+Target.create "Docker" (fun _ ->
+    let buildArgs = sprintf "build -t %s ." dockerFullName
+    runTool "docker" buildArgs "."
+
+    let tagArgs = sprintf "tag %s %s" dockerFullName dockerFullName
+    runTool "docker" tagArgs "."
+)
+
+
+open Fake.Core.TargetOperators
 
 "Clean"
-  ==> "Build"
-  ==> "Watch"
+    ==> "InstallClient"
+    ==> "Build"
+    ==> "Bundle"
+    ==> "Docker"
 
-// start build
-RunTargetOrDefault "Build"
+"Clean"
+    ==> "InstallClient"
+    ==> "RestoreServer"
+    ==> "Run"
+
+Target.runOrDefaultWithArguments "Build"

@@ -164,10 +164,10 @@ module Respond =
 
     let getPositionInformation id position =
         let positionInformation = getNode "positionInformation" NsSonos
-        
+
         addToNodeWithValue positionInformation "id" NsSonos id
         |> ignore
-        
+
         addToNodeWithValue positionInformation "index" NsSonos (string 0)
         |> ignore
 
@@ -175,7 +175,7 @@ module Respond =
         |> ignore
 
         positionInformation
-    
+
     let getMediaUriResponse uri id (position:int option) =
         let envelope, body = getEnvelopeWithBody()
         let response = addToNode body "getMediaURIResponse" NsSonos

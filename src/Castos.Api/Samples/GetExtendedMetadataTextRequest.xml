@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  <soap:Body>
-    <getExtendedMetadataText xmlns="http://www.sonos.com/Services/1.1">
-      <id>T:123456789</id>
-      <type>ARTIST_BIO</type>
-    </getExtendedMetadataText>
-  </soap:Body>
-</soap:Envelope>

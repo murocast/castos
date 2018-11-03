@@ -1,5 +1,4 @@
-Expecto
-Expecto.BenchmarkDotNet
-Expecto.FsCheck
-
-FSharp.Compiler.Tools
+group Server
+    Expecto
+    Expecto.BenchmarkDotNet
+    Expecto.FsCheck

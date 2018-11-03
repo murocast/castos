@@ -1,22 +1,43 @@
-redirects: on
-source https://www.nuget.org/api/v2/
-nuget FAKE
-nuget FSharp.Core ~> 4
-nuget FSharp.Data
-nuget Suave
-nuget Newtonsoft.Json.FSharp
-nuget NodaTime 1.3.4 //Newtonsoft.Json.FSharp 3.2.2 (latest) does not work with NodaTime >= 2.0
-github fsprojects/Chessie src/Chessie/ErrorHandling.fs
+group Server
+    source https://api.nuget.org/v3/index.json
+    framework: netcoreapp2.1
+    storage: none
 
-nuget Expecto
-nuget Expecto.BenchmarkDotNet
-nuget Expecto.FsCheck
+    nuget FSharp.Core
+    nuget Saturn
+    nuget Fable.JsonConverter
 
-nuget FSharp.Compiler.Tools
+    nuget FSharp.Data
 
-nuget EventStore.Client
-nuget EventStore.Client.Embedded
+    nuget System.Xml.XDocument
 
-nuget Argu
+    nuget EventStore.ClientAPI.NetCore
 
-nuget Topshelf.FSharp
+    nuget Expecto
+    nuget Expecto.BenchmarkDotNet
+    nuget Expecto.FsCheck
+
+group Client
+    source https://api.nuget.org/v3/index.json
+    framework: netstandard2.0
+    storage: none
+
+    nuget Fable.Core ~> 2
+    nuget Fable.Elmish ~> 2
+    nuget Fable.Elmish.Debugger ~> 2
+    nuget Fable.Elmish.React ~> 2
+    nuget Fable.Elmish.HMR ~> 2
+    nuget Fable.React ~> 4
+    nuget Fulma ~> 1
+
+    clitool dotnet-fable ~> 2
+
+group Build
+    storage: none
+    source https://api.nuget.org/v3/index.json
+
+    nuget FSharp.Core 4.3.4 // https://github.com/fsharp/FAKE/issues/2001
+    nuget Fake.Core.Target
+    nuget Fake.DotNet.Cli
+    nuget Fake.IO.FileSystem
+

@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <getLastUpdate xmlns="http://www.sonos.com/Services/1.1">
+    </getLastUpdate>
+  </soap:Body>
+</soap:Envelope>

@@ -1,4 +1,4 @@
-﻿namespace Smapi
+namespace Smapi
 
 open Smapi.Respond
 
