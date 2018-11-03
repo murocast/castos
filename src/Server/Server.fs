@@ -11,6 +11,7 @@ open Shared
 open Giraffe.Serialization
 open Castos.EventStore
 open Castos
+open Castos.Http
 open Castos.SubscriptionCompositions
 open Castos.Smapi
 open Microsoft.AspNetCore.Http
@@ -19,14 +20,6 @@ let publicPath = Path.GetFullPath "../Client/public"
 let port = 80us
 
 let eventStore = createGetEventStoreEventStore<CastosEventData, Error>(VersionConflict "Version conflict")
-
-let rawFormString (x:HttpContext) =
-    task {
-        let stream = x.Request.Body
-        use reader = new StreamReader(stream)
-        let! contents = reader.ReadToEndAsync()
-        return contents
-    }
 
 let getSmapiMethod (c:HttpContext) =
         task{
