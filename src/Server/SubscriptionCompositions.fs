@@ -91,14 +91,14 @@ module SubscriptionCompositions =
         | _ -> failwith("bla")
 
     let subscriptionsRouter eventStore = router {
-        get "/subscriptions"  (processAsync getSubscriptionsComposition eventStore)
-        post "/subscriptions"  (processDataAsync addSubscriptionComposition eventStore)
+        get ""  (processAsync getSubscriptionsComposition eventStore)
+        post ""  (processDataAsync addSubscriptionComposition eventStore)
 
-        get "/subscriptions/categories" (processAsync getCategoriesComposition eventStore)
-        getf "/subscriptions/categories/%s"  (fun category -> processAsync (fun eventStore -> getSubscriptionsOfCategoryComposition eventStore category) eventStore)
+        get "/categories" (processAsync getCategoriesComposition eventStore)
+        getf "/categories/%s"  (fun category -> processAsync (fun eventStore -> getSubscriptionsOfCategoryComposition eventStore category) eventStore)
 
-        getf "/subscriptions/%s/episodes/%i" (fun (subscriptionId, episodeId) -> text (sprintf "Metadata of Episode %i of subscription %A" episodeId subscriptionId))
+        getf "/%s/episodes/%i" (fun (subscriptionId, episodeId) -> text (sprintf "Metadata of Episode %i of subscription %A" episodeId subscriptionId))
 
-        getf "/subscriptions/%s/episodes" (fun id -> processAsync (fun eventStore -> getEpisodesOfSubscriptionComposition eventStore id) eventStore)
-        postf "/subscriptions/%s/episodes" (fun id -> processDataAsync (fun eventStore -> addEpisodeComposition eventStore id) eventStore )
+        getf "/%s/episodes" (fun id -> processAsync (fun eventStore -> getEpisodesOfSubscriptionComposition eventStore id) eventStore)
+        postf "/%s/episodes" (fun id -> processDataAsync (fun eventStore -> addEpisodeComposition eventStore id) eventStore )
     }

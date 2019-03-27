@@ -7,6 +7,10 @@ type CastosEventData =
     | SubscriptionDeleted of SubscriptionDeleted
     | EpisodeAdded of EpisodeAdded
 
+    //Stream for all users
+    | UserAdded of UserAdded
+    | PasswordChanged
+
     //Stream per user
     | Subscribed
     | SubscriptionCanceled
@@ -53,6 +57,17 @@ and SubscriptionCanceled = {
 }
 and SubscriptionId = System.Guid
 and EpisodeId = int
+and UserAdded = {
+    Id : UserId
+    Email: string
+    Password: string
+}
+and PasswordChanged = {
+    Id: UserId
+    Password: string
+}
+and UserId = | UserId of System.Guid
+
 
 type Error =
     | NotImplemented of string

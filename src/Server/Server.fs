@@ -7,7 +7,6 @@ open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.IdentityModel.Tokens
 open Saturn
-open Saturn.CSRF.View
 open System
 open System.IdentityModel.Tokens.Jwt
 open System.IO
@@ -17,6 +16,7 @@ open Castos.EventStore
 open Castos
 open Castos.SmapiCompositions
 open Castos.SubscriptionCompositions
+open Castos.Http
 
 let secret = "spadR2dre#u-ruBrE@TepA&*Uf@U"
 let issuer = "saturnframework.io"
@@ -39,6 +39,19 @@ type TokenResult =
         Token : string
     }
 
+type User = {
+    Id : UserId
+    Email: string
+    Password: string
+    //TODO: Hash and salt
+}
+
+type AddUserRendition =
+    {
+        EMail: string
+        Password: string
+    }
+
 let generateToken email =
     let claims = [|
         Claim(JwtRegisteredClaimNames.Sub, email);
@@ -57,10 +70,49 @@ let handlePostToken =
 
             return! json {Token = token} next ctx
 }
+
+let private storeUsersEvent eventStore (version, event) =
+    let streamId event = StreamId (sprintf "users")
+    eventStore.SaveEvents (streamId event) version [event]
+
+let apply state event =
+    match event with
+    | UserAdded data -> { Id = data.Id
+                          Email = data.Email
+                          Password = data.Password } :: state
+    | _ -> failwith "unkown event"
+
+let evolve state events =
+    events
+    |> List.fold apply state
+let getUsersComposition eventstore =
+    let result = eventStore.GetEvents (StreamId("users"))
+    match result with
+    | Success (_, events) -> ok (evolve [] events)
+    | _ -> failwith "bla"
+
+
+let addUserComposition eventStore rendition =
+    let result = (StreamVersion 0, UserAdded {
+                    Id = Guid.NewGuid() |> UserId
+                    Email = rendition.Email
+                    Password = rendition.Password
+                    //TODO: Hash and Salt
+                 }) |> storeUsersEvent eventStore
+    match result with
+    | Success _ -> ok ("added user")
+    | Failure m -> fail m
+
+let usersRouter eventStore = router {
+    get "" (processAsync getUsersComposition eventStore)
+    post "" (processDataAsync addUserComposition eventStore)
+}
+
 let webApp = router {
     post "/token" handlePostToken
 
-    forward "/api" (subscriptionsRouter eventStore)
+    forward "/api/users" (usersRouter eventStore)
+    forward "/api/subscriptions" (subscriptionsRouter eventStore)
     forward "/smapi" (smapiRouter eventStore)
 }
 
