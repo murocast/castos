@@ -14,3 +14,5 @@ deploy
 Castos.v3.ncrunchsolution.user
 *.sln.user
 *.fsproj.user
+
+.ionide
