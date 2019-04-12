@@ -17,6 +17,7 @@ open Castos
 open Castos.SmapiCompositions
 open Castos.SubscriptionCompositions
 open Castos.Http
+open FSharp.Data
 
 let secret = "spadR2dre#u-ruBrE@TepA&*Uf@U"
 let issuer = "saturnframework.io"
@@ -59,16 +60,18 @@ let generateToken email =
     claims
     |> Auth.generateJWT (secret, SecurityAlgorithms.HmacSha256) issuer (DateTime.UtcNow.AddHours(1.0))
 
-let handlePostToken =
+let handlePostToken (getUser:string -> Result<User option, Error>) =
     fun (next : HttpFunc) (ctx : HttpContext) ->
         task {
             let! model = ctx.BindJsonAsync<LoginViewModel>()
 
-            // authenticate user
+            let user = getUser model.Email
+            let jsonResult = match user with
+                             | Success (Some u) when u.Password = model.Password //TODO: Hash with salt
+                                 -> { Token = generateToken model.Email}
+                             | _ -> { Token = "" }
 
-            let token = generateToken model.Email
-
-            return! json {Token = token} next ctx
+            return! json jsonResult next ctx
 }
 
 let private storeUsersEvent eventStore (version, event) =
@@ -85,12 +88,20 @@ let apply state event =
 let evolve state events =
     events
     |> List.fold apply state
-let getUsersComposition eventstore =
+
+let getUsersComposition eventStore =
     let result = eventStore.GetEvents (StreamId("users"))
     match result with
     | Success (_, events) -> ok (evolve [] events)
-    | _ -> failwith "bla"
+    | Failure m -> fail m
 
+let getUser users email =
+    users |> List.tryFind (fun u -> u.Email = email)
+
+let getUserComposition eventStore email =
+    match getUsersComposition eventStore with
+    | Success users -> Success (getUser users email)
+    | Failure m -> fail m
 
 let addUserComposition eventStore rendition =
     let result = (StreamVersion 0, UserAdded {
@@ -109,7 +120,7 @@ let usersRouter eventStore = router {
 }
 
 let webApp = router {
-    post "/token" handlePostToken
+    post "/token" (handlePostToken (getUserComposition eventStore))
 
     forward "/api/users" (usersRouter eventStore)
     forward "/api/subscriptions" (subscriptionsRouter eventStore)

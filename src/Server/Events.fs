@@ -73,3 +73,4 @@ type Error =
     | NotImplemented of string
     | VersionConflict of string
     | NotFound of string
+    | GenericError of string
