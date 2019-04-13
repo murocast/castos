@@ -66,12 +66,13 @@ let handlePostToken (getUser:string -> Result<User option, Error>) =
             let! model = ctx.BindJsonAsync<LoginViewModel>()
 
             let user = getUser model.Email
-            let jsonResult = match user with
+            let result = match user with
                              | Success (Some u) when u.Password = model.Password //TODO: Hash with salt
-                                 -> { Token = generateToken model.Email}
-                             | _ -> { Token = "" }
-
-            return! json jsonResult next ctx
+                                 -> json { Token = generateToken model.Email} next ctx
+                             | _ ->
+                                    ctx.Response.StatusCode <- HttpStatusCodes.Unauthorized
+                                    json "" next ctx
+            return! result
 }
 
 let private storeUsersEvent eventStore (version, event) =
