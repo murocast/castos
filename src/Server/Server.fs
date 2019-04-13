@@ -4,6 +4,7 @@ open FSharp.Control.Tasks.V2.ContextInsensitive
 open Giraffe
 open Giraffe.Serialization
 open Microsoft.AspNetCore.Http
+open Microsoft.AspNetCore.Authentication.JwtBearer
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.IdentityModel.Tokens
 open Saturn
@@ -19,7 +20,7 @@ open Castos.SubscriptionCompositions
 open Castos.Http
 open FSharp.Data
 
-let secret = "spadR2dre#u-ruBrE@TepA&*Uf@U"
+let secret = "spadR2dre#u-ruBrE@TepA&*Uf@U" //TODO: not hardcoded
 let issuer = "saturnframework.io"
 
 let publicPath = Path.GetFullPath "../Client/public"
@@ -115,12 +116,19 @@ let addUserComposition eventStore rendition =
     | Success _ -> ok ("added user")
     | Failure m -> fail m
 
+let authorize =
+    requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
+
+
 let usersRouter eventStore = router {
-    get "" (processAsync getUsersComposition eventStore)
+    //pipe_through authorize  //<-- for all methods of router
+    get "" (authorize >=>  (processAsync getUsersComposition eventStore))
     post "" (processDataAsync addUserComposition eventStore)
 }
 
 let webApp = router {
+
+
     post "/token" (handlePostToken (getUserComposition eventStore))
 
     forward "/api/users" (usersRouter eventStore)
