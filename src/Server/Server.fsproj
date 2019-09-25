@@ -17,6 +17,8 @@
     <Compile Include="FeedCompositions.fs" />
     <Compile Include="Smapi.fs" />
     <Compile Include="SmapiComposition.fs" />
+    <Compile Include="Users.fs" />
+    <Compile Include="UserCompositions.fs" />
     <Compile Include="Server.fs" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
