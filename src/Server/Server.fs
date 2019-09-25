@@ -16,7 +16,7 @@ open System.Security.Claims
 open Castos.EventStore
 open Castos
 open Castos.SmapiCompositions
-open Castos.SubscriptionCompositions
+open Castos.FeedCompositions
 open Castos.Http
 open FSharp.Data
 
@@ -144,7 +144,7 @@ let webApp = router {
     post "/token" (handlePostToken (getUserComposition eventStore))
 
     forward "/api/users" (usersRouter eventStore)
-    forward "/api/subscriptions" (subscriptionsRouter eventStore)
+    forward "/api/feeds" (feedsRouter eventStore)
     forward "/smapi" (smapiRouter eventStore)
 }
 

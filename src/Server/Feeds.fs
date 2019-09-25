@@ -3,7 +3,7 @@ namespace Castos
 type Episode = {
     Id: EpisodeId
     Guid: string
-    SubscriptionId: SubscriptionId
+    FeedId: FeedId
     Url: string
     MediaUrl: string
     Title: string
@@ -11,8 +11,8 @@ type Episode = {
     ReleaseDate: System.DateTime
 }
 
-type Subscription = {
-    Id: SubscriptionId
+type Feed = {
+    Id: FeedId
     Url: string
     Name: string
     Category: string
@@ -20,15 +20,15 @@ type Subscription = {
     Episodes: Episode list
 }
 
-type SubscriptionListItemRendition = {
-    Id: SubscriptionId
+type FeedListItemRendition = {
+    Id: FeedId
     Url: string
     Name: string
     Category: string
     EpidsodesAmount: int
 }
 
-type AddSubscriptionRendition = {
+type AddFeedRendition = {
     Name: string
     Url: string
     Category: string
@@ -43,8 +43,8 @@ type AddEpisodeRendition = {
     Length: int
 }
 
-module SubscriptionSource =
-    let private initialSubscriptionState =
+module FeedSource =
+    let private initialFeedState =
         { Id = System.Guid.Empty
           Url = ""
           Name = ""
@@ -54,14 +54,14 @@ module SubscriptionSource =
 
     let private apply state event =
         match event with
-        | SubscriptionAdded ev -> { state with Id = ev.Id
-                                               Url = ev.Url
-                                               Name = ev.Name
-                                               Category = ev.Category
-                                               Active = true }
-        | SubscriptionDeleted _ -> { state with Active = false }
+        | FeedAdded ev -> { state with Id = ev.Id
+                                       Url = ev.Url
+                                       Name = ev.Name
+                                       Category = ev.Category
+                                       Active = true }
+        | FeedDeleted _ -> { state with Active = false }
         | EpisodeAdded ev ->    let newEpisode = { Id = ev.Id
-                                                   SubscriptionId = ev.SubscriptionId
+                                                   FeedId = ev.FeedId
                                                    Guid = ev.Guid
                                                    Url = ev.Url
                                                    MediaUrl = ev.MediaUrl
@@ -77,52 +77,52 @@ module SubscriptionSource =
         events
         |> List.fold apply state
 
-    let subscriptionId =
+    let feedId =
         function
-        | SubscriptionAdded data -> data.Id
-        | SubscriptionDeleted data -> data.Id
-        | EpisodeAdded data -> data.SubscriptionId
-        | PlaySecondsReported  data -> data.SubscriptionId
-        | PlayEpisodeStopped data -> data.SubscriptionId
+        | FeedAdded data -> data.Id
+        | FeedDeleted data -> data.Id
+        | EpisodeAdded data -> data.FeedId
+        | PlaySecondsReported  data -> data.FeedId
+        | PlayEpisodeStopped data -> data.FeedId
         | _ -> failwith("Unknown event")
 
-    let subscriptionRendition (subscription:Subscription) =
-        { Id = subscription.Id
-          Url = subscription.Url
-          Name = subscription.Name
-          Category = subscription.Category
-          EpidsodesAmount = List.length subscription.Episodes}
+    let feedRendition (feed:Feed) =
+        { Id = feed.Id
+          Url = feed.Url
+          Name = feed.Name
+          Category = feed.Category
+          EpidsodesAmount = List.length feed.Episodes}
 
-    let getSubscriptions events =
+    let getFeeds events =
         events
-        |> List.groupBy subscriptionId
-        |> List.map ((fun ev -> evolve initialSubscriptionState (snd ev)))
+        |> List.groupBy feedId
+        |> List.map ((fun ev -> evolve initialFeedState (snd ev)))
         |> List.filter (fun s  -> s.Active)
-        |> List.map subscriptionRendition
+        |> List.map feedRendition
 
-    let getSubscription events =
+    let getFeed events =
         events
-        |> evolve initialSubscriptionState
+        |> evolve initialFeedState
 
-    let addSubscription rendition =
-        (StreamVersion 0, SubscriptionAdded { Id = System.Guid.NewGuid()
-                                              Name = rendition.Name
-                                              Category = rendition.Category
-                                              Url = rendition.Url })
+    let addFeed rendition =
+        (StreamVersion 0, FeedAdded { Id = System.Guid.NewGuid()
+                                      Name = rendition.Name
+                                      Category = rendition.Category
+                                      Url = rendition.Url })
 
-    let deleteSubscription (version, events) =
-        let state = getSubscription events
+    let deleteFeed (version, events) =
+        let state = getFeed events
         match state.Active with
-        | true -> ok (version, SubscriptionDeleted { Id = state.Id })
+        | true -> ok (version, FeedDeleted { Id = state.Id })
         | _ -> fail (NotFound "")
 
-    let addEpisode (subscriptionId:string) rendition (version, events) =
-        let state = getSubscription events
+    let addEpisode (feedId:string) rendition (version, events) =
+        let state = getFeed events
         let lastEpisodeId = match List.length state.Episodes with
                             | 0 -> 0
                             | _ -> (List.maxBy (fun (e:Episode) -> e.Id) state.Episodes).Id
         ok ((version, EpisodeAdded { Id = lastEpisodeId + 1
-                                     SubscriptionId = SubscriptionId subscriptionId
+                                     FeedId = FeedId feedId
                                      Guid = rendition.Guid
                                      Url = rendition.Url
                                      MediaUrl = rendition.MediaUrl
@@ -131,15 +131,15 @@ module SubscriptionSource =
                                      ReleaseDate = rendition.ReleaseDate }))
 
     let getCategories events =
-        getSubscriptions events
+        getFeeds events
         |> List.map (fun s -> s.Category)
         |> List.distinct
         |> List.filter (System.String.IsNullOrWhiteSpace >> not)
 
-    let getSubscriptionsOfCategory category events =
-        getSubscriptions events
+    let getFeedsOfCategory category events =
+        getFeeds events
         |> List.filter (fun s -> s.Category = category)
 
     let getEpisodes events =
-        let subscription = getSubscription events
-        subscription.Episodes
+        let feed = getFeed events
+        feed.Episodes

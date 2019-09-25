@@ -7,7 +7,7 @@ open Smapi.GetLastUpdate
 open FSharp.Data
 open System.Text.RegularExpressions
 
-open SubscriptionCompositions
+open FeedCompositions
 
 type SmapiMethod =
     | GetMetadata of string
@@ -48,9 +48,9 @@ module Smapi =
         let m = Regex.Match(str, categoryPattern)
         if (m.Success) then Some m.Groups.[1].Value else None
 
-    let (|Subscription|_|) str =
-        let subscriptionPattern = "__subscription_(.*)"
-        let m = Regex.Match(str, subscriptionPattern)
+    let (|Feed|_|) str =
+        let feedPattern = "__feed_(.*)"
+        let m = Regex.Match(str, feedPattern)
         if (m.Success) then
           Some (System.Guid.Parse(m.Groups.[1].Value))
         else
@@ -88,11 +88,11 @@ module Smapi =
         | _ -> failwith("bla")
 
     let getPodcastsOfCategory eventStore c =
-        let result = getSubscriptionsOfCategoryComposition eventStore c
+        let result = getFeedsOfCategoryComposition eventStore c
         match result with
-        | Success (subscriptions) -> subscriptions
+        | Success (feeds) -> feeds
                                      |> List.sortBy (fun s -> s.Name)
-                                     |> List.map (fun p -> MediaCollection { Id = "__subscription_" + string p.Id
+                                     |> List.map (fun p -> MediaCollection { Id = "__feed_" + string p.Id
                                                                              ItemType = Collection
                                                                              Title = p.Name
                                                                              CanPlay = false })
@@ -104,12 +104,12 @@ module Smapi =
         |> List.ofSeq
         |> List.pick (fun p -> if (p.Name = pname) then Some p else None)
 
-    let getEpisodesOfSubscription eventStore id =
-        let result = getEpisodesOfSubscriptionComposition eventStore (string id)
+    let getEpisodesOfFeed eventStore id =
+        let result = getEpisodesOfFeedComposition eventStore (string id)
         match result with
         | Success (episodes) -> episodes
                                 |> List.sortByDescending (fun e -> e.ReleaseDate)
-                                |> List.map (fun e -> MediaMetadata { Id = sprintf "%A___%i" e.SubscriptionId e.Id
+                                |> List.map (fun e -> MediaMetadata { Id = sprintf "%A___%i" e.FeedId e.Id
                                                                       ItemType = Track
                                                                       Title = e.Title
                                                                       MimeType = "audio/mp3"
@@ -126,7 +126,7 @@ module Smapi =
                     | RootId -> getRootCollections
                     | LibraryId -> getCategories eventStore
                     | Category c -> getPodcastsOfCategory eventStore c
-                    | Subscription s -> getEpisodesOfSubscription eventStore s
+                    | Feed s -> getEpisodesOfFeed eventStore s
                     | CurrentId
                     | RecentId
                     | _ -> failwithf "unknown id %s" id
@@ -137,7 +137,7 @@ module Smapi =
     let processGetMediaMetadata eventStore (s:GetMediaMetadataRequest.Envelope) =
         let id = s.Body.GetMediaMetadata.Id
         let e = match id with
-                      | MediaMetadataId (subscriptionId, podcastId) -> getEpisodeOfSubscriptionComposition eventStore subscriptionId podcastId
+                      | MediaMetadataId (feedId, podcastId) -> getEpisodeOfFeedComposition eventStore feedId podcastId
                       | _ -> failwithf "Wrong Id: %s" id
         let metadata = { Id = id
                          ItemType = Track
@@ -162,7 +162,7 @@ module Smapi =
         let req = GetMediaURIRequest.Parse s
         let id = req.Body.GetMediaUri.Id
         let episode = match id with
-                      | MediaMetadataId (subscriptionId, episodeId) -> getEpisodeOfSubscriptionComposition eventstore subscriptionId episodeId
+                      | MediaMetadataId (feedId, episodeId) -> getEpisodeOfFeedComposition eventstore feedId episodeId
                       | _ -> failwithf "Wrong Id: %s" id
 
         let path = episode.MediaUrl
@@ -177,12 +177,12 @@ module Smapi =
             | Some (PlayEpisodeStopped data) -> if data.Id = episodeId then Some (data.Position) else None
             | _ -> None
 
-        let position = match subscriptionEvents eventstore (string episode.SubscriptionId) with
+        let position = match feedEvents eventstore (string episode.FeedId) with
                        | Success (_ , events) -> match lastPlayEpisodeStopped events with
                                                  | IsNeededPlaySecondsReported episode.Id position -> Some position
                                                  | IsNeededPlayEpisodeStopped episode.Id position -> Some position
                                                  | _ -> None
-                       | Failure (e:Error) -> failwithf "Get Events for position faild. Error: %s for Episode %i in Subscription %O" (string e) episode.Id episode.SubscriptionId
+                       | Failure (e:Error) -> failwithf "Get Events for position faild. Error: %s for Episode %i in Feed %O" (string e) episode.Id episode.FeedId
 
         let response = Smapi.Respond.getMediaUriResponse path id position
         ok response
@@ -199,16 +199,16 @@ module Smapi =
         let id = req.Body.ReportPlaySeconds.Id
         let position = req.Body.ReportPlaySeconds.OffsetMillis
 
-        let (episodeId, subscriptionId) = match id with
-                                          | MediaMetadataId (subscriptionId, episodeId) -> (episodeId, subscriptionId)
+        let (episodeId, feedId) = match id with
+                                          | MediaMetadataId (feedId, episodeId) -> (episodeId, feedId)
                                           | _ -> failwithf "unknown Id for play seconds reported: %s" id
-        let streamId = (getSubscriptionStreamId (string subscriptionId))
+        let streamId = (getFeedStreamId (string feedId))
         let version = match eventstore.GetEvents streamId with
                       | Success (version, _) -> version
                       | _ -> StreamVersion 0
 
         let ev = PlaySecondsReported { Id = episodeId
-                                       SubscriptionId = subscriptionId
+                                       FeedId = feedId
                                        Position = position }
         match eventstore.SaveEvents streamId version [ev] with
         | Success _ -> ()

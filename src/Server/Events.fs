@@ -2,9 +2,9 @@
 module Castos.Events
 
 type CastosEventData =
-    //Stream per subscription
-    | SubscriptionAdded of SubscriptionAdded
-    | SubscriptionDeleted of SubscriptionDeleted
+    //Stream per feed
+    | FeedAdded of FeedAdded
+    | FeedDeleted of FeedDeleted
     | EpisodeAdded of EpisodeAdded
 
     //Stream for all users
@@ -13,20 +13,20 @@ type CastosEventData =
 
     //Stream per user
     | Subscribed
-    | SubscriptionCanceled
+    | FeedCanceled
     | PlayEpisodeStarted of PlayEpisodeStarted
     | PlayEpisodeStopped of PlayEpisodeStopped
     | PlaySecondsReported of PlaySecondsReported
 
-and SubscriptionAdded = {
-    Id: SubscriptionId
+and FeedAdded = {
+    Id: FeedId
     Url: string
     Name: string
     Category: string }
-and SubscriptionDeleted = { Id: SubscriptionId }
+and FeedDeleted = { Id: FeedId }
 and EpisodeAdded = {
     Id: EpisodeId
-    SubscriptionId: SubscriptionId
+    FeedId: FeedId
     Guid: string
     Url: string
     MediaUrl: string
@@ -36,26 +36,26 @@ and EpisodeAdded = {
 }
 and PlayEpisodeStarted = {
     Id: EpisodeId
-    SubscriptionId: SubscriptionId
+    FeedId: FeedId
     TimeStamp: System.DateTime
     Position: int
     Player: string
 }
 and PlaySecondsReported = {
     Id: EpisodeId
-    SubscriptionId: SubscriptionId
+    FeedId: FeedId
     Position: int }
 and PlayEpisodeStopped = {
     Id: EpisodeId
-    SubscriptionId: SubscriptionId
+    FeedId: FeedId
     Position: int }
 and Subscribed = {
-    SubscriptionId: SubscriptionId
+    FeedId: FeedId
 }
-and SubscriptionCanceled = {
-    SubscriptionId: SubscriptionId
+and FeedCanceled = {
+    FeedId: FeedId
 }
-and SubscriptionId = System.Guid
+and FeedId = System.Guid
 and EpisodeId = int
 and UserAdded = {
     Id : UserId
