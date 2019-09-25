@@ -56,8 +56,9 @@ type AddUserRendition =
 
 let generateToken email =
     let claims = [|
-        Claim(JwtRegisteredClaimNames.Sub, email);
-        Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) |]
+        Claim(JwtRegisteredClaimNames.Sub, email)
+        Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        Claim(ClaimTypes.Role, "Admin") |]
     claims
     |> Auth.generateJWT (secret, SecurityAlgorithms.HmacSha256) issuer (DateTime.UtcNow.AddHours(1.0))
 
@@ -119,10 +120,21 @@ let addUserComposition eventStore rendition =
 let authorize =
     requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
 
+let adminOnly =
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+        task {
+            let hasAdminClaim = ctx.User.Claims
+                                 |> Seq.tryFindIndex
+                                        (fun c -> c.Type = ClaimTypes.Role && c.Value = "Admin") //TODO: use literal
+            match hasAdminClaim with
+            | Some _ -> return! next ctx
+            | _ -> return! (clearResponse >=> setStatusCode HttpStatusCodes.Forbidden >=> text "Forbidden") next ctx
+        }
+
 
 let usersRouter eventStore = router {
     //pipe_through authorize  //<-- for all methods of router
-    get "" (authorize >=>  (processAsync getUsersComposition eventStore))
+    get "" (authorize >=> adminOnly >=>  (processAsync getUsersComposition eventStore))
     post "" (processDataAsync addUserComposition eventStore)
 }
 
