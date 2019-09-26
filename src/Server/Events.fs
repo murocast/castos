@@ -12,8 +12,10 @@ type CastosEventData =
     | PasswordChanged
 
     //Stream per user
-    | Subscribed
-    | FeedCanceled
+    | Subscribed of Subscribed
+    | Unsubscribed of Unsubscribed
+
+    //per user
     | PlayEpisodeStarted of PlayEpisodeStarted
     | PlayEpisodeStopped of PlayEpisodeStopped
     | PlaySecondsReported of PlaySecondsReported
@@ -51,9 +53,13 @@ and PlayEpisodeStopped = {
     Position: int }
 and Subscribed = {
     FeedId: FeedId
+    UserId: UserId
+    Timestamp: System.DateTime
 }
-and FeedCanceled = {
+and Unsubscribed = {
     FeedId: FeedId
+    UserId: UserId
+    Timestamp: System.DateTime
 }
 and FeedId = System.Guid
 and EpisodeId = int

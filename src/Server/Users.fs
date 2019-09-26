@@ -1,4 +1,4 @@
-module Users
+module Castos.Users
 
 open Castos.Events
 

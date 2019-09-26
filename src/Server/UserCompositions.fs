@@ -1,6 +1,6 @@
 module Castos.UserCompositions
 
-open Users
+open Castos.Users
 open System
 open Giraffe
 open Saturn
