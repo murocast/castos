@@ -13,6 +13,7 @@
     <Compile Include="Http.fs" />
     <Compile Include="EventStore.fs" />
     <Compile Include="Events.fs" />
+    <Compile Include="Authentication.fs" />
     <Compile Include="Feeds.fs" />
     <Compile Include="FeedCompositions.fs" />
     <Compile Include="Smapi.fs" />

@@ -1,13 +1,7 @@
 module Castos.Users
 
 open Castos.Events
-
-type User = {
-    Id : UserId
-    Email: string
-    Password: string
-    //TODO: Hash and salt
-}
+open Castos.Auth
 
 type AddUserRendition =
     {
@@ -29,5 +23,5 @@ let private evolve state events =
 let getUsers events =
     evolve [] events
 
-let getUser users email =
+let getUser (users:User List) email =
     users |> List.tryFind (fun u -> u.Email = email)

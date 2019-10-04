@@ -8,6 +8,7 @@ open System.IO
 
 open Castos.EventStore
 open Castos
+open Castos.Auth
 open Castos.SmapiCompositions
 open Castos.FeedCompositions
 open Castos.UserCompositions
