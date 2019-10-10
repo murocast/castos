@@ -43,7 +43,7 @@ let generateToken email =
     let claims = [|
         Claim(JwtRegisteredClaimNames.Sub, email)
         Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        Claim(ClaimTypes.Role, "Admin") |]
+        Claim(ClaimTypes.Role, "Admin") |] //TODO: Not everone is admin; use literal
     claims
     |> Auth.generateJWT (secret, SecurityAlgorithms.HmacSha256) issuer (DateTime.UtcNow.AddHours(1.0))
 
