@@ -11,7 +11,7 @@ module Subscriptions =
             Paused: bool
         }
 
-    type SubscribeRendition = {
+    type AddSubscribeRendition = {
         UserId: UserId
         FeedId: FeedId
         Timestamp: DateTime
@@ -56,6 +56,11 @@ module Subscriptions =
 
 module SubscriptionCompositions =
     open Subscriptions
+    open Giraffe
+    open Saturn
+    open Castos.Auth
+    open Castos.Http
+
     let private subscriptionStreamId userId =
         StreamId (sprintf "sub-%A" userId)
 
@@ -73,3 +78,8 @@ module SubscriptionCompositions =
         match result with
         | Success _ -> ok ("added subscription")
         | Failure m -> fail m
+
+    let subscriptionsRouter eventStore = router {
+        pipe_through authorize
+        post "" (processDataAsync addSubscriptionComposition eventStore)
+    }
