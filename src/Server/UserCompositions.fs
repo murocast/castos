@@ -7,24 +7,19 @@ open Castos.Http
 open System
 open Giraffe
 open Saturn
-open FSharp.Control.Tasks.V2
 
+type AddUserRendition =
+    {
+        EMail: string
+        Password: string
+    }
+let private streamId = StreamId (sprintf "users")
 
-open Microsoft.AspNetCore.Http
-open Microsoft.IdentityModel.Tokens
-
-open Microsoft.AspNetCore.Authentication.JwtBearer
-open System.IdentityModel.Tokens.Jwt
-open System.Security.Claims
-
-open FSharp.Data
-
-let private storeUsersEvent eventStore (version, event) =
-    let streamId event = StreamId (sprintf "users")
-    eventStore.SaveEvents (streamId event) version [event]
+let private storeUsersEvent eventStore (version, event) =    
+    eventStore.SaveEvents streamId version [event]
 
 let getUsersComposition eventStore =
-    let result = eventStore.GetEvents (StreamId("users"))
+    let result = eventStore.GetEvents streamId
     match result with
     | Success (_, events) -> ok (getUsers events)
     | Failure m -> fail m
@@ -34,10 +29,10 @@ let getUserComposition eventStore email =
     | Success users -> Success (getUser users email)
     | Failure m -> fail m
 
-let addUserComposition eventStore rendition =
+let addUserComposition eventStore (rendition:AddUserRendition) =
     let result = (StreamVersion 0, UserAdded {
                     Id = Guid.NewGuid() |> UserId
-                    Email = rendition.Email
+                    Email = rendition.EMail
                     Password = rendition.Password
                     //TODO: Hash and Salt
                  }) |> storeUsersEvent eventStore

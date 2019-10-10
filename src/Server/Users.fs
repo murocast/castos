@@ -3,12 +3,6 @@ module Castos.Users
 open Castos.Events
 open Castos.Auth
 
-type AddUserRendition =
-    {
-        EMail: string
-        Password: string
-    }
-
 let private apply state event =
     match event with
     | UserAdded data -> { Id = data.Id
