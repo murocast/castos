@@ -11,12 +11,6 @@ module Subscriptions =
             Paused: bool
         }
 
-    type AddSubscribeRendition = {
-        UserId: UserId
-        FeedId: FeedId
-        Timestamp: DateTime
-    }
-
     let private apply state event =
         match event with
         | Subscribed data -> { UserId = data.UserId
@@ -46,13 +40,13 @@ module Subscriptions =
         getSubscriptions events
         |> List.tryFind (fun s -> s.FeedId = feedId)
 
-    let addSubscription rendition (version, events) =
-        let existing = getSubscription events rendition.FeedId
+    let addSubscription feedId userId (version, events) =
+        let existing = getSubscription events feedId
         match existing with
         | Some _ -> fail "Subscription for feed  already exists"
-        | None -> ok (version, Subscribed { FeedId = rendition.FeedId
-                                            UserId = rendition.UserId
-                                            Timestamp = rendition.Timestamp })
+        | None -> ok (version, Subscribed { FeedId = feedId
+                                            UserId = userId
+                                            Timestamp = DateTime.Now })
 
 module SubscriptionCompositions =
     open Subscriptions
@@ -60,6 +54,11 @@ module SubscriptionCompositions =
     open Saturn
     open Castos.Auth
     open Castos.Http
+
+    type AddSubscribeRendition = {
+        UserId: UserId
+        FeedId: FeedId
+    }
 
     let private subscriptionStreamId userId =
         StreamId (sprintf "sub-%A" userId)
@@ -73,7 +72,7 @@ module SubscriptionCompositions =
 
     let addSubscriptionComposition eventStore rendition =
         let result = subscriptionEvents eventStore rendition.UserId
-                        >>= (addSubscription rendition)
+                        >>= (addSubscription rendition.FeedId rendition.UserId)
                         >>= storeSubscriptionEvent eventStore
         match result with
         | Success _ -> ok ("added subscription")
