@@ -45,7 +45,7 @@ type AddEpisodeRendition = {
 
 module FeedSource =
     let private initialFeedState =
-        { Id = System.Guid.Empty
+        { Id = FeedId System.Guid.Empty
           Url = ""
           Name = ""
           Category = ""
@@ -105,7 +105,7 @@ module FeedSource =
         |> evolve initialFeedState
 
     let addFeed rendition =
-        (StreamVersion 0, FeedAdded { Id = System.Guid.NewGuid()
+        (StreamVersion 0, FeedAdded { Id = FeedId (System.Guid.NewGuid())
                                       Name = rendition.Name
                                       Category = rendition.Category
                                       Url = rendition.Url })
@@ -122,7 +122,7 @@ module FeedSource =
                             | 0 -> 0
                             | _ -> (List.maxBy (fun (e:Episode) -> e.Id) state.Episodes).Id
         ok ((version, EpisodeAdded { Id = lastEpisodeId + 1
-                                     FeedId = FeedId feedId
+                                     FeedId = FeedId (System.Guid.Parse(feedId))
                                      Guid = rendition.Guid
                                      Url = rendition.Url
                                      MediaUrl = rendition.MediaUrl

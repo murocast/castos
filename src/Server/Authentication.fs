@@ -22,8 +22,14 @@ let issuer = "saturnframework.io"
 type User = {
     Id : UserId
     Email: string
-    Password: string
-    //TODO: Hash and salt
+    Password: string //TODO: Hash and salt
+    Roles: string list
+}
+
+type AuthenticatedUser = {
+    Id : UserId
+    Email: string
+    Roles: string list
 }
 
 [<CLIMutable>]
@@ -39,12 +45,28 @@ type TokenResult =
         Token : string
     }
 
-let generateToken email =
+let claimsToAuthUser (cp:ClaimsPrincipal):AuthenticatedUser =
+    cp.Claims
+    |> Seq.fold (fun state c -> match c.Type with
+                                | JwtRegisteredClaimNames.Sub -> { state with Email = c.Value}
+                                | ClaimTypes.Sid -> { state with Id = UserId (Guid.Parse(c.Value))}
+                                | ClaimTypes.Role -> { state with Roles = (state.Roles @ [c.Value])}
+                                | _ -> state)
+        { Id = UserId(Guid.Empty)
+          Email = ""
+          Roles = [] }
+
+let generateToken (user:User) =
     let claims = [|
-        Claim(JwtRegisteredClaimNames.Sub, email)
+        Claim(JwtRegisteredClaimNames.Sub, user.Email)
         Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        Claim(ClaimTypes.Sid, user.Id.ToString())
         Claim(ClaimTypes.Role, "Admin") |] //TODO: Not everone is admin; use literal
+
+    let roles = user.Roles |> List.map (fun r -> Claim(ClaimTypes.Role, r))
+
     claims
+    |> Array.append (Array.ofList roles)
     |> Auth.generateJWT (secret, SecurityAlgorithms.HmacSha256) issuer (DateTime.UtcNow.AddHours(1.0))
 
 let handlePostToken (getUser:string -> Result<User option, Error>) =
@@ -55,7 +77,7 @@ let handlePostToken (getUser:string -> Result<User option, Error>) =
             let user = getUser model.Email
             let result = match user with
                              | Success (Some u) when u.Password = model.Password //TODO: Hash with salt
-                                 -> json { Token = generateToken model.Email} next ctx
+                                 -> json { Token = generateToken u} next ctx
                              | _ ->
                                     ctx.Response.StatusCode <- HttpStatusCodes.Unauthorized
                                     json "" next ctx

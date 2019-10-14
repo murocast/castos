@@ -7,7 +7,8 @@ let private apply state event =
     match event with
     | UserAdded data -> { Id = data.Id
                           Email = data.Email
-                          Password = data.Password } :: state
+                          Password = data.Password
+                          Roles = [] } :: state
     | _ -> failwith "unkown event"
 
 let private evolve state events =

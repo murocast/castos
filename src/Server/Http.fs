@@ -5,6 +5,7 @@ module Http =
     open Microsoft.AspNetCore.Http
     open FSharp.Control.Tasks.V2
     open System.IO
+    open Auth
 
     let rawFormString (x:HttpContext) =
         task {
@@ -33,3 +34,13 @@ module Http =
                         | Success (a) -> Successful.OK a next ctx
                         | Failure (_) -> RequestErrors.BAD_REQUEST "Error" next ctx
             }
+
+    let processDataAuthorizedAsync f eventStore =
+        fun next ctx ->
+                task {
+                    let! data = getJson ctx
+                    let result = f eventStore data (claimsToAuthUser ctx.User)
+                    return! match result with
+                            | Success (a) -> Successful.OK a next ctx
+                            | Failure (_) -> RequestErrors.BAD_REQUEST "Error" next ctx
+                }

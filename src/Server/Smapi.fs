@@ -208,7 +208,7 @@ module Smapi =
                       | _ -> StreamVersion 0
 
         let ev = PlaySecondsReported { Id = episodeId
-                                       FeedId = feedId
+                                       FeedId = FeedId feedId
                                        Position = position }
         match eventstore.SaveEvents streamId version [ev] with
         | Success _ -> ()

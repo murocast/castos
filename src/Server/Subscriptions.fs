@@ -56,7 +56,6 @@ module SubscriptionCompositions =
     open Castos.Http
 
     type AddSubscribeRendition = {
-        UserId: UserId
         FeedId: FeedId
     }
 
@@ -70,9 +69,9 @@ module SubscriptionCompositions =
     let private subscriptionEvents eventStore userId =
         eventStore.GetEvents (subscriptionStreamId userId)
 
-    let addSubscriptionComposition eventStore rendition =
-        let result = subscriptionEvents eventStore rendition.UserId
-                        >>= (addSubscription rendition.FeedId rendition.UserId)
+    let addSubscriptionComposition eventStore rendition user =
+        let result = subscriptionEvents eventStore user.Id
+                        >>= (addSubscription rendition.FeedId (user.Id))
                         >>= storeSubscriptionEvent eventStore
         match result with
         | Success _ -> ok ("added subscription")
@@ -80,5 +79,5 @@ module SubscriptionCompositions =
 
     let subscriptionsRouter eventStore = router {
         pipe_through authorize
-        post "" (processDataAsync addSubscriptionComposition eventStore)
+        post "" (processDataAuthorizedAsync addSubscriptionComposition eventStore)
     }
