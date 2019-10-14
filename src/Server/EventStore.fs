@@ -159,7 +159,8 @@ module EventStore =
 
             let id = decontructStreamId streamId
             let events = readStreamEvents store id (int64 0) 200
-                         |> List.map (fun ev ->
+                          |> List.filter (fun ev -> not(isNull (ev.Event)) && ev.Event.EventType <> "$metadata" )
+                          |> List.map (fun ev ->
                                             let json = (Text.Encoding.UTF8.GetString ev.Event.Data)
                                             unjson json)
             (Some events, store)
