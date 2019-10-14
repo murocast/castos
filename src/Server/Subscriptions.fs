@@ -43,7 +43,7 @@ module Subscriptions =
     let addSubscription feedId userId (version, events) =
         let existing = getSubscription events feedId
         match existing with
-        | Some _ -> fail "Subscription for feed  already exists"
+        | Some _ -> failwithf "Subscription for feed  already exists"
         | None -> ok (version, Subscribed { FeedId = feedId
                                             UserId = userId
                                             Timestamp = DateTime.Now })
@@ -54,6 +54,7 @@ module SubscriptionCompositions =
     open Saturn
     open Castos.Auth
     open Castos.Http
+    open Castos.FeedCompositions
 
     type AddSubscribeRendition = {
         FeedId: FeedId
@@ -66,13 +67,18 @@ module SubscriptionCompositions =
         let streamId event = subscriptionStreamId (userId event)
         eventStore.SaveEvents (streamId event) version [event]
 
-    let private subscriptionEvents eventStore userId =
+    let private subscriptionEvents eventStore userId feed =
         eventStore.GetEvents (subscriptionStreamId userId)
 
+    let private feedExists eventStore feedId =
+        getFeedComposition eventStore (feedId.ToString())
+
     let addSubscriptionComposition eventStore rendition user =
-        let result = subscriptionEvents eventStore user.Id
+        let result = feedExists eventStore rendition.FeedId
+                        >>= subscriptionEvents eventStore user.Id
                         >>= (addSubscription rendition.FeedId (user.Id))
                         >>= storeSubscriptionEvent eventStore
+
         match result with
         | Success _ -> ok ("added subscription")
         | Failure m -> fail m
