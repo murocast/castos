@@ -5,7 +5,7 @@
             "name": "Debug",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "Build Server",
+            "preLaunchTask": "build",
             "program": "${workspaceRoot}/src/Server/bin/Debug/netcoreapp2.1/Server.dll",
             "args": ["${workspaceRoot}/src/Client"],
             "cwd": "${workspaceRoot}",
