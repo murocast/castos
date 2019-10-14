@@ -12,6 +12,7 @@ open Castos.Auth
 open Castos.SmapiCompositions
 open Castos.FeedCompositions
 open Castos.UserCompositions
+open Castos.SubscriptionCompositions
 
 let publicPath = Path.GetFullPath "../Client/public"
 let port = 80us
@@ -24,6 +25,7 @@ let webApp = router {
 
     forward "/api/users" (usersRouter eventStore)
     forward "/api/feeds" (feedsRouter eventStore)
+    forward "/api/subscriptions" (subscriptionsRouter eventStore)
     forward "/smapi" (smapiRouter eventStore)
 }
 
