@@ -50,7 +50,6 @@ module Subscriptions =
 
 module SubscriptionCompositions =
     open Subscriptions
-    open Giraffe
     open Saturn
     open Castos.Auth
     open Castos.Http
@@ -67,7 +66,7 @@ module SubscriptionCompositions =
         let streamId event = subscriptionStreamId (userId event)
         eventStore.SaveEvents (streamId event) version [event]
 
-    let private subscriptionEvents eventStore userId feed =
+    let private subscriptionEvents eventStore userId =
         eventStore.GetEvents (subscriptionStreamId userId)
 
     let private feedExists eventStore feedId =
@@ -75,15 +74,23 @@ module SubscriptionCompositions =
 
     let addSubscriptionComposition eventStore rendition user =
         let result = feedExists eventStore rendition.FeedId
-                        >>= subscriptionEvents eventStore user.Id
-                        >>= (addSubscription rendition.FeedId (user.Id))
-                        >>= storeSubscriptionEvent eventStore
-
         match result with
-        | Success _ -> ok ("added subscription")
+        | Success _ -> let result = subscriptionEvents eventStore user.Id
+                                    >>= (addSubscription rendition.FeedId (user.Id))
+                                    >>= storeSubscriptionEvent eventStore
+                       match result with
+                       | Success _ -> ok ("added subscription")
+                       | Failure m -> fail m
+        | Failure m -> fail m
+
+    let getSubscriptionsComposition eventStore user =
+        let result = subscriptionEvents eventStore user.Id
+        match result with
+        | Success (_ , evs) -> ok (getSubscriptions evs)
         | Failure m -> fail m
 
     let subscriptionsRouter eventStore = router {
         pipe_through authorize
+        get "" (processAuthorizedAsync getSubscriptionsComposition eventStore)
         post "" (processDataAuthorizedAsync addSubscriptionComposition eventStore)
     }
