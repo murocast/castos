@@ -12,9 +12,14 @@ open Fake.Core
 open Fake.DotNet
 open Fake.IO
 
+Target.initEnvironment ()
+
 let serverPath = Path.getFullName "./src/Server"
 let clientPath = Path.getFullName "./src/Client"
+let clientDeployPath = Path.combine clientPath "deploy"
 let deployDir = Path.getFullName "./deploy"
+
+let release = ReleaseNotes.load "RELEASE_NOTES.md"
 
 let platformTool tool winTool =
     let tool = if Environment.isUnix then tool else winTool
@@ -52,8 +57,11 @@ let openBrowser url =
     |> Proc.run
     |> ignore
 
+
 Target.create "Clean" (fun _ ->
-    Shell.cleanDirs [deployDir]
+    [ deployDir
+      clientDeployPath ]
+    |> Shell.cleanDirs
 )
 
 Target.create "InstallClient" (fun _ ->
@@ -62,16 +70,16 @@ Target.create "InstallClient" (fun _ ->
     printfn "Yarn version:"
     runTool yarnTool "--version" __SOURCE_DIRECTORY__
     runTool yarnTool "install --frozen-lockfile" __SOURCE_DIRECTORY__
-    runDotNet "restore" clientPath
-)
-
-Target.create "RestoreServer" (fun _ ->
-    runDotNet "restore" serverPath
 )
 
 Target.create "Build" (fun _ ->
     runDotNet "build" serverPath
-    runDotNet "fable webpack-cli -- --config src/Client/webpack.config.js -p" clientPath
+    Shell.regexReplaceInFileWithEncoding
+        "let app = \".+\""
+       ("let app = \"" + release.NugetVersion + "\"")
+        System.Text.Encoding.UTF8
+        (Path.combine clientPath "Version.fs")
+    runTool yarnTool "webpack-cli -p" __SOURCE_DIRECTORY__
 )
 
 Target.create "Run" (fun _ ->
@@ -79,41 +87,30 @@ Target.create "Run" (fun _ ->
         runDotNet "watch run" serverPath
     }
     let client = async {
-        runDotNet "fable webpack-dev-server -- --config src/Client/webpack.config.js" clientPath
+        runTool yarnTool "webpack-dev-server" __SOURCE_DIRECTORY__
     }
     let browser = async {
         do! Async.Sleep 5000
         openBrowser "http://localhost:8080"
     }
 
-    [ server; client; browser ]
+    let vsCodeSession = Environment.hasEnvironVar "vsCodeSession"
+    let safeClientOnly = Environment.hasEnvironVar "safeClientOnly"
+
+    let tasks =
+        [ if not safeClientOnly then yield server
+          yield client
+          if not vsCodeSession then yield browser ]
+
+    tasks
     |> Async.Parallel
     |> Async.RunSynchronously
     |> ignore
 )
 
-Target.create "Bundle" (fun _ ->
-    let serverDir = Path.combine deployDir "Server"
-    let clientDir = Path.combine deployDir "Client"
-    let publicDir = Path.combine clientDir "public"
 
-    let publishArgs = sprintf "publish -c Release -o \"%s\"" serverDir
-    runDotNet publishArgs serverPath
 
-    Shell.copyDir publicDir "src/Client/public" FileFilter.allFiles
-)
 
-let dockerUser = "brase"
-let dockerImageName = "castos"
-let dockerFullName = sprintf "%s/%s" dockerUser dockerImageName
-
-Target.create "Docker" (fun _ ->
-    let buildArgs = sprintf "build -t %s ." dockerFullName
-    runTool "docker" buildArgs "."
-
-    let tagArgs = sprintf "tag %s %s" dockerFullName dockerFullName
-    runTool "docker" tagArgs "."
-)
 
 
 open Fake.Core.TargetOperators
@@ -121,12 +118,10 @@ open Fake.Core.TargetOperators
 "Clean"
     ==> "InstallClient"
     ==> "Build"
-    ==> "Bundle"
-    ==> "Docker"
+
 
 "Clean"
     ==> "InstallClient"
-    ==> "RestoreServer"
     ==> "Run"
 
 Target.runOrDefaultWithArguments "Build"
