@@ -5,6 +5,7 @@ group Server
 
     nuget FSharp.Core
     nuget Saturn
+    nuget Giraffe
     nuget Thoth.Json.Giraffe
     nuget Fable.JsonConverter
 
