@@ -188,5 +188,24 @@ module Respond =
 
         envelope.ToString()
 
+    let getAppLinkResponse url linkCode =
+        let envelope, body = getEnvelopeWithBody()
+        let response = addToNode body "getAppLinkResponse" NsSonos
+        let result = addToNode response "getAppLinkResult" NsSonos
+        let authorizeAcc = addToNode result "authorizeAccount" NsSonos
+
+        let signInStringId = addToNode authorizeAcc "appUrlStringId" NsSonos
+        signInStringId.Value <- "SIGN_IN"
+
+        let deviceLink = addToNode authorizeAcc "deviceLink" NsSonos
+        let regUrl = addToNode deviceLink "regUrl" NsSonos
+        regUrl.Value <- url
+        let linkCodeNode = addToNode deviceLink "linkCode" NsSonos
+        linkCodeNode.Value <- linkCode
+        let showLinkCodeNode = addToNode deviceLink "showLinkCode" NsSonos
+        showLinkCodeNode.Value <- "false"
+
+        envelope.ToString()
+
 
 

@@ -26,10 +26,11 @@ module SmapiCompositions =
                        | "reportPlaySeconds" -> ok(ReportPlaySeconds(formString))
                        | "reportPlayStatus" -> ok(ReportPlayStatus(formString))
                        | "setPlayedSeconds" -> ok(SetPlayedSeconds(formString))
+                       | "getAppLink" -> ok(GetAppLink(formString))
                        | _ -> fail(sprintf "Method not implemented %s" m)
             }
 
-    let internal processSmapiMethod eventStore m =
+    let internal processSmapiMethod eventStore db m =
         match m with
         | GetMetadata s -> processGetMetadata eventStore (GetMetadataRequest.Parse s)
         | GetMediaMetadata s -> processGetMediaMetadata eventStore (GetMediaMetadataRequest.Parse s)
@@ -40,24 +41,25 @@ module SmapiCompositions =
              ok("")
         | ReportPlayStatus _ -> ok("")
         | SetPlayedSeconds _ -> ok("")
+        | GetAppLink s -> processGetAppLink eventStore db s
         | _ -> fail "blubber"
 
 
-    let internal smapiImp eventStore c =
+    let internal smapiImp eventStore db c =
         task{
             let! result = getSmapiMethod c
-            return result >>= (processSmapiMethod eventStore)
+            return result >>= (processSmapiMethod eventStore db)
         }
 
-    let internal processSmapiRequest eventStore=
+    let internal processSmapiRequest eventStore db =
         fun next ctx ->
             task {
-                let! result = smapiImp eventStore ctx
+                let! result = smapiImp eventStore db ctx
                 return! match result with
                         | Success (content) -> text content next ctx
                         | Failure (_) -> RequestErrors.BAD_REQUEST "Error" next ctx
             }
 
-    let smapiRouter eventStore = router {
-        post "" (processSmapiRequest eventStore)
+    let smapiRouter eventStore db = router {
+        post "" (processSmapiRequest eventStore db)
     }

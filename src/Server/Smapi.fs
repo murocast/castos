@@ -19,6 +19,7 @@ type SmapiMethod =
     | ReportPlayStatus of string
     | ReportPlaySeconds of string
     | SetPlayedSeconds of string
+    | GetAppLink of string
 
 module Smapi =
     [<Literal>]
@@ -39,6 +40,7 @@ module Smapi =
     type ReportPlaySecondsRequest = XmlProvider<"Samples/ReportPlaySecondsRequest.xml">
     type ReportPlayStatusRequest = XmlProvider<"Samples/ReportPlayStatusRequest.xml">
     type SetPlayedSecondsRequest = XmlProvider<"Samples/SetPlayedSecondsRequest.xml">
+    type GetAppLinkRequest = XmlProvider<"Samples/GetAppLink.xml">
 
     let extractSmapiMethod (m:string) =
         m.Trim('"').[34..] //cut until #: http://www.sonos.com/Services/1.1#getMetadata
@@ -213,6 +215,20 @@ module Smapi =
         match eventstore.SaveEvents streamId version [ev] with
         | Success _ -> ()
         | Failure (error:Error) -> failwith (string error)
+
+    let processGetAppLink eventstore (db:Database.DatabaseConnection) s =
+        let req = GetAppLinkRequest.Parse s
+        let houseHoldId = req.Body.GetAppLink.HouseholdId
+
+        let token = { Id = System.Guid.NewGuid()
+                      HouseholdId = houseHoldId
+                      LinkCode = "asd"
+                      Created = System.DateTime.Now }:Database.AuthRequest
+
+        db.AddAuthRequest token
+
+        let response = Smapi.Respond.getAppLinkResponse "http://example.com/signin" token.LinkCode
+        ok response
 
     let processGetExtendedMetadata s =
         let req = GetExtendedMetadataRequest.Parse s

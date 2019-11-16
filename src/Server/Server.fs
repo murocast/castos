@@ -18,6 +18,7 @@ let publicPath = Path.GetFullPath "../Client/public"
 let port = 80us
 
 let eventStore = createGetEventStoreEventStore<CastosEventData, Error>(VersionConflict "Version conflict")
+let db = Database.createDatabaseConnection()
 
 let webApp = router {
 
@@ -26,7 +27,7 @@ let webApp = router {
     forward "/api/users" (usersRouter eventStore)
     forward "/api/feeds" (feedsRouter eventStore)
     forward "/api/subscriptions" (subscriptionsRouter eventStore)
-    forward "/smapi" (smapiRouter eventStore)
+    forward "/smapi" (smapiRouter eventStore db)
 }
 
 let configureSerialization (services:IServiceCollection) =

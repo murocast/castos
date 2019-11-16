@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:ns="http://www.sonos.com/Services/1.1">
+    <soapenv:Body>
+        <ns:getAppLink>
+            <ns:householdId>Sonos_ghsAflSonosakevCzmxcmFhN7pN</ns:householdId>
+            <ns:hardware>iPhone8,2</ns:hardware>
+            <ns:osVersion>Version 9.3.3 (Build 13G34)</ns:osVersion>
+            <ns:sonosAppName>ICRU_iPhone8,2</ns:sonosAppName>
+            <ns:callbackPath>sonos://x-callback-url/addAccount?state=sid%3D61703%26OAuthDeviceID%3DSonos_ghsAflSonosakevCzmxcmFhN7pN%26callbackPath%3D%2FaddAccount</ns:callbackPath>
+        </ns:getAppLink>
+    </soapenv:Body>
+</soapenv:Envelope>
