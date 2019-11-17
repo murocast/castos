@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://www.sonos.com/Services/1.1">
+   <soap:Header>
+      <ns:credentials>
+         <ns:deviceId>deviceId32578</ns:deviceId>
+         <ns:deviceProvider>Sonos</ns:deviceProvider>
+      </ns:credentials>
+   </soap:Header>
+   <soap:Body>
+      <ns:getDeviceAuthToken>
+         <ns:householdId>householdId653482</ns:householdId>
+         <ns:linkCode>8c047510296b11e5a2cb0800200c9a66</ns:linkCode>
+      </ns:getDeviceAuthToken>
+   </soap:Body>
+</soap:Envelope>

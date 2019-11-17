@@ -41,6 +41,7 @@ module Smapi =
     type ReportPlayStatusRequest = XmlProvider<"Samples/ReportPlayStatusRequest.xml">
     type SetPlayedSecondsRequest = XmlProvider<"Samples/SetPlayedSecondsRequest.xml">
     type GetAppLinkRequest = XmlProvider<"Samples/GetAppLink.xml">
+    type GetDeviceAuthTokenRequest = XmlProvider<"Samples/GetDeviceAuthToken.xml">
 
     let extractSmapiMethod (m:string) =
         m.Trim('"').[34..] //cut until #: http://www.sonos.com/Services/1.1#getMetadata
@@ -222,13 +223,27 @@ module Smapi =
 
         let token = { Id = System.Guid.NewGuid()
                       HouseholdId = houseHoldId
-                      LinkCode = "asd"
+                      LinkCode = System.Guid.NewGuid()
                       Created = System.DateTime.Now }:Database.AuthRequest
 
         db.AddAuthRequest token
 
-        let response = Smapi.Respond.getAppLinkResponse "http://example.com/signin" token.LinkCode
+        let response = Smapi.Respond.getAppLinkResponse "http://example.com/signin" (string token.LinkCode)
         ok response
+
+    let linkcodeFault() =
+        Smapi.Respond.getFault "Client.NOT_LINKED_RETRY" "Access token not found, retry" "Retry token request." "5"
+
+    let processGetDeviceAuthTokenRequest (db:Database.DatabaseConnection) s =
+        let req = GetDeviceAuthTokenRequest.Parse s
+        let householdId = req.Body.GetDeviceAuthToken.HouseholdId
+        let linkCode = req.Body.GetDeviceAuthToken.LinkCode
+
+        let found = db.GetAuthRequestByLinkToken linkCode householdId
+        match found with
+        | None -> ok (linkcodeFault())
+        | Some r -> ok "TODO: Some"
+
 
     let processGetExtendedMetadata s =
         let req = GetExtendedMetadataRequest.Parse s

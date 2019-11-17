@@ -207,5 +207,15 @@ module Respond =
 
         envelope.ToString()
 
+    let getFault faultcode faultstring exceptionInfo sonosError =
+        let envelope, body = getEnvelopeWithBody()
+        let fault = addToNode body "fault" NsEnvelope
+        addToNodeWithValue fault "faultcode" "" faultcode |> ignore
+        addToNodeWithValue fault "faultstring" "" faultstring |> ignore
+        let detail = addToNode fault "detail" ""
+        addToNodeWithValue detail "ExceptionInfo" NsSonos exceptionInfo |> ignore
+        addToNodeWithValue detail "SonosError" NsSonos sonosError |> ignore
+
+        envelope.ToString()
 
 

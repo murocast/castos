@@ -14,20 +14,21 @@ module Database =
 
     type AuthRequest = { Id: System.Guid
                          HouseholdId: string
-                         LinkCode: string
+                         LinkCode: System.Guid
                          Created: System.DateTime }
 
     type DatabaseConnection = { AddAuthRequest: AuthRequest->unit
-                                GetAuthRequestByLinkToken: string->AuthRequest option }
+                                GetAuthRequestByLinkToken: System.Guid -> string -> AuthRequest option }
 
     let private addAuthRequest (db:LiteDatabase) (token:AuthRequest) =
         let collection = db.GetCollection<AuthRequest>("authrequests")
         collection.Insert(token)
         |> ignore
 
-    let private getAuthRequest (db:LiteDatabase) linkCode =
+    let private getAuthRequest (db:LiteDatabase) linkCode householdId =
         let collection = db.GetCollection<AuthRequest>("authrequests")
-        let result = collection.Find (fun token -> token.LinkCode = linkCode)
+        //TODO: check timestamp
+        let result = collection.Find (fun token -> token.LinkCode = linkCode && token.HouseholdId = householdId)
                      |> List.ofSeq
         match result with
         | head::tail -> Some head
