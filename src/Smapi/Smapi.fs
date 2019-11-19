@@ -218,4 +218,11 @@ module Respond =
 
         envelope.ToString()
 
+    let processGetDeviceAuthTokenResponse token privateKey =
+        let envelope, body = getEnvelopeWithBody()
+        let response = addToNode body "getDeviceAuthTokenResponse" NsSonos
+        let result = addToNode response "getDeviceAuthTokenResult" NsSonos
+        addToNodeWithValue result "authToken" NsSonos token |> ignore
+        addToNodeWithValue result "privateKey" NsSonos privateKey |> ignore
 
+        envelope.ToString()

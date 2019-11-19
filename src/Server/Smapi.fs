@@ -220,11 +220,13 @@ module Smapi =
     let processGetAppLink eventstore (db:Database.DatabaseConnection) s =
         let req = GetAppLinkRequest.Parse s
         let houseHoldId = req.Body.GetAppLink.HouseholdId
-
-        let token = { Id = System.Guid.NewGuid()
+        let id = System.Guid.NewGuid()
+        let token = { Id = id
                       HouseholdId = houseHoldId
-                      LinkCode = System.Guid.NewGuid()
-                      Created = System.DateTime.Now }:Database.AuthRequest
+                      LinkCode = (System.Guid.NewGuid())
+                      UserId = None
+                      Created = System.DateTime.Now
+                      Used = None } : Database.AuthRequest
 
         db.AddAuthRequest token
 
@@ -242,7 +244,20 @@ module Smapi =
         let found = db.GetAuthRequestByLinkToken linkCode householdId
         match found with
         | None -> ok (linkcodeFault())
-        | Some r -> ok "TODO: Some"
+        | Some r ->
+            let updatedReq = { r with Used = Some System.DateTime.Now }
+            db.UpdateAuthRequest updatedReq |> ignore
+
+            let authToken = { Id = System.Guid.NewGuid()
+                              HouseholdId = householdId
+                              Token = string (System.Guid.NewGuid())
+                              PrivateKey = "no refresh yet"
+                              UserId = r.UserId |> Option.get
+                              Created = System.DateTime.Now } : Database.AuthToken
+            db.AddAuthToken authToken
+
+            let response = Smapi.Respond.processGetDeviceAuthTokenResponse authToken.Token authToken.PrivateKey
+            ok response
 
 
     let processGetExtendedMetadata s =
