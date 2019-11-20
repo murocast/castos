@@ -2,54 +2,113 @@ module Client
 
 open Elmish
 open Elmish.React
+open Elmish.UrlParser
+open Elmish.Navigation
 open Fable.FontAwesome
 open Fable.FontAwesome.Free
 open Fable.React
 open Fable.React.Props
-open Fetch.Types
 open Thoth.Fetch
-open Fulma
 open Thoth.Json
+open Fulma
 
+open System
+open Browser
+open Browser
+open Browser
+open Elmish
+open Fable.Import
 open Shared
+
+type LinkCode =
+    | LinkCode of System.Guid
+    | Invalid
+
+type HttpRequest<'a> =
+    | New
+    | Pending
+    | Success of 'a
+    | Error
+
+type AuthQuery =
+    { LinkCode: string
+      HouseholdId: string }
 
 // The model holds data that you want to keep track of while the application is running
 // in this case, we are keeping track of a counter
 // we mark it as optional, because initially it will not be available from the client
 // the initial value will be requested from server
-type Model = { Counter: Counter option }
+type Model = { LinkCode: LinkCode
+               HouseholdId: string
+               Username: string
+               Password: string
+               Authorized: bool }
 
 // The Msg type defines what events/actions can occur while the application is running
 // the state of the application changes *only* in reaction to these events
 type Msg =
-    | Increment
-    | Decrement
-    | InitialCountLoaded of Counter
+    | Authorize
+    | EmailChanged of string
+    | PasswordChanged of string
+    | Authorized of string
 
-let initialCounter () = Fetch.fetchAs<Counter> "/api/init"
+let postAuthorization linkCode model =
+    promise {
+        let data = { EMail = model.Username
+                     Password = model.Password
+                     HouseholdId = model.HouseholdId
+                     LinkCode = linkCode }
+
+        return! Fetch.post<SmapiAuthRendition,string>("", data)
+    }
+
 
 // defines the initial state and initial command (= side-effect) of the application
 let init () : Model * Cmd<Msg> =
-    let initialModel = { Counter = None }
-    let loadCountCmd =
-        Cmd.OfPromise.perform initialCounter () InitialCountLoaded
-    initialModel, loadCountCmd
+
+    let parser = UrlParser.top <?> stringParam "linkcode" <?> stringParam "householdid"
+    //let linkCodeOption = UrlParser.parsePath (UrlParser.top <?> stringParam "linkcode" <?> stringParam "householdid") Dom.window.location
+    let mapper linkcode householdid =
+        match linkcode, householdid with
+        | Some l, Some h -> Some ({ LinkCode = l; HouseholdId = h })
+        | _ -> None
+    let mapped = UrlParser.map mapper parser
+    let result = UrlParser.parsePath mapped Dom.window.location
+    Console.WriteLine(sprintf "%A" result.IsSome)
+    Console.WriteLine(sprintf "%A" result.Value.IsSome)
+    Console.WriteLine(sprintf "%A" result.Value.Value)
+
+    let authQuery = Option.bind (fun (oa:option<AuthQuery>) -> match oa with
+                                                               | Some s -> match Guid.TryParse s.LinkCode with
+                                                                           | (true, g) -> Some (LinkCode g, s.HouseholdId)
+                                                                           | (false, _) -> None
+                                                               | None -> None ) result
+                                |> Option.defaultValue (Invalid, "INVALID")
+
+    let initialModel = { LinkCode = fst authQuery
+                         HouseholdId = snd authQuery
+                         Username = ""
+                         Password = ""
+                         Authorized = false }
+
+    initialModel, Cmd.none
 
 // The update function computes the next state of the application based on the current state and the incoming events/messages
 // It can also run side-effects (encoded as commands) like calling the server via Http.
 // these commands in turn, can dispatch messages to which the update function will react.
 let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
-    match currentModel.Counter, msg with
-    | Some counter, Increment ->
-        let nextModel = { currentModel with Counter = Some { Value = counter.Value + 1 } }
-        nextModel, Cmd.none
-    | Some counter, Decrement ->
-        let nextModel = { currentModel with Counter = Some { Value = counter.Value - 1 } }
-        nextModel, Cmd.none
-    | _, InitialCountLoaded initialCount->
-        let nextModel = { Counter = Some initialCount }
-        nextModel, Cmd.none
-    | _ -> currentModel, Cmd.none
+    match msg with
+    | EmailChanged s ->
+        { currentModel with Username = s }, Cmd.none
+    | PasswordChanged s ->
+        { currentModel with Password = s }, Cmd.none
+    | Authorize ->
+        //create command
+        match currentModel.LinkCode with
+        | LinkCode g  -> currentModel, Cmd.OfPromise.perform (postAuthorization g) currentModel Authorized
+        | _ -> currentModel, Cmd.none
+    | Authorized _ ->
+        currentModel, Cmd.none
 
 
 let safeComponents =
@@ -96,20 +155,23 @@ let column (model : Model) (dispatch : Msg -> unit) =
                         [ Input.email
                             [ Input.Size IsLarge
                               Input.Placeholder "Your Email"
-                              Input.Props [ AutoFocus true ] ] ] ]
+                              Input.Props [ AutoFocus true ]
+                              Input.OnChange (fun ev -> dispatch (EmailChanged ev.Value)) ] ] ]
                   Field.div [ ]
                     [ Control.div [ ]
                         [ Input.password
                             [ Input.Size IsLarge
-                              Input.Placeholder "Your Password" ] ] ]
+                              Input.Placeholder "Your Password"
+                              Input.OnChange (fun ev -> dispatch (PasswordChanged ev.Value)) ] ] ]
                   Field.div [ ]
                     [ Checkbox.checkbox [ ]
-                        [ input [ Type "checkbox" ]
+                        [ Checkbox.input [ ]
                           str "Remember me" ] ]
                   Button.button
                     [ Button.Color IsInfo
                       Button.IsFullWidth
-                      Button.CustomClass "is-large is-block" ]
+                      Button.CustomClass "is-large is-block"
+                      Button.OnClick (fun _ -> dispatch Authorize) ]
                     [ str "Login" ] ] ]
           Text.p [ Modifiers [ Modifier.TextColor IsGrey ] ]
             [ a [ ] [ str "Sign Up" ]

@@ -7,17 +7,13 @@ open Castos.Http
 open System
 open Giraffe
 open Saturn
-
+open Shared
 type AddUserRendition =
     {
         EMail: string
         Password: string
     }
 
-type SmapiAuthRendition = { EMail: string
-                            Password: string
-                            LinkCode: Guid
-                            HouseholdId: string }
 let private streamId = StreamId (sprintf "users")
 
 let private storeUsersEvent eventStore (version, event) =
@@ -45,7 +41,7 @@ let addUserComposition eventStore (rendition:AddUserRendition) =
     | Success _ -> ok ("added user")
     | Failure m -> fail m
 
-let smapiauthComposition (db:Database.DatabaseConnection) eventStore rendition =
+let smapiauthComposition (db:Database.DatabaseConnection) eventStore (rendition:SmapiAuthRendition) =
     match getUsersComposition eventStore with
     | Failure m -> fail "User not found"
     | Success users -> match (getUser users rendition.EMail) with
