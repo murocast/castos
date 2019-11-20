@@ -20,6 +20,7 @@ type SmapiMethod =
     | ReportPlaySeconds of string
     | SetPlayedSeconds of string
     | GetAppLink of string
+    | GetDeviceAuthToken of string
 
 module Smapi =
     [<Literal>]

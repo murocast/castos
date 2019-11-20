@@ -24,7 +24,7 @@ let webApp = router {
 
     post "/token" (handlePostToken (getUserComposition eventStore))
 
-    forward "/api/users" (usersRouter eventStore)
+    forward "/api/users" (usersRouter eventStore db)
     forward "/api/feeds" (feedsRouter eventStore)
     forward "/api/subscriptions" (subscriptionsRouter eventStore)
     forward "/smapi" (smapiRouter eventStore db)

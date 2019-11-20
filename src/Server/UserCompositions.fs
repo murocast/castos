@@ -13,9 +13,14 @@ type AddUserRendition =
         EMail: string
         Password: string
     }
+
+type SmapiAuthRendition = { EMail: string
+                            Password: string
+                            LinkCode: Guid
+                            HouseholdId: string }
 let private streamId = StreamId (sprintf "users")
 
-let private storeUsersEvent eventStore (version, event) =    
+let private storeUsersEvent eventStore (version, event) =
     eventStore.SaveEvents streamId version [event]
 
 let getUsersComposition eventStore =
@@ -40,10 +45,27 @@ let addUserComposition eventStore (rendition:AddUserRendition) =
     | Success _ -> ok ("added user")
     | Failure m -> fail m
 
+let smapiauthComposition (db:Database.DatabaseConnection) eventStore rendition =
+    match getUsersComposition eventStore with
+    | Failure m -> fail "User not found"
+    | Success users -> match (getUser users rendition.EMail) with
+                       | None -> fail "User not found"
+                       | Some u -> let correctPassword = (u.Password = rendition.Password)
+                                   let authReq = db.GetAuthRequestByLinkToken rendition.LinkCode rendition.HouseholdId
+                                   let found = authReq.IsSome
+                                   match (correctPassword, found) with
+                                   | true, true ->
+                                        let updatedReq = { authReq.Value with
+                                                            UserId = Some (u.Id)
+                                                            Used = Some (System.DateTime.Now) }
+                                        db.UpdateAuthRequest updatedReq |> ignore
+                                        ok "Success"
+                                   | _ -> fail "Auth not successful"
 
-let usersRouter eventStore = router {
+let usersRouter eventStore db = router {
     //pipe_through authorize  //<-- for all methods of router
     get "" (authorize >=> adminOnly >=>  (processAsync getUsersComposition eventStore))
     post "" (processDataAsync addUserComposition eventStore)
+    post "/smapiauth" (processDataAsync (smapiauthComposition db) eventStore)
 }
 

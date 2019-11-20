@@ -27,6 +27,7 @@ module SmapiCompositions =
                        | "reportPlayStatus" -> ok(ReportPlayStatus(formString))
                        | "setPlayedSeconds" -> ok(SetPlayedSeconds(formString))
                        | "getAppLink" -> ok(GetAppLink(formString))
+                       | "GetDeviceAuthToken" -> ok(GetDeviceAuthToken(formString))
                        | _ -> fail(sprintf "Method not implemented %s" m)
             }
 
@@ -42,11 +43,12 @@ module SmapiCompositions =
         | ReportPlayStatus _ -> ok("")
         | SetPlayedSeconds _ -> ok("")
         | GetAppLink s -> processGetAppLink eventStore db s
-        | _ -> fail "blubber"
-
+        | GetDeviceAuthToken s -> processGetDeviceAuthTokenRequest db s
+        | GetExtendedMetadata _ -> fail "not implemented"
+        | GetExtendedMetadataText _ -> fail "not implemented"
 
     let internal smapiImp eventStore db c =
-        task{
+        task {
             let! result = getSmapiMethod c
             return result >>= (processSmapiMethod eventStore db)
         }

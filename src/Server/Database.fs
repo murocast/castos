@@ -9,13 +9,13 @@ module Database =
                        HouseholdId: string
                        Token: string
                        PrivateKey: string
-                       UserId: int
+                       UserId: UserId
                        Created: System.DateTime }
 
     type AuthRequest = { Id: System.Guid
                          HouseholdId: string
                          LinkCode: System.Guid
-                         UserId: int option
+                         UserId: UserId option
                          Created: System.DateTime
                          Used: System.DateTime option }
 
