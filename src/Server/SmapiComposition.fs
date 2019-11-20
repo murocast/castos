@@ -42,7 +42,7 @@ module SmapiCompositions =
              ok("")
         | ReportPlayStatus _ -> ok("")
         | SetPlayedSeconds _ -> ok("")
-        | GetAppLink s -> processGetAppLink eventStore db s
+        | GetAppLink s -> processGetAppLink db s
         | GetDeviceAuthToken s -> processGetDeviceAuthTokenRequest db s
         | GetExtendedMetadata _ -> fail "not implemented"
         | GetExtendedMetadataText _ -> fail "not implemented"

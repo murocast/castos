@@ -218,20 +218,21 @@ module Smapi =
         | Success _ -> ()
         | Failure (error:Error) -> failwith (string error)
 
-    let processGetAppLink eventstore (db:Database.DatabaseConnection) s =
+    let processGetAppLink (db:Database.DatabaseConnection) s =
         let req = GetAppLinkRequest.Parse s
         let houseHoldId = req.Body.GetAppLink.HouseholdId
         let id = System.Guid.NewGuid()
-        let token = { Id = id
-                      HouseholdId = houseHoldId
-                      LinkCode = (System.Guid.NewGuid())
-                      UserId = None
-                      Created = System.DateTime.Now
-                      Used = None } : Database.AuthRequest
+        let request = { Id = id
+                        HouseholdId = houseHoldId
+                        LinkCode = (System.Guid.NewGuid())
+                        UserId = None
+                        Created = System.DateTime.Now
+                        Used = None } : Database.AuthRequest
 
-        db.AddAuthRequest token
+        db.AddAuthRequest request
 
-        let response = Smapi.Respond.getAppLinkResponse "http://example.com/signin" (string token.LinkCode)
+        let loginFormUrl = (sprintf "http://localhost:8080/?linkcode=%A&householdid=%s" request.LinkCode request.HouseholdId)
+        let response = Smapi.Respond.getAppLinkResponse loginFormUrl (string request.LinkCode)
         ok response
 
     let linkcodeFault() =

@@ -32,7 +32,7 @@ module Http =
                 let result = f eventStore data
                 return! match result with
                         | Success (a) -> Successful.OK a next ctx
-                        | Failure (_) -> RequestErrors.BAD_REQUEST "Error" next ctx
+                        | Failure (m) -> RequestErrors.BAD_REQUEST m next ctx
             }
 
     let processAuthorizedAsync f eventStore =
@@ -49,7 +49,7 @@ module Http =
                 task {
                     let! data = getJson ctx
                     let result = f eventStore data (claimsToAuthUser ctx.User)
-                    return! match result with 
+                    return! match result with
                             | Success (a) -> Successful.OK a next ctx
                             | Failure (_) -> RequestErrors.BAD_REQUEST "Error" next ctx
                 }

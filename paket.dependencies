@@ -7,7 +7,6 @@ group Server
     nuget Saturn
     nuget Giraffe
     nuget Thoth.Json.Giraffe
-    nuget Thoth.Fetch
     nuget Fable.JsonConverter
 
     nuget FSharp.Data

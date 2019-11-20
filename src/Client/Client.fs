@@ -20,6 +20,9 @@ open Elmish
 open Fable.Import
 open Shared
 
+[<Literal>]
+let BaseUrl = "http://localhost:80"
+
 type LinkCode =
     | LinkCode of System.Guid
     | Invalid
@@ -59,7 +62,7 @@ let postAuthorization linkCode model =
                      HouseholdId = model.HouseholdId
                      LinkCode = linkCode }
 
-        return! Fetch.post<SmapiAuthRendition,string>("", data)
+        return! Fetch.post<SmapiAuthRendition,string>(BaseUrl + "/api/users/smapiauth", data)
     }
 
 
@@ -74,10 +77,6 @@ let init () : Model * Cmd<Msg> =
         | _ -> None
     let mapped = UrlParser.map mapper parser
     let result = UrlParser.parsePath mapped Dom.window.location
-    Console.WriteLine(sprintf "%A" result.IsSome)
-    Console.WriteLine(sprintf "%A" result.Value.IsSome)
-    Console.WriteLine(sprintf "%A" result.Value.Value)
-
     let authQuery = Option.bind (fun (oa:option<AuthQuery>) -> match oa with
                                                                | Some s -> match Guid.TryParse s.LinkCode with
                                                                            | (true, g) -> Some (LinkCode g, s.HouseholdId)
@@ -163,25 +162,23 @@ let column (model : Model) (dispatch : Msg -> unit) =
                             [ Input.Size IsLarge
                               Input.Placeholder "Your Password"
                               Input.OnChange (fun ev -> dispatch (PasswordChanged ev.Value)) ] ] ]
-                  Field.div [ ]
-                    [ Checkbox.checkbox [ ]
-                        [ Checkbox.input [ ]
-                          str "Remember me" ] ]
                   Button.button
                     [ Button.Color IsInfo
                       Button.IsFullWidth
                       Button.CustomClass "is-large is-block"
-                      Button.OnClick (fun _ -> dispatch Authorize) ]
+                      Button.OnClick (fun ev -> ev.preventDefault()
+                                                dispatch Authorize) ]
                     [ str "Login" ] ] ]
-          Text.p [ Modifiers [ Modifier.TextColor IsGrey ] ]
-            [ a [ ] [ str "Sign Up" ]
-              str "\u00A0·\u00A0"
-              a [ ] [ str "Forgot Password" ]
-              str "\u00A0·\u00A0"
-              a [ ] [ str "Need Help?" ] ]
+        //   Text.p [ Modifiers [ Modifier.TextColor IsGrey ] ]
+        //     [ a [ ] [ str "Sign Up" ]
+        //       str "\u00A0·\u00A0"
+        //       a [ ] [ str "Forgot Password" ]
+        //       str "\u00A0·\u00A0"
+        //       a [ ] [ str "Need Help?" ] ]
           br [ ]
-          Text.div [ Modifiers [   Modifier.TextColor IsGrey ] ]
-            [ safeComponents ] ]
+        //   Text.div [ Modifiers [   Modifier.TextColor IsGrey ] ]
+        //     [ safeComponents ]
+        ]
 
 let view (model : Model) (dispatch : Msg -> unit) =
     Hero.hero

@@ -42,6 +42,11 @@ let app = application {
     memory_cache
     use_static publicPath
     service_config configureSerialization
+    use_cors "Cors Policy" (fun builder -> builder
+                                            .AllowAnyMethod()
+                                            .AllowAnyHeader()
+                                            .WithOrigins [|"http://localhost:8080"; "http://127.0.0.1:8080"|]
+                                           |> ignore )
     use_gzip
 }
 

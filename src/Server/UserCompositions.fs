@@ -43,7 +43,7 @@ let addUserComposition eventStore (rendition:AddUserRendition) =
 
 let smapiauthComposition (db:Database.DatabaseConnection) eventStore (rendition:SmapiAuthRendition) =
     match getUsersComposition eventStore with
-    | Failure m -> fail "User not found"
+    | Failure m -> fail "Users not found"
     | Success users -> match (getUser users rendition.EMail) with
                        | None -> fail "User not found"
                        | Some u -> let correctPassword = (u.Password = rendition.Password)

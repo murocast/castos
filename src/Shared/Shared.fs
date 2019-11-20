@@ -1,6 +1,5 @@
 namespace Shared
 open System
-open Thoth.Json
 
 type Counter = { Value : int }
 
