@@ -109,32 +109,6 @@ let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
     | Authorized _ ->
         currentModel, Cmd.none
 
-
-let safeComponents =
-    let components =
-        span [ ]
-           [ a [ Href "https://github.com/SAFE-Stack/SAFE-template" ]
-               [ str "SAFE  "
-                 str Version.template ]
-             str ", "
-             a [ Href "https://saturnframework.github.io" ] [ str "Saturn" ]
-             str ", "
-             a [ Href "http://fable.io" ] [ str "Fable" ]
-             str ", "
-             a [ Href "https://elmish.github.io" ] [ str "Elmish" ]
-             str ", "
-             a [ Href "https://fulma.github.io/Fulma" ] [ str "Fulma" ]
-             str ", "
-             a [ Href "https://bulmatemplates.github.io/bulma-templates/" ] [ str "Bulma\u00A0Templates" ]
-
-           ]
-
-    span [ ]
-        [ str "Version "
-          strong [ ] [ str Version.app ]
-          str " powered by: "
-          components ]
-
 let column (model : Model) (dispatch : Msg -> unit) =
     Column.column
         [ Column.Width (Screen.All, Column.Is4)
@@ -169,15 +143,7 @@ let column (model : Model) (dispatch : Msg -> unit) =
                       Button.OnClick (fun ev -> ev.preventDefault()
                                                 dispatch Authorize) ]
                     [ str "Login" ] ] ]
-        //   Text.p [ Modifiers [ Modifier.TextColor IsGrey ] ]
-        //     [ a [ ] [ str "Sign Up" ]
-        //       str "\u00A0·\u00A0"
-        //       a [ ] [ str "Forgot Password" ]
-        //       str "\u00A0·\u00A0"
-        //       a [ ] [ str "Need Help?" ] ]
           br [ ]
-        //   Text.div [ Modifiers [   Modifier.TextColor IsGrey ] ]
-        //     [ safeComponents ]
         ]
 
 let view (model : Model) (dispatch : Msg -> unit) =
