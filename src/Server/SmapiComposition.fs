@@ -7,6 +7,7 @@ open FSharp.Control.Tasks.V2
 open Castos
 open Castos.Smapi
 open Microsoft.AspNetCore.Http
+open Microsoft.Extensions.Logging
 
 module SmapiCompositions =
     let internal getSmapiMethod (c:HttpContext) =
@@ -47,10 +48,18 @@ module SmapiCompositions =
         | GetExtendedMetadata _ -> fail "not implemented"
         | GetExtendedMetadataText _ -> fail "not implemented"
 
-    let internal smapiImp eventStore db c =
+    let internal smapiImp eventStore db (c:HttpContext) =
         task {
             let! result = getSmapiMethod c
-            return result >>= (processSmapiMethod eventStore db)
+            let log (ctx:HttpContext) (m:SmapiMethod) =
+                let j = mkjson m
+                let logger = ctx.GetLogger()
+                logger.LogInformation j
+                ok m
+
+            return result
+                    >>= log c
+                    >>= (processSmapiMethod eventStore db)
         }
 
     let internal processSmapiRequest eventStore db =
@@ -59,7 +68,10 @@ module SmapiCompositions =
                 let! result = smapiImp eventStore db ctx
                 return! match result with
                         | Success (content) -> text content next ctx
-                        | Failure (_) -> RequestErrors.BAD_REQUEST "Error" next ctx
+                        | Failure (error) ->
+                            let logger = ctx.GetLogger()
+                            logger.LogError (sprintf "Error Handling Request: %s" error)
+                            RequestErrors.BAD_REQUEST error next ctx
             }
 
     let smapiRouter eventStore db = router {

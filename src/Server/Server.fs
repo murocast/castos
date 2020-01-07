@@ -2,6 +2,7 @@ module Server
 
 open Giraffe.Serialization
 open Microsoft.Extensions.DependencyInjection
+open Microsoft.Extensions.Logging
 
 open Saturn
 open System.IO
@@ -48,6 +49,7 @@ let app = application {
                                             .WithOrigins [|"http://localhost:8080"; "http://127.0.0.1:8080"|]
                                            |> ignore )
     use_gzip
+    logging (fun logger -> logger.SetMinimumLevel LogLevel.Information |> ignore)
 }
 
 [<EntryPoint>]
