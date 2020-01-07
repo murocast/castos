@@ -247,20 +247,22 @@ module Smapi =
         match found with
         | None -> ok (linkcodeFault())
         | Some r ->
-            let updatedReq = { r with Used = Some System.DateTime.Now }
-            db.UpdateAuthRequest updatedReq |> ignore
+            match r.UserId with
+            | None -> ok (linkcodeFault())
+            | Some u ->
+                    let updatedReq = { r with Used = Some System.DateTime.Now }
+                    db.UpdateAuthRequest updatedReq |> ignore
 
-            let authToken = { Id = System.Guid.NewGuid()
-                              HouseholdId = householdId
-                              Token = string (System.Guid.NewGuid())
-                              PrivateKey = "no refresh yet"
-                              UserId = r.UserId |> Option.get
-                              Created = System.DateTime.Now } : Database.AuthToken
-            db.AddAuthToken authToken
+                    let authToken = { Id = System.Guid.NewGuid()
+                                      HouseholdId = householdId
+                                      Token = string (System.Guid.NewGuid())
+                                      PrivateKey = "no refresh yet"
+                                      UserId = r.UserId |> Option.get
+                                      Created = System.DateTime.Now } : Database.AuthToken
+                    db.AddAuthToken authToken
 
-            let response = Smapi.Respond.processGetDeviceAuthTokenResponse authToken.Token authToken.PrivateKey
-            ok response
-
+                    let response = Smapi.Respond.processGetDeviceAuthTokenResponse authToken.Token authToken.PrivateKey
+                    ok response
 
     let processGetExtendedMetadata s =
         let req = GetExtendedMetadataRequest.Parse s
