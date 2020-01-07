@@ -52,8 +52,7 @@ let smapiauthComposition (db:Database.DatabaseConnection) eventStore (rendition:
                                    match (correctPassword, found) with
                                    | true, true ->
                                         let updatedReq = { authReq.Value with
-                                                            UserId = Some (u.Id)
-                                                            Used = Some (System.DateTime.Now) }
+                                                            UserId = Some (u.Id) }
                                         db.UpdateAuthRequest updatedReq |> ignore
                                         ok "Success"
                                    | _ -> fail "Auth not successful"
