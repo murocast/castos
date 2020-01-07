@@ -28,7 +28,7 @@ module SmapiCompositions =
                        | "reportPlayStatus" -> ok(ReportPlayStatus(formString))
                        | "setPlayedSeconds" -> ok(SetPlayedSeconds(formString))
                        | "getAppLink" -> ok(GetAppLink(formString))
-                       | "GetDeviceAuthToken" -> ok(GetDeviceAuthToken(formString))
+                       | "getDeviceAuthToken" -> ok(GetDeviceAuthToken(formString))
                        | _ -> fail(sprintf "Method not implemented %s" m)
             }
 
