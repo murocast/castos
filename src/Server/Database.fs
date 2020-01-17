@@ -22,8 +22,8 @@ module Database =
     type DatabaseConnection = { AddAuthRequest: AuthRequest->unit
                                 GetAuthRequestByLinkToken: System.Guid -> string -> AuthRequest option
                                 UpdateAuthRequest: AuthRequest -> bool
-
-                                AddAuthToken: AuthToken -> unit }
+                                AddAuthToken: AuthToken -> unit
+                                GetAuthToken: string -> string -> AuthToken option }
 
     [<Literal>]
     let private AuthRequestCollection = "authrequests"
@@ -53,6 +53,14 @@ module Database =
         collection.Insert token
         |> ignore
 
+    let private getAuthToken (db:LiteDatabase) (token:string) (householdId:string) =
+        let collection = db.GetCollection<AuthToken>(AuthTokenCollection)
+        let result = collection.Find (fun authToken -> authToken.Token = token)
+                     |> List.ofSeq
+        match result with
+        | head::tail -> Some head
+        | [] -> None
+
     let createDatabaseConnection() =
         let mapper = FSharpBsonMapper()
         let db = new LiteDatabase("murocast.db", mapper) //TODO: DB is IDisposable
@@ -60,4 +68,5 @@ module Database =
         { AddAuthRequest = addAuthRequest db
           GetAuthRequestByLinkToken = getAuthRequest db
           UpdateAuthRequest = updateAuthRequest db
-          AddAuthToken = addAuthToken db }
+          AddAuthToken = addAuthToken db
+          GetAuthToken = getAuthToken db }

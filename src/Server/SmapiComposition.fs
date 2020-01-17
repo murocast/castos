@@ -10,47 +10,50 @@ open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Logging
 
 module SmapiCompositions =
-    let internal getSmapiMethod (c:HttpContext) =
+    let internal getSmapiMethod db (c:HttpContext) =
             task{
                 let m = match c.GetRequestHeader "SOAPAction" with
                         | Error msg -> failwith msg
                         | Result.Ok headerValue -> extractSmapiMethod headerValue
 
                 let! formString = Http.rawFormString c
+                let userId = getUserFromHeader db formString
+
                 return match m with
-                       | "getMetadata" -> ok (GetMetadata (formString))
-                       | "getMediaMetadata" -> ok (GetMediaMetadata (formString))
-                       | "getMediaURI" -> ok(GetMediaURI (formString))
-                       | "getLastUpdate" -> ok(GetLastUpdate(formString))
-                       | "getExtendedMetadataRequest" -> ok(GetExtendedMetadata(formString))
-                       | "getExtendedMetadataRequestText" -> ok(GetExtendedMetadataText(formString))
-                       | "reportPlaySeconds" -> ok(ReportPlaySeconds(formString))
-                       | "reportPlayStatus" -> ok(ReportPlayStatus(formString))
-                       | "setPlayedSeconds" -> ok(SetPlayedSeconds(formString))
-                       | "getAppLink" -> ok(GetAppLink(formString))
-                       | "getDeviceAuthToken" -> ok(GetDeviceAuthToken(formString))
+                       | "getMetadata" -> ok (GetMetadata (formString, userId))
+                       | "getMediaMetadata" -> ok (GetMediaMetadata (formString, userId))
+                       | "getMediaURI" -> ok(GetMediaURI (formString, userId))
+                       | "getLastUpdate" -> ok(GetLastUpdate(formString, userId))
+                       | "getExtendedMetadataRequest" -> ok(GetExtendedMetadata(formString, userId))
+                       | "getExtendedMetadataRequestText" -> ok(GetExtendedMetadataText(formString, userId))
+                       | "reportPlaySeconds" -> ok(ReportPlaySeconds(formString, userId))
+                       | "reportPlayStatus" -> ok(ReportPlayStatus(formString, userId))
+                       | "setPlayedSeconds" -> ok(SetPlayedSeconds(formString, userId))
+                       | "getAppLink" -> ok(GetAppLink(formString, userId))
+                       | "getDeviceAuthToken" -> ok(GetDeviceAuthToken(formString, userId))
                        | _ -> fail(sprintf "Method not implemented %s" m)
             }
 
     let internal processSmapiMethod eventStore db m =
         match m with
-        | GetMetadata s -> processGetMetadata eventStore (GetMetadataRequest.Parse s)
-        | GetMediaMetadata s -> processGetMediaMetadata eventStore (GetMediaMetadataRequest.Parse s)
-        | GetLastUpdate s -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
-        | GetMediaURI s -> processGetMediaURI eventStore s
-        | ReportPlaySeconds s ->
+        | GetMetadata (s, Some u) -> processGetMetadata eventStore u (GetMetadataRequest.Parse s)
+        | GetMetadata (_, None) -> fail "User not found"
+        | GetMediaMetadata (s,u) -> processGetMediaMetadata eventStore (GetMediaMetadataRequest.Parse s)
+        | GetLastUpdate (s,u) -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
+        | GetMediaURI (s,u) -> processGetMediaURI eventStore s
+        | ReportPlaySeconds (s,u) ->
              processReportPlaySecondsRequest eventStore s
              ok("")
         | ReportPlayStatus _ -> ok("")
         | SetPlayedSeconds _ -> ok("")
-        | GetAppLink s -> processGetAppLink db s
-        | GetDeviceAuthToken s -> processGetDeviceAuthTokenRequest db s
+        | GetAppLink (s,u) -> processGetAppLink db s
+        | GetDeviceAuthToken (s,u) -> processGetDeviceAuthTokenRequest db s
         | GetExtendedMetadata _ -> fail "not implemented"
         | GetExtendedMetadataText _ -> fail "not implemented"
 
     let internal smapiImp eventStore db (c:HttpContext) =
         task {
-            let! result = getSmapiMethod c
+            let! result = getSmapiMethod db c
             let log (ctx:HttpContext) (m:SmapiMethod) =
                 let j = mkjson m
                 let logger = ctx.GetLogger()

@@ -10,17 +10,17 @@ open System.Text.RegularExpressions
 open FeedCompositions
 
 type SmapiMethod =
-    | GetMetadata of string
-    | GetMediaMetadata of string
-    | GetMediaURI of string
-    | GetLastUpdate of string
-    | GetExtendedMetadata of string
-    | GetExtendedMetadataText of string
-    | ReportPlayStatus of string
-    | ReportPlaySeconds of string
-    | SetPlayedSeconds of string
-    | GetAppLink of string
-    | GetDeviceAuthToken of string
+    | GetMetadata of string*(UserId option)
+    | GetMediaMetadata of string*(UserId option)
+    | GetMediaURI of string*(UserId option)
+    | GetLastUpdate of string*(UserId option)
+    | GetExtendedMetadata of string*(UserId option)
+    | GetExtendedMetadataText of string*(UserId option)
+    | ReportPlayStatus of string*(UserId option)
+    | ReportPlaySeconds of string*(UserId option)
+    | SetPlayedSeconds of string*(UserId option)
+    | GetAppLink of string*(UserId option)
+    | GetDeviceAuthToken of string*(UserId option)
 
 module Smapi =
     [<Literal>]
@@ -32,6 +32,7 @@ module Smapi =
     [<Literal>]
     let RecentId = "recent"
 
+    type Header = XmlProvider<"Samples/Header.xml">
     type GetMetadataRequest = XmlProvider<"Samples/GetMetadataRequest.xml">
     type GetMediaMetadataRequest = XmlProvider<"Samples/GetMediaMetadataRequest.xml">
     type GetMediaURIRequest = XmlProvider<"Samples/GetMediaURIRequest.xml">
@@ -79,7 +80,18 @@ module Smapi =
                             Title = "Recent"
                             CanPlay = false }]
         |> Seq.ofList
-    let getCategories eventStore =
+
+    let getUserFromHeader (db:Database.DatabaseConnection) xml =
+        let header = Header.Parse xml
+        let loginToken = header.Header.Credentials.LoginToken
+        let token = loginToken.Token
+        let householdId = loginToken.HouseholdId
+        let existingToken = db.GetAuthToken token householdId
+        match existingToken with
+        | None -> None
+        | Some t -> Some t.UserId
+
+    let getCategories eventStore userId =
         let result = getCategoriesComposition eventStore
         match result with
         | Success (categories) -> categories
@@ -91,7 +103,7 @@ module Smapi =
                                   |> Seq.ofList
         | _ -> failwith("bla")
 
-    let getPodcastsOfCategory eventStore c =
+    let getPodcastsOfCategory eventStore userId c =
         let result = getFeedsOfCategoryComposition eventStore c
         match result with
         | Success (feeds) -> feeds
@@ -124,12 +136,12 @@ module Smapi =
                                 |> Seq.ofList
         | _ -> failwith("bla")
 
-    let processGetMetadata eventStore (s:GetMetadataRequest.Envelope) =
+    let processGetMetadata eventStore userId (s:GetMetadataRequest.Envelope) =
         let id = s.Body.GetMetadata.Id
         let items = match id with
                     | RootId -> getRootCollections
-                    | LibraryId -> getCategories eventStore
-                    | Category c -> getPodcastsOfCategory eventStore c
+                    | LibraryId -> getCategories eventStore userId
+                    | Category c -> getPodcastsOfCategory eventStore userId c
                     | Feed s -> getEpisodesOfFeed eventStore s
                     | CurrentId
                     | RecentId
