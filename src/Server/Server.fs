@@ -15,10 +15,18 @@ open Castos.FeedCompositions
 open Castos.UserCompositions
 open Castos.SubscriptionCompositions
 
+open CosmoStore
+
 let publicPath = Path.GetFullPath "../Client/public"
 let port = 80us
 
 let eventStore = createGetEventStoreEventStore<CastosEventData, Error>(VersionConflict "Version conflict")
+
+let eventStore2 = { LiteDb.Configuration.Empty with
+                        StoreType = LiteDb.LocalDB
+                        Folder = "Castos" }
+                  |> LiteDb.EventStore.getEventStore
+
 let db = Database.createDatabaseConnection()
 
 let webApp = router {
@@ -26,7 +34,7 @@ let webApp = router {
     post "/token" (handlePostToken (getUserComposition eventStore))
 
     forward "/api/users" (usersRouter eventStore db)
-    forward "/api/feeds" (feedsRouter eventStore)
+    forward "/api/feeds" (feedsRouter eventStore eventStore2)
     forward "/api/subscriptions" (subscriptionsRouter eventStore)
     forward "/smapi" (smapiRouter eventStore db)
 }

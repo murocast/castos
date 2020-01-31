@@ -5,3 +5,5 @@ group Server
     EventStore.ClientAPI.NetCore
     FSharp.Data
     LiteDB.FSharp
+    CosmoStore
+    CosmoStore.LiteDB
