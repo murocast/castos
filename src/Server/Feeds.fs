@@ -121,14 +121,14 @@ module FeedSource =
         let lastEpisodeId = match List.length state.Episodes with
                             | 0 -> 0
                             | _ -> (List.maxBy (fun (e:Episode) -> e.Id) state.Episodes).Id
-        ok ((version, EpisodeAdded { Id = lastEpisodeId + 1
-                                     FeedId = FeedId (System.Guid.Parse(feedId))
-                                     Guid = rendition.Guid
-                                     Url = rendition.Url
-                                     MediaUrl = rendition.MediaUrl
-                                     Title = rendition.Title
-                                     Length = rendition.Length
-                                     ReleaseDate = rendition.ReleaseDate }))
+        (version, EpisodeAdded { Id = lastEpisodeId + 1
+                                 FeedId = FeedId (System.Guid.Parse(feedId))
+                                 Guid = rendition.Guid
+                                 Url = rendition.Url
+                                 MediaUrl = rendition.MediaUrl
+                                 Title = rendition.Title
+                                 Length = rendition.Length
+                                 ReleaseDate = rendition.ReleaseDate })
 
     let getCategories events =
         getFeeds events

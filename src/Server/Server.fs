@@ -34,9 +34,9 @@ let webApp = router {
     post "/token" (handlePostToken (getUserComposition eventStore))
 
     forward "/api/users" (usersRouter eventStore db)
-    forward "/api/feeds" (feedsRouter eventStore eventStore2)
+    forward "/api/feeds" (feedsRouter eventStore2)
     forward "/api/subscriptions" (subscriptionsRouter eventStore)
-    forward "/smapi" (smapiRouter eventStore db)
+    forward "/smapi" (smapiRouter eventStore eventStore2 db)
 }
 
 let configureSerialization (services:IServiceCollection) =
