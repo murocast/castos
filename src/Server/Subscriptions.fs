@@ -40,13 +40,13 @@ module Subscriptions =
         getSubscriptions events
         |> List.tryFind (fun s -> s.FeedId = feedId)
 
-    let addSubscription feedId userId (version, events) =
+    let addSubscription feedId userId events =
         let existing = getSubscription events feedId
         match existing with
         | Some _ -> failwithf "Subscription for feed  already exists"
-        | None -> ok (version, Subscribed { FeedId = feedId
-                                            UserId = userId
-                                            Timestamp = DateTime.Now })
+        | None -> Subscribed { FeedId = feedId
+                               UserId = userId
+                               Timestamp = DateTime.Now }
 
 module SubscriptionCompositions =
     open Subscriptions
@@ -60,14 +60,14 @@ module SubscriptionCompositions =
     }
 
     let private subscriptionStreamId userId =
-        StreamId (sprintf "sub-%A" userId)
+        sprintf "sub-%A" userId
 
-    let private storeSubscriptionEvent eventStore (version, event) =
-        let streamId event = subscriptionStreamId (userId event)
-        eventStore.SaveEvents (streamId event) version [event]
+    let private storeSubscriptionEvent eventStore event =
+        storeEvent eventStore (userId >> subscriptionStreamId) event
 
     let private subscriptionEvents eventStore userId =
-        eventStore.GetEvents (subscriptionStreamId userId)
+        let (events, _) = getAllEventsFromStreamById eventStore (subscriptionStreamId userId)
+        events
 
     let private feedExists eventStore feedId =
         getFeedComposition eventStore (feedId.ToString())
@@ -75,19 +75,15 @@ module SubscriptionCompositions =
     let addSubscriptionComposition eventStore rendition user =
         let result = feedExists eventStore rendition.FeedId
         match result with
-        | Success _ -> let result = subscriptionEvents eventStore user.Id
-                                    >>= (addSubscription rendition.FeedId (user.Id))
-                                    >>= storeSubscriptionEvent eventStore
-                       match result with
-                       | Success _ -> ok ("added subscription")
-                       | Failure m -> fail m
+        | Success _ -> let events = subscriptionEvents eventStore (user.Id)
+                       let added = addSubscription rendition.FeedId (user.Id) events
+                       storeSubscriptionEvent eventStore added
+                       ok ("added subscription")
         | Failure m -> fail m
 
     let getSubscriptionsComposition eventStore user =
-        let result = subscriptionEvents eventStore user.Id
-        match result with
-        | Success (_ , evs) -> ok (getSubscriptions evs)
-        | Failure m -> fail m
+        let evs = subscriptionEvents eventStore user.Id
+        ok (getSubscriptions evs)
 
     let subscriptionsRouter eventStore = router {
         pipe_through authorize

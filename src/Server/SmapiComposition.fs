@@ -34,9 +34,9 @@ module SmapiCompositions =
                        | _ -> fail(sprintf "Method not implemented %s" m)
             }
 
-    let internal processSmapiMethod eventStore eventStore2 db m =
+    let internal processSmapiMethod eventStore db m =
         match m with
-        | GetMetadata (s, Some u) -> processGetMetadata eventStore2 u (GetMetadataRequest.Parse s)
+        | GetMetadata (s, Some u) -> processGetMetadata eventStore u (GetMetadataRequest.Parse s)
         | GetMetadata (_, None) -> fail "User not found"
         | GetMediaMetadata (s,u) -> processGetMediaMetadata eventStore (GetMediaMetadataRequest.Parse s)
         | GetLastUpdate (s,u) -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
@@ -51,7 +51,7 @@ module SmapiCompositions =
         | GetExtendedMetadata _ -> fail "not implemented"
         | GetExtendedMetadataText _ -> fail "not implemented"
 
-    let internal smapiImp eventStore eventStore2 db (c:HttpContext) =
+    let internal smapiImp eventStore db (c:HttpContext) =
         task {
             let! result = getSmapiMethod db c
             let log (ctx:HttpContext) (m:SmapiMethod) =
@@ -62,13 +62,13 @@ module SmapiCompositions =
 
             return result
                     >>= log c
-                    >>= (processSmapiMethod eventStore eventStore2 db)
+                    >>= (processSmapiMethod eventStore db)
         }
 
-    let internal processSmapiRequest eventStore eventStore2 db =
+    let internal processSmapiRequest eventStore db =
         fun next ctx ->
             task {
-                let! result = smapiImp eventStore eventStore2 db ctx
+                let! result = smapiImp eventStore db ctx
                 return! match result with
                         | Success (content) -> text content next ctx
                         | Failure (error) ->
@@ -77,6 +77,6 @@ module SmapiCompositions =
                             RequestErrors.BAD_REQUEST error next ctx
             }
 
-    let smapiRouter eventStore eventStore2 db = router {
-        post "" (processSmapiRequest eventStore eventStore2 db)
+    let smapiRouter eventStore db = router {
+        post "" (processSmapiRequest eventStore db)
     }

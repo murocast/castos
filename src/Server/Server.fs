@@ -35,8 +35,8 @@ let webApp = router {
 
     forward "/api/users" (usersRouter eventStore db)
     forward "/api/feeds" (feedsRouter eventStore2)
-    forward "/api/subscriptions" (subscriptionsRouter eventStore)
-    forward "/smapi" (smapiRouter eventStore eventStore2 db)
+    forward "/api/subscriptions" (subscriptionsRouter eventStore2)
+    forward "/smapi" (smapiRouter eventStore2 db)
 }
 
 let configureSerialization (services:IServiceCollection) =

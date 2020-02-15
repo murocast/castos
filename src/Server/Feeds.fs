@@ -105,30 +105,30 @@ module FeedSource =
         |> evolve initialFeedState
 
     let addFeed rendition =
-        (StreamVersion 0, FeedAdded { Id = FeedId (System.Guid.NewGuid())
-                                      Name = rendition.Name
-                                      Category = rendition.Category
-                                      Url = rendition.Url })
+        FeedAdded { Id = FeedId (System.Guid.NewGuid())
+                    Name = rendition.Name
+                    Category = rendition.Category
+                    Url = rendition.Url }
 
-    let deleteFeed (version, events) =
+    let deleteFeed events =
         let state = getFeed events
         match state.Active with
-        | true -> ok (version, FeedDeleted { Id = state.Id })
-        | _ -> fail (NotFound "")
+        | true -> Some (FeedDeleted { Id = state.Id })
+        | _ -> None
 
-    let addEpisode (feedId:string) rendition (version, events) =
+    let addEpisode (feedId:string) rendition events =
         let state = getFeed events
         let lastEpisodeId = match List.length state.Episodes with
                             | 0 -> 0
                             | _ -> (List.maxBy (fun (e:Episode) -> e.Id) state.Episodes).Id
-        (version, EpisodeAdded { Id = lastEpisodeId + 1
-                                 FeedId = FeedId (System.Guid.Parse(feedId))
-                                 Guid = rendition.Guid
-                                 Url = rendition.Url
-                                 MediaUrl = rendition.MediaUrl
-                                 Title = rendition.Title
-                                 Length = rendition.Length
-                                 ReleaseDate = rendition.ReleaseDate })
+        EpisodeAdded { Id = lastEpisodeId + 1
+                       FeedId = FeedId (System.Guid.Parse(feedId))
+                       Guid = rendition.Guid
+                       Url = rendition.Url
+                       MediaUrl = rendition.MediaUrl
+                       Title = rendition.Title
+                       Length = rendition.Length
+                       ReleaseDate = rendition.ReleaseDate }
 
     let getCategories events =
         getFeeds events

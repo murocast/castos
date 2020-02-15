@@ -16,21 +16,22 @@ module FeedCompositions =
 
     let private feedStreamId event = sprintf "feed-%A" (feedId event)
 
-    let rec getEventsFromEventRead (events:EventRead<'a, 'b> list) =
+    let rec getEventsFromEventRead (lastVersion:int64) (events:EventRead<'a, 'b> list) =
         match events with
-        | e :: rest -> e.Data :: getEventsFromEventRead rest
-        | [ ] -> [ ]
+        | e :: rest -> let (events, version) = getEventsFromEventRead lastVersion rest
+                       ((e.Data :: events), (System.Math.Max(version,lastVersion))) //TODO: Tail recursion??
+        | [ ] -> [ ], lastVersion
 
     let getAllEventsFromStreamById (store:CosmoStore.EventStore<'a, 'b>) streamId =
         AllEvents
         |> store.GetEvents (streamId)
         |> Async.AwaitTask
         |> Async.RunSynchronously
-        |> getEventsFromEventRead
+        |> getEventsFromEventRead 0L
 
     let rec getAllEventsFromStreams (store:CosmoStore.EventStore<'a, 'b>) (streams:Stream<'b> list) =
         match streams with
-        | s::rest -> let evs = getAllEventsFromStreamById store s.Id
+        | s::rest -> let (evs, version) = getAllEventsFromStreamById store s.Id
                      evs @ getAllEventsFromStreams store rest
         | [] -> []
 
@@ -50,15 +51,8 @@ module FeedCompositions =
     let private allEpisodeAddedEvents eventStore =
         eventStore.GetEvents (StreamId("latest-feeds"))
 
-    let getFeedStreamId id =
-        (StreamId(sprintf "feed-%s" id))
-
-    let feedEvents eventStore id =
-        eventStore.GetEvents (getFeedStreamId id)
-
-    let private storeFeedEvent eventStore (version, event) =
-        let streamId event = StreamId (sprintf "feed-%A" (feedId event))
-        eventStore.SaveEvents (streamId event) version [event]
+    let private getFeedStreamId id =
+        sprintf "feed-%A" id
 
     let private getUnionCaseName (x:'a) =
         match FSharpValue.GetUnionFields(x, typeof<'a>) with
@@ -77,67 +71,67 @@ module FeedCompositions =
         |> Async.AwaitTask
         |> Async.RunSynchronously
 
+    //TODO: Version
+    let storeEvent eventStore getStreamId ev =
+        createEvent (ev)
+        |> appendEvent eventStore (getStreamId ev)
+        |> ignore
+
+    let private storeFeedEvent eventStore ev =
+        storeEvent eventStore feedStreamId ev
+
     let getCategoriesComposition eventStore =
         let events = allFeedsEvents eventStore
         ok (getCategories events)
 
     let addEpisodeComposition eventStore feedId rendition =
-        let events = getAllEventsFromStreamById eventStore feedId
-        let added = addEpisode feedId rendition (0, events) //TODO Version
+        let (events, version) = getAllEventsFromStreamById eventStore (getFeedStreamId feedId)
+        let added = addEpisode feedId rendition events
 
-        createEvent (snd added)
-        |> appendEvent eventStore feedId
-        |> ignore
+        //TODO: Version
+        storeFeedEvent eventStore added
 
         ok ("added episode")
 
     let addFeedComposition eventStore rendition =
-        let (version, event) = addFeed rendition
+        let event = addFeed rendition
         let read = createEvent event
                    |> appendEvent eventStore (feedStreamId event)
 
-        ok ("added feed") //TODO: Error Handlin!!
-        // match result with
-        // | Success _ -> ok ("added feed")
-        // | Failure m -> fail m
+        ok ("added feed")
 
     let deleteFeedComposition eventStore id =
-        let result = feedEvents eventStore id
-                        >>= deleteFeed
-                        >>= storeFeedEvent eventStore
-        match result with
-        | Success _ -> ok (sprintf "Deleted %s" id)
-        | Failure m -> fail m
+        let (events, version) = getAllEventsFromStreamById eventStore (getFeedStreamId id)
+
+        let deleted = deleteFeed events
+        match deleted with
+        | Some ev ->
+            storeFeedEvent eventStore ev
+        | None -> ()
+
+        ok (sprintf "Deleted %s" id)
 
     let getFeedsComposition eventStore =
-        //let result = allFeedsEvents eventStore
-
-        // match result with
-        // | Success (_, events) -> ok (getFeeds events)
-        // | _ -> failwith "bla"
         let events = allEventsFromStreamsStartsWith eventStore "feed-"
         ok (getFeeds events)
 
     let getFeedComposition eventStore id =
-        let result = feedEvents eventStore id
-        match result with
-        | Success (_, events) -> ok (getFeed events)
-        | _ -> failwith "stream not found"
+        let (events, _) = getAllEventsFromStreamById eventStore (getFeedStreamId id)
+        ok (getFeed events)
 
     let getFeedsOfCategoryComposition eventStore category =
         let events = allFeedsEvents eventStore
         ok (getFeedsOfCategory category events)
 
     let getEpisodesOfFeedComposition eventStore id =
-        let events = getAllEventsFromStreamById eventStore id
+        let (events, _) = getAllEventsFromStreamById eventStore (getFeedStreamId id)
         ok (getEpisodes events)
 
     let getEpisodeOfFeedComposition eventStore feedId episodeId =
-        let result = feedEvents eventStore (string feedId)
-        match result with
-        | Success (_, events) -> (getEpisodes events)
-                                 |> List.find (fun x -> x.Id = episodeId)
-        | _ -> failwith("bla")
+        let (events, _) = getAllEventsFromStreamById eventStore (getFeedStreamId feedId)
+
+        (getEpisodes events)
+        |> List.find (fun x -> x.Id = episodeId)
 
     let feedsRouter eventStore = router {
         get ""  (processAsync getFeedsComposition eventStore)

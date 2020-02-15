@@ -178,8 +178,8 @@ module Smapi =
         let req = GetMediaURIRequest.Parse s
         let id = req.Body.GetMediaUri.Id
         let episode = match id with
-                      | MediaMetadataId (feedId, episodeId) -> getEpisodeOfFeedComposition eventstore feedId episodeId
                       | _ -> failwithf "Wrong Id: %s" id
+                      | MediaMetadataId (feedId, episodeId) -> getEpisodeOfFeedComposition eventstore feedId episodeId
 
         let path = episode.MediaUrl
 
@@ -193,12 +193,11 @@ module Smapi =
             | Some (PlayEpisodeStopped data) -> if data.Id = episodeId then Some (data.Position) else None
             | _ -> None
 
-        let position = match feedEvents eventstore (string episode.FeedId) with
-                       | Success (_ , events) -> match lastPlayEpisodeStopped events with
-                                                 | IsNeededPlaySecondsReported episode.Id position -> Some position
-                                                 | IsNeededPlayEpisodeStopped episode.Id position -> Some position
-                                                 | _ -> None
-                       | Failure (e:Error) -> failwithf "Get Events for position faild. Error: %s for Episode %i in Feed %O" (string e) episode.Id episode.FeedId
+        let (events, _) = getAllEventsFromStreamById eventstore (string (episode.FeedId))
+        let position = match lastPlayEpisodeStopped events with
+                       | IsNeededPlaySecondsReported episode.Id position -> Some position
+                       | IsNeededPlayEpisodeStopped episode.Id position -> Some position
+                       | _ -> None
 
         let response = Smapi.Respond.getMediaUriResponse path id position
         ok response
@@ -211,24 +210,26 @@ module Smapi =
         ok (toLastUpdateXml result)
 
     let processReportPlaySecondsRequest eventstore s =
-        let req = ReportPlaySecondsRequest.Parse s
-        let id = req.Body.ReportPlaySeconds.Id
-        let position = req.Body.ReportPlaySeconds.OffsetMillis
+        // let req = ReportPlaySecondsRequest.Parse s
+        // let id = req.Body.ReportPlaySeconds.Id
+        // let position = req.Body.ReportPlaySeconds.OffsetMillis
 
-        let (episodeId, feedId) = match id with
-                                          | MediaMetadataId (feedId, episodeId) -> (episodeId, feedId)
-                                          | _ -> failwithf "unknown Id for play seconds reported: %s" id
-        let streamId = (getFeedStreamId (string feedId))
-        let version = match eventstore.GetEvents streamId with
-                      | Success (version, _) -> version
-                      | _ -> StreamVersion 0
+        // let (episodeId, feedId) = match id with
+        //                                   | MediaMetadataId (feedId, episodeId) -> (episodeId, feedId)
+        //                                   | _ -> failwithf "unknown Id for play seconds reported: %s" id
+        // let streamId = (getFeedStreamId (string feedId))
+        // let version = match eventstore.GetEvents streamId with
+        //               | Success (version, _) -> version
+        //               | _ -> StreamVersion 0
 
-        let ev = PlaySecondsReported { Id = episodeId
-                                       FeedId = FeedId feedId
-                                       Position = position }
-        match eventstore.SaveEvents streamId version [ev] with
-        | Success _ -> ()
-        | Failure (error:Error) -> failwith (string error)
+        // let ev = PlaySecondsReported { Id = episodeId
+        //                                FeedId = FeedId feedId
+        //                                Position = position }
+        // match eventstore.SaveEvents streamId version [ev] with
+        // | Success _ -> ()
+        // | Failure (error:Error) -> failwith (string error)
+
+        ()
 
     let processGetAppLink (db:Database.DatabaseConnection) s =
         let req = GetAppLinkRequest.Parse s
