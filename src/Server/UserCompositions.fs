@@ -17,7 +17,7 @@ type AddUserRendition =
 
 let private streamId = sprintf "users"
 
-let private storeUsersEvent eventStore (version, event) =
+let private storeUsersEvent eventStore event =
     storeEvent eventStore (fun _ -> streamId) event
 
 let getUsersComposition eventStore =
@@ -30,12 +30,10 @@ let getUserComposition eventStore email =
     | Failure m -> fail m
 
 let addUserComposition eventStore (rendition:AddUserRendition) =
-    (StreamVersion 0, UserAdded {
-       Id = Guid.NewGuid() |> UserId
-       Email = rendition.EMail
-       Password = rendition.Password
-       //TODO: Hash and Salt
-    }) |> storeUsersEvent eventStore
+    UserAdded { Id = Guid.NewGuid() |> UserId
+                Email = rendition.EMail
+                Password = rendition.Password } //TODO: Hash and Salt
+    |> storeUsersEvent eventStore
 
     ok ("added user")
 

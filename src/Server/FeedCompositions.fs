@@ -45,12 +45,6 @@ module FeedCompositions =
     let private allFeedsEvents eventStore =
         allEventsFromStreamsStartsWith eventStore "feed-"
 
-    let private allFeedAddedEvents eventStore =
-        eventStore.GetEvents (StreamId("latest-feeds"))
-
-    let private allEpisodeAddedEvents eventStore =
-        eventStore.GetEvents (StreamId("latest-feeds"))
-
     let private getFeedStreamId id =
         sprintf "feed-%A" id
 

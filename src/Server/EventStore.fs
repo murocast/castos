@@ -3,7 +3,6 @@ namespace Castos
 open System
 open EventStore.ClientAPI
 
-[<AutoOpen>]
 module EventStore =
     type StreamId = StreamId of string
     type StreamVersion = StreamVersion of int

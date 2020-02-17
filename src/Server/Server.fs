@@ -7,7 +7,6 @@ open Microsoft.Extensions.Logging
 open Saturn
 open System.IO
 
-open Castos.EventStore
 open Castos
 open Castos.Auth
 open Castos.SmapiCompositions
