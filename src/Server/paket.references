@@ -2,7 +2,6 @@ group Server
     FSharp.Core
     Saturn
     Fable.JsonConverter
-    EventStore.ClientAPI.NetCore
     FSharp.Data
     LiteDB.FSharp
     CosmoStore

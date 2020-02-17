@@ -13,8 +13,6 @@ group Server
 
     nuget System.Xml.XDocument
 
-    nuget EventStore.ClientAPI.NetCore
-
     nuget Expecto
     nuget Expecto.BenchmarkDotNet
     nuget Expecto.FsCheck
