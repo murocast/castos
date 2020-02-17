@@ -7,35 +7,19 @@ open Castos
 open Castos.Http
 open FeedSource
 
-open Microsoft.FSharp.Reflection
-
 open CosmoStore
 
 module FeedCompositions =
-    open Castos
 
     let private feedStreamId event = sprintf "feed-%A" (feedId event)
 
-    let rec getEventsFromEventRead (lastVersion:int64) (events:EventRead<'a, 'b> list) =
-        match events with
-        | e :: rest -> let (events, version) = getEventsFromEventRead lastVersion rest
-                       ((e.Data :: events), (System.Math.Max(version,lastVersion))) //TODO: Tail recursion??
-        | [ ] -> [ ], lastVersion
-
-    let getAllEventsFromStreamById (store:CosmoStore.EventStore<'a, 'b>) streamId =
-        AllEvents
-        |> store.GetEvents (streamId)
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-        |> getEventsFromEventRead 0L
-
-    let rec getAllEventsFromStreams (store:CosmoStore.EventStore<'a, 'b>) (streams:Stream<'b> list) =
+    let rec getAllEventsFromStreams store streams =
         match streams with
         | s::rest -> let (evs, version) = getAllEventsFromStreamById store s.Id
                      evs @ getAllEventsFromStreams store rest
         | [] -> []
 
-    let private allEventsFromStreamsStartsWith (store:CosmoStore.EventStore<'a, 'b>) startsWith =
+    let private allEventsFromStreamsStartsWith store startsWith =
         StreamsReadFilter.StartsWith(startsWith)
         |> store.GetStreams
         |> Async.AwaitTask
@@ -47,29 +31,6 @@ module FeedCompositions =
 
     let private getFeedStreamId id =
         sprintf "feed-%A" id
-
-    let private getUnionCaseName (x:'a) =
-        match FSharpValue.GetUnionFields(x, typeof<'a>) with
-        | case, _ -> case.Name
-
-    let private createEvent event =
-        ({ Id = (System.Guid.NewGuid())
-           CorrelationId = None
-           CausationId = None
-           Name = getUnionCaseName event
-           Data = event
-           Metadata = None })
-
-    let private appendEvent store stream event =
-        store.AppendEvent stream Any event
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-
-    //TODO: Version
-    let storeEvent eventStore getStreamId ev =
-        createEvent (ev)
-        |> appendEvent eventStore (getStreamId ev)
-        |> ignore
 
     let private storeFeedEvent eventStore ev =
         storeEvent eventStore feedStreamId ev
@@ -89,8 +50,7 @@ module FeedCompositions =
 
     let addFeedComposition eventStore rendition =
         let event = addFeed rendition
-        let read = createEvent event
-                   |> appendEvent eventStore (feedStreamId event)
+        storeEvent eventStore feedStreamId event
 
         ok ("added feed")
 

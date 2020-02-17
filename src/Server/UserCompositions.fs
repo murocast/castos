@@ -1,14 +1,15 @@
 module Castos.UserCompositions
 
-open Castos.Users
-open Castos.Auth
 open Castos
+open Castos.Auth
 open Castos.Http
+open Castos.Users
+
 open System
 open Giraffe
 open Saturn
 open Shared
-open Castos.FeedCompositions
+
 type AddUserRendition =
     {
         EMail: string
