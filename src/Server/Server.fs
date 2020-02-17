@@ -20,9 +20,7 @@ open CosmoStore
 let publicPath = Path.GetFullPath "../Client/public"
 let port = 80us
 
-let eventStore = createGetEventStoreEventStore<CastosEventData, Error>(VersionConflict "Version conflict")
-
-let eventStore2 = { LiteDb.Configuration.Empty with
+let eventStore = { LiteDb.Configuration.Empty with
                         StoreType = LiteDb.LocalDB
                         Folder = "Castos" }
                   |> LiteDb.EventStore.getEventStore
@@ -34,9 +32,9 @@ let webApp = router {
     post "/token" (handlePostToken (getUserComposition eventStore))
 
     forward "/api/users" (usersRouter eventStore db)
-    forward "/api/feeds" (feedsRouter eventStore2)
-    forward "/api/subscriptions" (subscriptionsRouter eventStore2)
-    forward "/smapi" (smapiRouter eventStore2 db)
+    forward "/api/feeds" (feedsRouter eventStore)
+    forward "/api/subscriptions" (subscriptionsRouter eventStore)
+    forward "/smapi" (smapiRouter eventStore db)
 }
 
 let configureSerialization (services:IServiceCollection) =
