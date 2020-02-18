@@ -178,7 +178,7 @@ module Smapi =
         | true -> None
         | false -> Some (List.reduce (fun _ i -> i) filteredLs)
 
-    let processGetMediaURI eventstore s =
+    let processGetMediaURI eventstore s (UserId u) =
         let req = GetMediaURIRequest.Parse s
         let id = req.Body.GetMediaUri.Id
         let episode = match id with
@@ -197,7 +197,7 @@ module Smapi =
             | Some (PlayEpisodeStopped data) -> if data.Id = episodeId then Some (data.Position) else None
             | _ -> None
 
-        let (events, _) = getAllEventsFromStreamById eventstore (string (episode.FeedId))
+        let (events, _) = getAllEventsFromStreamById eventstore (getPlayEpisodeStreamId u episode.FeedId episode.Id)
         let position = match lastPlayEpisodeStopped events with
                        | IsNeededPlaySecondsReported episode.Id position -> Some position
                        | IsNeededPlayEpisodeStopped episode.Id position -> Some position

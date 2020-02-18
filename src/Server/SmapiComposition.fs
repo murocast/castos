@@ -40,7 +40,8 @@ module SmapiCompositions =
         | GetMetadata (_, None) -> fail "User not found"
         | GetMediaMetadata (s,u) -> processGetMediaMetadata eventStore (GetMediaMetadataRequest.Parse s)
         | GetLastUpdate (s,u) -> processGetLastUpdate (GetLastUpdateRequest.Parse s)
-        | GetMediaURI (s, _) -> processGetMediaURI eventStore s
+        | GetMediaURI (s, Some u) -> processGetMediaURI eventStore s u
+        | GetMediaURI (_, None) -> fail "user not found"
         | ReportPlaySeconds (s, Some u) ->
              processReportPlaySecondsRequest eventStore s u
              ok("")
