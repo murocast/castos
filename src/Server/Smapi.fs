@@ -82,6 +82,9 @@ module Smapi =
                             CanPlay = false }]
         |> Seq.ofList
 
+    let private getPlayEpisodeStreamId userId feedId episodeId =
+            sprintf "PlayEpisode__%A__%A__%A" userId feedId episodeId
+
     let getUserFromHeader (db:Database.DatabaseConnection) xml =
         let header = Header.Parse xml
         let loginToken = header.Header.Credentials.LoginToken
@@ -105,7 +108,7 @@ module Smapi =
         | _ -> failwith("bla")
 
     let getPodcastsOfCategory eventStore userId c =
-        let result = getFeedsOfCategoryComposition eventStore c
+        let result = getPodcastsOfCategoriesForUser eventStore userId c
         match result with
         | Success (feeds) -> feeds
                                      |> List.sortBy (fun s -> s.Name)
@@ -210,27 +213,22 @@ module Smapi =
                        PollIntervall = 500 }
         ok (toLastUpdateXml result)
 
-    let processReportPlaySecondsRequest eventstore s =
-        // let req = ReportPlaySecondsRequest.Parse s
-        // let id = req.Body.ReportPlaySeconds.Id
-        // let position = req.Body.ReportPlaySeconds.OffsetMillis
+    let processReportPlaySecondsRequest eventstore s (UserId u) =
+        let req = ReportPlaySecondsRequest.Parse s
+        let id = req.Body.ReportPlaySeconds.Id
+        let position = req.Body.ReportPlaySeconds.OffsetMillis
 
-        // let (episodeId, feedId) = match id with
-        //                                   | MediaMetadataId (feedId, episodeId) -> (episodeId, feedId)
-        //                                   | _ -> failwithf "unknown Id for play seconds reported: %s" id
-        // let streamId = (getFeedStreamId (string feedId))
-        // let version = match eventstore.GetEvents streamId with
-        //               | Success (version, _) -> version
-        //               | _ -> StreamVersion 0
+        //FeedId is SubscriptionId? Which user?
+        let (episodeId, feedId) =
+            match id with
+            | MediaMetadataId (feedId, episodeId) -> (episodeId, feedId)
+            | _ -> failwithf "unknown Id for play seconds reported: %s" id
 
-        // let ev = PlaySecondsReported { Id = episodeId
-        //                                FeedId = FeedId feedId
-        //                                Position = position }
-        // match eventstore.SaveEvents streamId version [ev] with
-        // | Success _ -> ()
-        // | Failure (error:Error) -> failwith (string error)
-
-        ()
+        let streamId = getPlayEpisodeStreamId u feedId episodeId
+        let ev = PlaySecondsReported { Id = episodeId
+                                       FeedId = FeedId feedId
+                                       Position = position }
+        storeEvent eventstore (fun _ -> streamId) ev
 
     let processGetAppLink (db:Database.DatabaseConnection) s =
         let req = GetAppLinkRequest.Parse s

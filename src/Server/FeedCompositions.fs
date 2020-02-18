@@ -81,8 +81,9 @@ module FeedCompositions =
         ok (getFeed events)
 
     let getFeedsOfCategoryComposition eventStore category =
-        let events = allFeedsEvents eventStore
-        ok (getFeedsOfCategory category events)
+        let feeds = allFeedsEvents eventStore
+                    |> getFeeds
+        ok (getFeedsOfCategory category feeds)
 
     let getEpisodesOfFeedComposition eventStore id =
         let (events, _) = getAllEventsFromStreamById eventStore (getFeedStreamId id)

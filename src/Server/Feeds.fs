@@ -136,8 +136,8 @@ module FeedSource =
         |> List.distinct
         |> List.filter (System.String.IsNullOrWhiteSpace >> not)
 
-    let getFeedsOfCategory category events =
-        getFeeds events
+    let getFeedsOfCategory category (feeds:FeedListItemRendition list) =
+        feeds
         |> List.filter (fun s -> s.Category = category)
 
     let getEpisodes events =
