@@ -8,6 +8,7 @@ open FSharp.Data
 open System.Text.RegularExpressions
 
 open FeedCompositions
+open SubscriptionCompositions
 
 type SmapiMethod =
     | GetMetadata of string*(UserId option)
@@ -92,7 +93,7 @@ module Smapi =
         | Some t -> Some t.UserId
 
     let getCategories eventStore userId =
-        let result = getCategoriesComposition eventStore
+        let result = SubscriptionCompositions.getSubscriptionsCategoriesComposition eventStore userId
         match result with
         | Success (categories) -> categories
                                   |> List.sort

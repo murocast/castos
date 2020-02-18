@@ -130,8 +130,8 @@ module FeedSource =
                        Length = rendition.Length
                        ReleaseDate = rendition.ReleaseDate }
 
-    let getCategories events =
-        getFeeds events
+    let getCategories (feeds:FeedListItemRendition list) =
+        feeds
         |> List.map (fun s -> s.Category)
         |> List.distinct
         |> List.filter (System.String.IsNullOrWhiteSpace >> not)

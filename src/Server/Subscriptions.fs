@@ -85,6 +85,14 @@ module SubscriptionCompositions =
         let evs = subscriptionEvents eventStore user.Id
         ok (getSubscriptions evs)
 
+    let getSubscriptionsCategoriesComposition eventStore userId =
+        let feedIds = subscriptionEvents eventStore userId
+                            |> getSubscriptions
+                            |> List.map (fun s -> s.FeedId)
+                            |> List.distinct
+        FeedCompositions.getCategoriesOfFeedsComposition eventStore feedIds
+
+
     let subscriptionsRouter eventStore = router {
         pipe_through authorize
         get "" (processAuthorizedAsync getSubscriptionsComposition eventStore)
