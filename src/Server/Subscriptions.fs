@@ -72,6 +72,12 @@ module SubscriptionCompositions =
     let private feedExists eventStore feedId =
         getFeedComposition eventStore (feedId.ToString())
 
+    let private feedsOfUser eventStore userId  =
+        subscriptionEvents eventStore userId
+        |> getSubscriptions
+        |> List.map (fun s -> s.FeedId)
+        |> List.distinct
+
     let addSubscriptionComposition eventStore rendition user =
         let result = feedExists eventStore rendition.FeedId
         match result with
@@ -86,12 +92,8 @@ module SubscriptionCompositions =
         ok (getSubscriptions evs)
 
     let getSubscriptionsCategoriesComposition eventStore userId =
-        let feedIds = subscriptionEvents eventStore userId
-                            |> getSubscriptions
-                            |> List.map (fun s -> s.FeedId)
-                            |> List.distinct
-        FeedCompositions.getCategoriesOfFeedsComposition eventStore feedIds
-
+        feedsOfUser eventStore userId
+        |> getCategoriesOfFeedsComposition eventStore
 
     let subscriptionsRouter eventStore = router {
         pipe_through authorize
