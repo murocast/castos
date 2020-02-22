@@ -87,13 +87,16 @@ module Smapi =
 
     let getUserFromHeader (db:Database.DatabaseConnection) xml =
         let header = Header.Parse xml
-        let loginToken = header.Header.Credentials.LoginToken
-        let token = loginToken.Token
-        let householdId = loginToken.HouseholdId
-        let existingToken = db.GetAuthToken token householdId
-        match existingToken with
-        | None -> None
-        | Some t -> Some t.UserId
+        try
+            let loginToken = header.Header.Credentials.LoginToken
+            let token = loginToken.Token
+            let householdId = loginToken.HouseholdId
+            let existingToken = db.GetAuthToken token householdId
+            match existingToken with
+            | None -> None
+            | Some t -> Some t.UserId
+        with
+            | _ -> None
 
     let getCategories eventStore userId =
         let result = SubscriptionCompositions.getSubscriptionsCategoriesComposition eventStore userId
@@ -107,12 +110,15 @@ module Smapi =
                                   |> Seq.ofList
         | _ -> failwith("bla")
 
+    let getFeedIdId (FeedId g) =
+        sprintf "__feed_%A" g
+
     let getPodcastsOfCategory eventStore userId c =
         let result = getPodcastsOfCategoriesForUser eventStore userId c
         match result with
         | Success (feeds) -> feeds
                                      |> List.sortBy (fun s -> s.Name)
-                                     |> List.map (fun p -> MediaCollection { Id = "__feed_" + string p.Id
+                                     |> List.map (fun p -> MediaCollection { Id = getFeedIdId p.Id
                                                                              ItemType = Collection
                                                                              Title = p.Name
                                                                              CanPlay = false })
