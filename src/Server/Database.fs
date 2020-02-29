@@ -64,6 +64,7 @@ module Database =
     let createDatabaseConnection folderName =
         let folder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData)
         let filePath = System.IO.Path.Combine(folder, folderName, "database.db")
+        printfn "Using database file: %s" filePath
         let mapper = FSharpBsonMapper()
         let db = new LiteDatabase(filePath, mapper) //TODO: DB is IDisposable
 
