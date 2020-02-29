@@ -31,9 +31,12 @@ let getUserComposition eventStore email =
     | Failure m -> fail m
 
 let addUserComposition eventStore (rendition:AddUserRendition) =
+    let salt = generateSalt()
+    let hash = calculateHash rendition.Password salt
     UserAdded { Id = Guid.NewGuid() |> UserId
                 Email = rendition.EMail
-                Password = rendition.Password } //TODO: Hash and Salt
+                PasswordHash = hash
+                Salt = salt }
     |> storeUsersEvent eventStore
 
     ok ("added user")
@@ -44,7 +47,7 @@ let smapiauthComposition (db:Database.DatabaseConnection) eventStore (rendition:
     | Failure m -> fail "Users not found"
     | Success users -> match (getUser users rendition.EMail) with
                        | None -> fail "User not found"
-                       | Some u -> let correctPassword = (u.Password = rendition.Password)
+                       | Some u -> let correctPassword = (u.PasswordHash = calculateHash rendition.Password u.Salt)
                                    let authReq = db.GetAuthRequestByLinkToken rendition.LinkCode rendition.HouseholdId
                                    let found = authReq.IsSome
                                    match (correctPassword, found) with

@@ -66,7 +66,8 @@ and EpisodeId = int
 and UserAdded = {
     Id : UserId
     Email: string
-    Password: string
+    PasswordHash: string
+    Salt: byte array
 }
 and PasswordChanged = {
     Id: UserId

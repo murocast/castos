@@ -3,6 +3,8 @@ module Castos.Auth
 open Castos
 open Castos.Configuration
 open System
+open System.Security.Cryptography
+open Microsoft.AspNetCore.Cryptography.KeyDerivation
 open Giraffe
 open Saturn
 open FSharp.Control.Tasks.V2
@@ -20,7 +22,8 @@ open FSharp.Data
 type User = {
     Id : UserId
     Email: string
-    Password: string //TODO: Hash and salt
+    PasswordHash: string
+    Salt: byte array
     Roles: string list
 }
 
@@ -42,6 +45,15 @@ type TokenResult =
     {
         Token : string
     }
+
+let generateSalt() =
+    use rng = RandomNumberGenerator.Create()
+    let mutable (salt:byte array) = Array.zeroCreate (128 / 8) //128bit salt
+    rng.GetBytes(salt)
+    salt
+
+let calculateHash password salt =
+    Convert.ToBase64String(KeyDerivation.Pbkdf2(password, salt, KeyDerivationPrf.HMACSHA256, 10000, 256 / 8)) //256bit hash with SHA256
 
 let claimsToAuthUser (cp:ClaimsPrincipal):AuthenticatedUser =
     cp.Claims
@@ -77,7 +89,7 @@ let handlePostToken authConfig (getUser:string -> Result<User option, Error>) =
 
             let user = getUser model.Email
             let result = match user with
-                             | Success (Some u) when u.Password = model.Password //TODO: Hash with salt
+                             | Success (Some u) when u.PasswordHash = calculateHash model.Password u.Salt
                                  -> json { Token = generateToken authConfig.Secret authConfig.Issuer u} next ctx
                              | _ ->
                                     ctx.Response.StatusCode <- HttpStatusCodes.Unauthorized
