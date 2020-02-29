@@ -25,7 +25,7 @@ let DataFolder = "Castos"
 
 let appConfig =
     let builder =
-        let path = DirectoryInfo(Directory.GetCurrentDirectory()).Parent.FullName
+        let path = DirectoryInfo(Directory.GetCurrentDirectory()).FullName
         printfn "Searching for configuration in %s" path
         ConfigurationBuilder()
             .SetBasePath(path)
