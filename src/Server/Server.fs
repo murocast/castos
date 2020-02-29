@@ -2,6 +2,7 @@ module Server
 
 open Giraffe.Serialization
 open Microsoft.Extensions.DependencyInjection
+open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Logging
 
 open Saturn
@@ -9,6 +10,7 @@ open System.IO
 
 open Castos
 open Castos.Auth
+open Castos.Configuration
 open Castos.SmapiCompositions
 open Castos.FeedCompositions
 open Castos.UserCompositions
@@ -21,6 +23,20 @@ let port = 80us
 [<Literal>]
 let DataFolder = "Castos"
 
+let appConfig =
+    let builder =
+        let path = DirectoryInfo(Directory.GetCurrentDirectory()).Parent.FullName
+        printfn "Searching for configuration in %s" path
+        ConfigurationBuilder()
+            .SetBasePath(path)
+            .AddJsonFile("appsettings.json", optional = true)
+            .AddEnvironmentVariables()
+            .Build()
+
+    { Auth = {
+        Secret = builder.["Auth:Secret"]
+        Issuer = builder.["Auth:Issuer"]}}
+
 let eventStore = { LiteDb.Configuration.Empty with
                         StoreType = LiteDb.LocalDB
                         Folder = DataFolder }
@@ -28,10 +44,8 @@ let eventStore = { LiteDb.Configuration.Empty with
 
 let db = Database.createDatabaseConnection DataFolder
 
-let webApp = router {
-
-    post "/token" (handlePostToken (getUserComposition eventStore))
-
+let webApp appConfig = router {
+    post "/token" (handlePostToken appConfig.Auth (getUserComposition eventStore))
     forward "/api/users" (usersRouter eventStore db)
     forward "/api/feeds" (feedsRouter eventStore)
     forward "/api/subscriptions" (subscriptionsRouter eventStore)
@@ -44,9 +58,9 @@ let configureSerialization (services:IServiceCollection) =
     services.AddSingleton<IJsonSerializer>(NewtonsoftJsonSerializer fableJsonSettings)
 
 let app = application {
-    use_jwt_authentication secret issuer
+    use_jwt_authentication appConfig.Auth.Secret appConfig.Auth.Issuer
     url ("http://0.0.0.0:" + port.ToString() + "/")
-    use_router webApp
+    use_router (webApp appConfig)
     memory_cache
     use_static publicPath
     service_config configureSerialization

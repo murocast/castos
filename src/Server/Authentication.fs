@@ -1,6 +1,7 @@
 module Castos.Auth
 
 open Castos
+open Castos.Configuration
 open System
 open Giraffe
 open Saturn
@@ -15,9 +16,6 @@ open System.IdentityModel.Tokens.Jwt
 open System.Security.Claims
 
 open FSharp.Data
-
-let secret = "spadR2dre#u-ruBrE@TepA&*Uf@U" //TODO: not hardcoded
-let issuer = "saturnframework.io"
 
 type User = {
     Id : UserId
@@ -56,7 +54,7 @@ let claimsToAuthUser (cp:ClaimsPrincipal):AuthenticatedUser =
           Email = ""
           Roles = [] }
 
-let generateToken (user:User) =
+let generateToken secret issuer (user:User) =
     let guid (UserId id) =
         id
 
@@ -72,7 +70,7 @@ let generateToken (user:User) =
     |> Array.append (Array.ofList roles)
     |> Auth.generateJWT (secret, SecurityAlgorithms.HmacSha256) issuer (DateTime.UtcNow.AddHours(1.0))
 
-let handlePostToken (getUser:string -> Result<User option, Error>) =
+let handlePostToken authConfig (getUser:string -> Result<User option, Error>) =
     fun (next : HttpFunc) (ctx : HttpContext) ->
         task {
             let! model = ctx.BindJsonAsync<LoginViewModel>()
@@ -80,7 +78,7 @@ let handlePostToken (getUser:string -> Result<User option, Error>) =
             let user = getUser model.Email
             let result = match user with
                              | Success (Some u) when u.Password = model.Password //TODO: Hash with salt
-                                 -> json { Token = generateToken u} next ctx
+                                 -> json { Token = generateToken authConfig.Secret authConfig.Issuer u} next ctx
                              | _ ->
                                     ctx.Response.StatusCode <- HttpStatusCodes.Unauthorized
                                     json "" next ctx
