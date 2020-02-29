@@ -18,13 +18,15 @@ open CosmoStore
 
 let publicPath = Path.GetFullPath "../Client/public"
 let port = 80us
+[<Literal>]
+let DataFolder = "Castos"
 
 let eventStore = { LiteDb.Configuration.Empty with
                         StoreType = LiteDb.LocalDB
-                        Folder = "Castos" }
+                        Folder = DataFolder }
                   |> LiteDb.EventStore.getEventStore
 
-let db = Database.createDatabaseConnection()
+let db = Database.createDatabaseConnection DataFolder
 
 let webApp = router {
 

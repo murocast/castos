@@ -61,9 +61,11 @@ module Database =
         | head::tail -> Some head
         | [] -> None
 
-    let createDatabaseConnection() =
+    let createDatabaseConnection folderName =
+        let folder = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData)
+        let filePath = System.IO.Path.Combine(folder, folderName, "database.db")
         let mapper = FSharpBsonMapper()
-        let db = new LiteDatabase("murocast.db", mapper) //TODO: DB is IDisposable
+        let db = new LiteDatabase(filePath, mapper) //TODO: DB is IDisposable
 
         { AddAuthRequest = addAuthRequest db
           GetAuthRequestByLinkToken = getAuthRequest db
