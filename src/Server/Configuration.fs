@@ -6,4 +6,7 @@ type AuthConfig = {
 }
 
 type Configuration =
-    { Auth: AuthConfig }
+    { Auth: AuthConfig
+      Url: string
+      Port: uint16
+      CorsUrls: string array }

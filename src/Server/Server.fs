@@ -35,7 +35,10 @@ let appConfig =
 
     { Auth = {
         Secret = builder.["Auth:Secret"]
-        Issuer = builder.["Auth:Issuer"]}}
+        Issuer = builder.["Auth:Issuer"] }
+      CorsUrls = builder.["CorsUrls"].Split([|';'|], System.StringSplitOptions.RemoveEmptyEntries)
+      Url = builder.["Url"]
+      Port = System.UInt16.Parse builder.["Port"] }
 
 let eventStore = { LiteDb.Configuration.Empty with
                         StoreType = LiteDb.LocalDB
@@ -59,7 +62,7 @@ let configureSerialization (services:IServiceCollection) =
 
 let app = application {
     use_jwt_authentication appConfig.Auth.Secret appConfig.Auth.Issuer
-    url ("http://0.0.0.0:" + port.ToString() + "/")
+    url  (sprintf "http://%s:%i/" appConfig.Url appConfig.Port)
     use_router (webApp appConfig)
     memory_cache
     use_static publicPath
@@ -67,7 +70,7 @@ let app = application {
     use_cors "Cors Policy" (fun builder -> builder
                                             .AllowAnyMethod()
                                             .AllowAnyHeader()
-                                            .WithOrigins [|"http://localhost:8080"; "http://127.0.0.1:8080"|]
+                                            .WithOrigins appConfig.CorsUrls
                                            |> ignore )
     use_gzip
     logging (fun logger -> logger.SetMinimumLevel LogLevel.Information |> ignore)
