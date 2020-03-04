@@ -1,17 +1,13 @@
 namespace Castos
 
+open Thoth.Json.Net
+
 [<AutoOpen>]
 module Json =
-    open Newtonsoft.Json
-    let settings =
-        let fableJsonSettings = Newtonsoft.Json.JsonSerializerSettings()
-        fableJsonSettings.Converters.Add(Fable.JsonConverter())
-        fableJsonSettings
-
     let inline unjson<'T> json =
-            let a = JsonConvert.DeserializeObject<'T>(json, settings)
+            let a = Decode.Auto.fromString<'T>(json, isCamelCase=true)
             a
 
     let inline mkjson a =
-            let json = JsonConvert.SerializeObject(a, settings)
+            let json = Encode.Auto.toString(4, a)
             json

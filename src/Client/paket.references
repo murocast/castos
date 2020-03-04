@@ -5,6 +5,7 @@ group Client
     Fable.Elmish.React
     Fable.Elmish.HMR
     Thoth.Fetch
+    Thoth.Json
     Fulma
     Fable.FontAwesome.Free
 

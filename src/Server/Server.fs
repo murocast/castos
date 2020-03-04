@@ -1,7 +1,5 @@
 module Server
 
-open Giraffe.Serialization
-open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Logging
 
@@ -29,7 +27,7 @@ let appConfig =
         printfn "Searching for configuration in %s" path
         ConfigurationBuilder()
             .SetBasePath(path)
-            .AddJsonFile("appsettings.json", optional = true)
+            .AddJsonFile("appsettings.json", optional = false)
             .AddEnvironmentVariables()
             .Build()
 
@@ -55,18 +53,13 @@ let webApp appConfig = router {
     forward "/smapi" (smapiRouter eventStore db)
 }
 
-let configureSerialization (services:IServiceCollection) =
-    let fableJsonSettings = Newtonsoft.Json.JsonSerializerSettings()
-    fableJsonSettings.Converters.Add(Fable.JsonConverter())
-    services.AddSingleton<IJsonSerializer>(NewtonsoftJsonSerializer fableJsonSettings)
-
 let app = application {
     use_jwt_authentication appConfig.Auth.Secret appConfig.Auth.Issuer
     url  (sprintf "http://%s:%i/" appConfig.Url appConfig.Port)
     use_router (webApp appConfig)
     memory_cache
     use_static publicPath
-    service_config configureSerialization
+    use_json_serializer(Thoth.Json.Giraffe.ThothSerializer())
     use_cors "Cors Policy" (fun builder -> builder
                                             .AllowAnyMethod()
                                             .AllowAnyHeader()
