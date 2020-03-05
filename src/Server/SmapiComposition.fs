@@ -5,6 +5,7 @@ open Saturn
 open FSharp.Control.Tasks.V2
 
 open Castos
+open Castos.Configuration
 open Castos.Smapi
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Logging
@@ -34,7 +35,7 @@ module SmapiCompositions =
                        | _ -> fail(sprintf "Method not implemented %s" m)
             }
 
-    let internal processSmapiMethod eventStore db m =
+    let internal processSmapiMethod appConfig eventStore db m =
         match m with
         | GetMetadata (s, Some u) -> processGetMetadata eventStore u (GetMetadataRequest.Parse s)
         | GetMetadata (_, None) -> fail "User not found"
@@ -48,12 +49,12 @@ module SmapiCompositions =
         | ReportPlaySeconds (_, None) -> fail "user not found"
         | ReportPlayStatus _ -> ok("")
         | SetPlayedSeconds _ -> ok("")
-        | GetAppLink (s,u) -> processGetAppLink db s
+        | GetAppLink (s,u) -> processGetAppLink appConfig.ClientBaseUrl db s
         | GetDeviceAuthToken (s,u) -> processGetDeviceAuthTokenRequest db s
         | GetExtendedMetadata _ -> fail "not implemented"
         | GetExtendedMetadataText _ -> fail "not implemented"
 
-    let internal smapiImp eventStore db (c:HttpContext) =
+    let internal smapiImp appConfig eventStore db (c:HttpContext) =
         task {
             let! result = getSmapiMethod db c
             let log (ctx:HttpContext) (m:SmapiMethod) =
@@ -64,13 +65,13 @@ module SmapiCompositions =
 
             return result
                     >>= log c
-                    >>= (processSmapiMethod eventStore db)
+                    >>= (processSmapiMethod appConfig eventStore db)
         }
 
-    let internal processSmapiRequest eventStore db =
+    let internal processSmapiRequest appConfig eventStore db =
         fun next ctx ->
             task {
-                let! result = smapiImp eventStore db ctx
+                let! result = smapiImp appConfig eventStore db ctx
                 return! match result with
                         | Success (content) -> text content next ctx
                         | Failure (error) ->
@@ -79,6 +80,6 @@ module SmapiCompositions =
                             RequestErrors.BAD_REQUEST error next ctx
             }
 
-    let smapiRouter eventStore db = router {
-        post "" (processSmapiRequest eventStore db)
+    let smapiRouter appConfig eventStore db = router {
+        post "" (processSmapiRequest appConfig eventStore db)
     }

@@ -36,6 +36,7 @@ let appConfig =
         Issuer = builder.["Auth:Issuer"] }
       CorsUrls = builder.["CorsUrls"].Split([|';'|], System.StringSplitOptions.RemoveEmptyEntries)
       Url = builder.["Url"]
+      ClientBaseUrl = builder.["ClientBaseUrl"]
       Port = System.UInt16.Parse builder.["Port"] }
 
 let eventStore = { LiteDb.Configuration.Empty with
@@ -50,7 +51,7 @@ let webApp appConfig = router {
     forward "/api/users" (usersRouter eventStore db)
     forward "/api/feeds" (feedsRouter eventStore)
     forward "/api/subscriptions" (subscriptionsRouter eventStore)
-    forward "/smapi" (smapiRouter eventStore db)
+    forward "/smapi" (smapiRouter appConfig eventStore db)
 }
 
 let app = application {

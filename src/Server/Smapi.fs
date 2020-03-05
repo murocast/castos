@@ -236,7 +236,7 @@ module Smapi =
                                        Position = position }
         storeEvent eventstore (fun _ -> streamId) ev
 
-    let processGetAppLink (db:Database.DatabaseConnection) s =
+    let processGetAppLink baseUrl (db:Database.DatabaseConnection) s =
         let req = GetAppLinkRequest.Parse s
         let houseHoldId = req.Body.GetAppLink.HouseholdId
         let id = System.Guid.NewGuid()
@@ -249,7 +249,7 @@ module Smapi =
 
         db.AddAuthRequest request
 
-        let loginFormUrl = (sprintf "http://localhost:8080/?linkcode=%A&householdid=%s" request.LinkCode request.HouseholdId)
+        let loginFormUrl = (sprintf "%s/?linkcode=%A&householdid=%s" baseUrl request.LinkCode request.HouseholdId)
         let response = Smapi.Respond.getAppLinkResponse loginFormUrl (string request.LinkCode)
         ok response
 
