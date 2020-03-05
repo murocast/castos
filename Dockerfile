@@ -1,4 +1,4 @@
-FROM microsoft/dotnet:2.1-aspnetcore-runtime-alpine
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 COPY /deploy /
 WORKDIR /Server
 EXPOSE 8085

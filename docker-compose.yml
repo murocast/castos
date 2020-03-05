@@ -1,19 +1,11 @@
 version: '2'
 
 services:
-  eventstore:
-    image: "eventstore/eventstore:release-5.0.2"
-    container_name: eventstore
+  murocast:
+    build:
+        context: .
+    container_name: "murocast"
     restart: unless-stopped
     ports:
-      - "127.0.0.1:2113:2113"
-      - "127.0.0.1:1113:1113"
-
-#   mongo:
-#     image: mongo:4.2
-#     restart: unless-stopped
-#     ports:
-#         - "127.0.0.1:27017:27017"
-
-# //docker run --name eventstore-node -it -p 2113:2113 -p 1113:1113 eventstore/eventstore
+        - "80:80"
 
