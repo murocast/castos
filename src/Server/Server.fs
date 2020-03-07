@@ -60,7 +60,7 @@ let app = application {
     use_router (webApp appConfig)
     memory_cache
     use_static publicPath
-    use_json_serializer(Thoth.Json.Giraffe.ThothSerializer())
+    use_json_serializer(Thoth.Json.Giraffe.ThothSerializer(caseStrategy=Thoth.Json.Net.CamelCase))
     use_cors "Cors Policy" (fun builder -> builder
                                             .AllowAnyMethod()
                                             .AllowAnyHeader()
