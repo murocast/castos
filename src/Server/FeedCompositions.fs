@@ -30,7 +30,7 @@ module FeedCompositions =
         allEventsFromStreamsStartsWith eventStore "feed-"
 
     let private getFeedStreamId id =
-        sprintf "feed-%A" id
+        sprintf "feed-%O" id
 
     let private storeFeedEvent eventStore ev =
         storeEvent eventStore feedStreamId ev
@@ -43,7 +43,7 @@ module FeedCompositions =
     let getCategoriesOfFeedsComposition eventStore feedIds =
         let events = allFeedsEvents eventStore
         let feeds = getFeeds events
-                    |> List.filter (fun f -> List.contains f.Id feedIds)
+                    |> List.filter (fun f -> List.contains (FeedId(f.Id)) feedIds)
         ok (getCategories feeds)
 
     let addEpisodeComposition eventStore feedId rendition =

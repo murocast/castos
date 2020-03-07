@@ -118,7 +118,7 @@ module Smapi =
         match result with
         | Success (feeds) -> feeds
                                      |> List.sortBy (fun s -> s.Name)
-                                     |> List.map (fun p -> MediaCollection { Id = getFeedIdId p.Id
+                                     |> List.map (fun p -> MediaCollection { Id = getFeedIdId (FeedId(p.Id))
                                                                              ItemType = Collection
                                                                              Title = p.Name
                                                                              CanPlay = false })

@@ -3,7 +3,7 @@ namespace Castos
 type Episode = {
     Id: EpisodeId
     Guid: string
-    FeedId: FeedId
+    FeedId: System.Guid
     Url: string
     MediaUrl: string
     Title: string
@@ -21,7 +21,7 @@ type Feed = {
 }
 
 type FeedListItemRendition = {
-    Id: FeedId
+    Id: System.Guid
     Url: string
     Name: string
     Category: string
@@ -60,8 +60,9 @@ module FeedSource =
                                        Category = ev.Category
                                        Active = true }
         | FeedDeleted _ -> { state with Active = false }
-        | EpisodeAdded ev ->    let newEpisode = { Id = ev.Id
-                                                   FeedId = ev.FeedId
+        | EpisodeAdded ev ->    let (FeedId(feedIdGuid)) = ev.FeedId
+                                let newEpisode = { Id = ev.Id
+                                                   FeedId = feedIdGuid
                                                    Guid = ev.Guid
                                                    Url = ev.Url
                                                    MediaUrl = ev.MediaUrl
@@ -77,17 +78,22 @@ module FeedSource =
         events
         |> List.fold apply state
 
+    let feedIdToGuid id =
+        let (FeedId(guid)) = id
+        guid
+
     let feedId =
         function
-        | FeedAdded data -> data.Id
-        | FeedDeleted data -> data.Id
-        | EpisodeAdded data -> data.FeedId
-        | PlaySecondsReported  data -> data.FeedId
-        | PlayEpisodeStopped data -> data.FeedId
+        | FeedAdded data -> feedIdToGuid data.Id
+        | FeedDeleted data -> feedIdToGuid data.Id
+        | EpisodeAdded data -> feedIdToGuid data.FeedId
+        | PlaySecondsReported  data -> feedIdToGuid data.FeedId
+        | PlayEpisodeStopped data -> feedIdToGuid data.FeedId
         | _ -> failwith("Unknown event")
 
     let feedRendition (feed:Feed) =
-        { Id = feed.Id
+        let (FeedId(idAsGuid)) = feed.Id
+        { Id = idAsGuid
           Url = feed.Url
           Name = feed.Name
           Category = feed.Category
