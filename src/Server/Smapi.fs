@@ -110,7 +110,7 @@ module Smapi =
                                   |> Seq.ofList
         | _ -> failwith("bla")
 
-    let getFeedIdId (FeedId g) =
+    let getFeedIdId g =
         sprintf "__feed_%A" g
 
     let getPodcastsOfCategory eventStore userId c =
@@ -118,7 +118,7 @@ module Smapi =
         match result with
         | Success (feeds) -> feeds
                                      |> List.sortBy (fun s -> s.Name)
-                                     |> List.map (fun p -> MediaCollection { Id = getFeedIdId (FeedId(p.Id))
+                                     |> List.map (fun p -> MediaCollection { Id = getFeedIdId p.Id
                                                                              ItemType = Collection
                                                                              Title = p.Name
                                                                              CanPlay = false })
