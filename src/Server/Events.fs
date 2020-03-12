@@ -28,6 +28,7 @@ and FeedAdded = {
 and FeedDeleted = { Id: FeedId }
 and EpisodeAdded = {
     Id: EpisodeId
+    Episode: int
     FeedId: FeedId
     Guid: string
     Url: string
@@ -62,7 +63,7 @@ and Unsubscribed = {
     Timestamp: System.DateTime
 }
 and FeedId = | FeedId of System.Guid
-and EpisodeId = int
+and EpisodeId = System.Guid
 and UserAdded = {
     Id : UserId
     Email: string

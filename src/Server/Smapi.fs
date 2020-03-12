@@ -65,7 +65,7 @@ module Smapi =
     let (|MediaMetadataId|_|) str =
         let idPattern = "([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})___(\\d+)"
         let m = Regex.Match(str, idPattern)
-        if(m.Success) then Some ((System.Guid.Parse(m.Groups.[1].Value)), System.Int32.Parse(m.Groups.[2].Value)) else None
+        if(m.Success) then Some ((System.Guid.Parse(m.Groups.[1].Value)), System.Guid.Parse(m.Groups.[2].Value)) else None
 
     let getRootCollections =
         [ MediaCollection { Id = LibraryId
@@ -135,7 +135,7 @@ module Smapi =
         match result with
         | Success (episodes) -> episodes
                                 |> List.sortByDescending (fun e -> e.ReleaseDate)
-                                |> List.map (fun e -> MediaMetadata { Id = sprintf "%A___%i" e.FeedId e.Id
+                                |> List.map (fun e -> MediaMetadata { Id = sprintf "%A___%A" e.FeedId e.Id
                                                                       ItemType = Track
                                                                       Title = e.Title
                                                                       MimeType = "audio/mp3"

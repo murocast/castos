@@ -47,8 +47,8 @@ module FeedCompositions =
         ok (getCategories feeds)
 
     let addEpisodeComposition eventStore feedId rendition =
-        let (events, version) = getAllEventsFromStreamById eventStore (getFeedStreamId feedId)
-        let added = addEpisode feedId rendition events
+        let (_, version) = getAllEventsFromStreamById eventStore (getFeedStreamId feedId)
+        let added = addEpisode feedId rendition
 
         //TODO: Version
         storeFeedEvent eventStore added

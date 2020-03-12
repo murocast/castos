@@ -9,6 +9,7 @@ type Episode = {
     Title: string
     Length: int
     ReleaseDate: System.DateTime
+    Episode: int
 }
 
 type Feed = {
@@ -41,6 +42,7 @@ type AddEpisodeRendition = {
     ReleaseDate: System.DateTime
     MediaUrl: string
     Length: int
+    Episode: int
 }
 
 module FeedSource =
@@ -68,7 +70,8 @@ module FeedSource =
                                                    MediaUrl = ev.MediaUrl
                                                    Title = ev.Title
                                                    ReleaseDate = ev.ReleaseDate
-                                                   Length = ev.Length }
+                                                   Length = ev.Length
+                                                   Episode = ev.Episode }
                                 { state with Episodes = newEpisode :: state.Episodes }
         | PlaySecondsReported  _ -> state
         | PlayEpisodeStopped _ -> state
@@ -122,12 +125,9 @@ module FeedSource =
         | true -> Some (FeedDeleted { Id = state.Id })
         | _ -> None
 
-    let addEpisode (feedId:string) rendition events =
-        let state = getFeed events
-        let lastEpisodeId = match List.length state.Episodes with
-                            | 0 -> 0
-                            | _ -> (List.maxBy (fun (e:Episode) -> e.Id) state.Episodes).Id
-        EpisodeAdded { Id = lastEpisodeId + 1
+    let addEpisode (feedId:string) rendition =
+        EpisodeAdded { Id = System.Guid.NewGuid()
+                       Episode = rendition.Episode
                        FeedId = FeedId (System.Guid.Parse(feedId))
                        Guid = rendition.Guid
                        Url = rendition.Url
