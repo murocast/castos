@@ -74,7 +74,7 @@ and PasswordChanged = {
     Id: UserId
     Password: string
 }
-and UserId = | UserId of System.Guid
+and UserId = System.Guid
 
 
 type Error =

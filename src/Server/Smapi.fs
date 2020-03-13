@@ -184,7 +184,7 @@ module Smapi =
         | true -> None
         | false -> Some (List.reduce (fun _ i -> i) filteredLs)
 
-    let processGetMediaURI eventstore s (UserId u) =
+    let processGetMediaURI eventstore s userId =
         let req = GetMediaURIRequest.Parse s
         let id = req.Body.GetMediaUri.Id
         let episode = match id with
@@ -203,7 +203,7 @@ module Smapi =
             | Some (PlayEpisodeStopped data) -> if data.Id = episodeId then Some (data.Position) else None
             | _ -> None
 
-        let (events, _) = getAllEventsFromStreamById eventstore (getPlayEpisodeStreamId u episode.FeedId episode.Id)
+        let (events, _) = getAllEventsFromStreamById eventstore (getPlayEpisodeStreamId userId episode.FeedId episode.Id)
         let position = match lastPlayEpisodeStopped events with
                        | IsNeededPlaySecondsReported episode.Id position -> Some position
                        | IsNeededPlayEpisodeStopped episode.Id position -> Some position
@@ -219,7 +219,7 @@ module Smapi =
                        PollIntervall = 500 }
         ok (toLastUpdateXml result)
 
-    let processReportPlaySecondsRequest eventstore s (UserId u) =
+    let processReportPlaySecondsRequest eventstore s u =
         let req = ReportPlaySecondsRequest.Parse s
         let id = req.Body.ReportPlaySeconds.Id
         let position = req.Body.ReportPlaySeconds.OffsetMillis

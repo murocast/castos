@@ -59,21 +59,18 @@ let claimsToAuthUser (cp:ClaimsPrincipal):AuthenticatedUser =
     cp.Claims
     |> Seq.fold (fun state c -> match c.Type with
                                 | JwtRegisteredClaimNames.Sub -> { state with Email = c.Value}
-                                | ClaimTypes.Sid -> { state with Id = UserId (Guid.Parse(c.Value))}
+                                | ClaimTypes.Sid -> { state with Id = Guid.Parse(c.Value)}
                                 | ClaimTypes.Role -> { state with Roles = (state.Roles @ [c.Value])}
                                 | _ -> state)
-        { Id = UserId(Guid.Empty)
+        { Id = Guid.Empty
           Email = ""
           Roles = [] }
 
 let generateToken secret issuer (user:User) =
-    let guid (UserId id) =
-        id
-
     let claims = [|
         Claim(JwtRegisteredClaimNames.Sub, user.Email)
         Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        Claim(ClaimTypes.Sid, (guid user.Id).ToString())
+        Claim(ClaimTypes.Sid, (user.Id).ToString())
         Claim(ClaimTypes.Role, "Admin") |] //TODO: Not everone is admin; use literal
 
     let roles = user.Roles |> List.map (fun r -> Claim(ClaimTypes.Role, r))
