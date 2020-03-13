@@ -98,7 +98,7 @@ module SubscriptionCompositions =
     let getPodcastsOfCategoriesForUser eventStore userId c =
         let feedIds = feedsOfUser eventStore userId
         match getFeedsOfCategoryComposition eventStore c with
-        | Success feeds -> ok (feeds |> List.filter (fun f -> List.contains (FeedId(f.Id)) feedIds))
+        | Success feeds -> ok (feeds |> List.filter (fun f -> List.contains (f.Id) feedIds))
         | Failure _ -> failwith "Bla"
 
     let subscriptionsRouter eventStore = router {

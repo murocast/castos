@@ -62,7 +62,7 @@ and Unsubscribed = {
     UserId: UserId
     Timestamp: System.DateTime
 }
-and FeedId = | FeedId of System.Guid
+and FeedId = System.Guid
 and EpisodeId = System.Guid
 and UserAdded = {
     Id : UserId

@@ -3,7 +3,7 @@ namespace Castos
 type Episode = {
     Id: EpisodeId
     Guid: string
-    FeedId: System.Guid
+    FeedId: FeedId
     Url: string
     MediaUrl: string
     Title: string
@@ -47,7 +47,7 @@ type AddEpisodeRendition = {
 
 module FeedSource =
     let private initialFeedState =
-        { Id = FeedId System.Guid.Empty
+        { Id = System.Guid.Empty
           Url = ""
           Name = ""
           Category = ""
@@ -62,9 +62,8 @@ module FeedSource =
                                        Category = ev.Category
                                        Active = true }
         | FeedDeleted _ -> { state with Active = false }
-        | EpisodeAdded ev ->    let (FeedId(feedIdGuid)) = ev.FeedId
-                                let newEpisode = { Id = ev.Id
-                                                   FeedId = feedIdGuid
+        | EpisodeAdded ev ->    let newEpisode = { Id = ev.Id
+                                                   FeedId = ev.FeedId
                                                    Guid = ev.Guid
                                                    Url = ev.Url
                                                    MediaUrl = ev.MediaUrl
@@ -81,22 +80,17 @@ module FeedSource =
         events
         |> List.fold apply state
 
-    let feedIdToGuid id =
-        let (FeedId(guid)) = id
-        guid
-
     let feedId =
         function
-        | FeedAdded data -> feedIdToGuid data.Id
-        | FeedDeleted data -> feedIdToGuid data.Id
-        | EpisodeAdded data -> feedIdToGuid data.FeedId
-        | PlaySecondsReported  data -> feedIdToGuid data.FeedId
-        | PlayEpisodeStopped data -> feedIdToGuid data.FeedId
+        | FeedAdded data -> data.Id
+        | FeedDeleted data -> data.Id
+        | EpisodeAdded data -> data.FeedId
+        | PlaySecondsReported  data ->  data.FeedId
+        | PlayEpisodeStopped data -> data.FeedId
         | _ -> failwith("Unknown event")
 
     let feedRendition (feed:Feed) =
-        let (FeedId(idAsGuid)) = feed.Id
-        { Id = idAsGuid
+        { Id = feed.Id
           Url = feed.Url
           Name = feed.Name
           Category = feed.Category
@@ -114,7 +108,7 @@ module FeedSource =
         |> evolve initialFeedState
 
     let addFeed rendition =
-        FeedAdded { Id = FeedId (System.Guid.NewGuid())
+        FeedAdded { Id = System.Guid.NewGuid()
                     Name = rendition.Name
                     Category = rendition.Category
                     Url = rendition.Url }
@@ -128,7 +122,7 @@ module FeedSource =
     let addEpisode (feedId:string) rendition =
         EpisodeAdded { Id = System.Guid.NewGuid()
                        Episode = rendition.Episode
-                       FeedId = FeedId (System.Guid.Parse(feedId))
+                       FeedId = System.Guid.Parse(feedId)
                        Guid = rendition.Guid
                        Url = rendition.Url
                        MediaUrl = rendition.MediaUrl

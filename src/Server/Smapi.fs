@@ -232,7 +232,7 @@ module Smapi =
 
         let streamId = getPlayEpisodeStreamId u feedId episodeId
         let ev = PlaySecondsReported { Id = episodeId
-                                       FeedId = FeedId feedId
+                                       FeedId = feedId
                                        Position = position }
         storeEvent eventstore (fun _ -> streamId) ev
 

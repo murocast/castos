@@ -43,7 +43,7 @@ module FeedCompositions =
     let getCategoriesOfFeedsComposition eventStore feedIds =
         let events = allFeedsEvents eventStore
         let feeds = getFeeds events
-                    |> List.filter (fun f -> List.contains (FeedId(f.Id)) feedIds)
+                    |> List.filter (fun f -> List.contains (f.Id) feedIds)
         ok (getCategories feeds)
 
     let addEpisodeComposition eventStore feedId rendition =
