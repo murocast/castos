@@ -33,7 +33,7 @@ group Client
     nuget Fable.Elmish.Debugger ~> 3
     nuget Fable.Elmish.HMR ~> 4
     nuget Fable.Elmish.React ~> 3
-    nuget Thoth.Fetch ~> 1
+    nuget Thoth.Fetch ~> 2
     nuget Fable.React ~> 5
     nuget Fulma ~> 2
     nuget Fable.FontAwesome.Free ~> 2
