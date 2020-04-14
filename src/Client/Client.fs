@@ -4,6 +4,7 @@ open Elmish
 open Elmish.React
 open Elmish.UrlParser
 open Elmish.Navigation
+open Fable.Core
 open Fable.FontAwesome
 open Fable.FontAwesome.Free
 open Fable.React
@@ -20,8 +21,8 @@ open Elmish
 open Fable.Import
 open Shared
 
-[<Literal>]
-let BaseUrl = "http://localhost:80"
+[<Emit("__BASE_URL__")>]
+let BaseUrl : string = jsNative
 
 type LinkCode =
     | LinkCode of System.Guid
@@ -62,7 +63,7 @@ let postAuthorization linkCode model =
                      HouseholdId = model.HouseholdId
                      LinkCode = linkCode }
 
-        return! Fetch.post<SmapiAuthRendition,string>(BaseUrl + "/api/users/smapiauth", data)
+        return! Fetch.post<SmapiAuthRendition,string>(BaseUrl + "/api/users/smapiauth", data, caseStrategy = CamelCase)
     }
 
 
