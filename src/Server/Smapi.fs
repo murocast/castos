@@ -63,7 +63,7 @@ module Smapi =
           None
 
     let (|MediaMetadataId|_|) str =
-        let idPattern = "([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})___(\\d+)"
+        let idPattern = "([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})___([a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12})"
         let m = Regex.Match(str, idPattern)
         if(m.Success) then Some ((System.Guid.Parse(m.Groups.[1].Value)), System.Guid.Parse(m.Groups.[2].Value)) else None
 
