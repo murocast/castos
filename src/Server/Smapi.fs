@@ -188,8 +188,8 @@ module Smapi =
         let req = GetMediaURIRequest.Parse s
         let id = req.Body.GetMediaUri.Id
         let episode = match id with
-                      | _ -> failwithf "Wrong Id: %s" id
                       | MediaMetadataId (feedId, episodeId) -> getEpisodeOfFeedComposition eventstore feedId episodeId
+                      | _ -> failwithf "Wrong Id: %s" id
 
         let path = episode.MediaUrl
 
