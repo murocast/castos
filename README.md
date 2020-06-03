@@ -1,1 +1,1 @@
-![build](https://github.com/brase/castos/workflows/build/badge.svg)
+![build](https://github.com/murocast/castos/workflows/build/badge.svg)
