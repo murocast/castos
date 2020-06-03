@@ -131,13 +131,14 @@ module Smapi =
         |> List.pick (fun p -> if (p.Name = pname) then Some p else None)
 
     let getEpisodesOfFeed eventStore id =
+        let yymmdd1 (date:System.DateTime) = date.ToString("yy.MM.dd")
         let result = getEpisodesOfFeedComposition eventStore (string id)
         match result with
         | Success (episodes) -> episodes
                                 |> List.sortByDescending (fun e -> e.ReleaseDate)
                                 |> List.map (fun e -> MediaMetadata { Id = sprintf "%A___%A" e.FeedId e.Id
                                                                       ItemType = Track
-                                                                      Title = e.Title
+                                                                      Title = sprintf "%s (%s)" e.Title (yymmdd1 e.ReleaseDate)
                                                                       MimeType = "audio/mp3"
                                                                       ItemMetadata = TrackMetadata { Artist = "Artist"
                                                                                                      Duration = e.Length
