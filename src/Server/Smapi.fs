@@ -131,7 +131,7 @@ module Smapi =
         |> List.pick (fun p -> if (p.Name = pname) then Some p else None)
 
     let getEpisodesOfFeed eventStore id =
-        let yymmdd1 (date:System.DateTime) = date.ToString("yy.MM.dd")
+        let yymmdd1 (date:System.DateTime) = date.ToString("dd.MM.yyyy")
         let result = getEpisodesOfFeedComposition eventStore (string id)
         match result with
         | Success (episodes) -> episodes
