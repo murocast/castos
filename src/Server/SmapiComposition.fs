@@ -60,7 +60,7 @@ module SmapiCompositions =
             let log (ctx:HttpContext) (m:SmapiMethod) =
                 let j = mkjson m
                 let logger = ctx.GetLogger()
-                logger.LogInformation j
+                logger.LogDebug j
                 ok m
 
             return result
