@@ -16,8 +16,7 @@ open Castos.SubscriptionCompositions
 
 open CosmoStore
 
-let publicPath = Path.GetFullPath "../Client/public"
-let port = 80us
+
 [<Literal>]
 let DataFolder = "Castos"
 
@@ -59,7 +58,7 @@ let app = application {
     url  (sprintf "http://%s:%i/" appConfig.Url appConfig.Port)
     use_router (webApp appConfig)
     memory_cache
-    use_static publicPath
+    use_static "public"
     use_json_serializer(Thoth.Json.Giraffe.ThothSerializer(caseStrategy=Thoth.Json.Net.CamelCase))
     use_cors "Cors Policy" (fun builder -> builder
                                             .AllowAnyMethod()

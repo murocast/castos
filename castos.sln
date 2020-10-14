@@ -13,6 +13,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DDFDB8C6
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Smapi.Tests", "tests\Smapi.Tests\Smapi.Tests.fsproj", "{43CF6E5F-3E88-4EA3-9AED-EBCF5F041EEC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3D389B64-F763-4C13-8933-330000AE22F2}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Shared", "src\Shared\Shared.fsproj", "{9280A632-14B1-4CF1-AB8E-F8A186BFE30F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +35,10 @@ Global
 		{43CF6E5F-3E88-4EA3-9AED-EBCF5F041EEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43CF6E5F-3E88-4EA3-9AED-EBCF5F041EEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43CF6E5F-3E88-4EA3-9AED-EBCF5F041EEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9280A632-14B1-4CF1-AB8E-F8A186BFE30F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9280A632-14B1-4CF1-AB8E-F8A186BFE30F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9280A632-14B1-4CF1-AB8E-F8A186BFE30F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9280A632-14B1-4CF1-AB8E-F8A186BFE30F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{73E8E820-C8AA-47CC-BB2B-152CA4D0B856}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -46,5 +54,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{43CF6E5F-3E88-4EA3-9AED-EBCF5F041EEC} = {DDFDB8C6-E642-427C-B9D1-70C516DFCEEF}
+		{9280A632-14B1-4CF1-AB8E-F8A186BFE30F} = {3D389B64-F763-4C13-8933-330000AE22F2}
 	EndGlobalSection
 EndGlobal

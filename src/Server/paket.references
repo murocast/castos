@@ -1,9 +1,8 @@
-group Server
-    FSharp.Core
-    Saturn
-    FSharp.Data
-    LiteDB.FSharp
-    CosmoStore
-    CosmoStore.LiteDB
-    Thoth.Json.Net
-    Thoth.Json.Giraffe
+FSharp.Core
+Saturn
+FSharp.Data
+LiteDB.FSharp
+CosmoStore
+CosmoStore.LiteDB
+Thoth.Json.Net
+Thoth.Json.Giraffe
