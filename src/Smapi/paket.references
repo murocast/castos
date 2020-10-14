@@ -1,3 +1,2 @@
-group Server
-    FSharp.Core
-    System.Xml.XDocument
+FSharp.Core
+System.Xml.XDocument

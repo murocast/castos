@@ -1,4 +1,3 @@
-group Server
-    Expecto
-    Expecto.BenchmarkDotNet
-    Expecto.FsCheck
+Expecto
+Expecto.BenchmarkDotNet
+Expecto.FsCheck

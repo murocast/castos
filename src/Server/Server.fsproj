@@ -5,9 +5,9 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Smapi\Smapi.fsproj" />
+    <ProjectReference Include="..\Shared\Shared.fsproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="../Shared/Shared.fs" />
     <Compile Include="Configuration.fs" />
     <Compile Include="Json.fs" />
     <Compile Include="ErrorHandling.fs" />
