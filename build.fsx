@@ -114,4 +114,4 @@ open Fake.Core.TargetOperators
     ==> "InstallClient"
     ==> "RunTests"
 
-Target.runOrDefaultWithArguments "Build"
+Target.runOrDefaultWithArguments "Bundle"
