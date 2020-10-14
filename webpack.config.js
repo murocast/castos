@@ -17,6 +17,7 @@ var CONFIG = {
     // See https://github.com/jantimon/html-webpack-plugin
     indexHtmlTemplate: './src/Client/index.html',
     fsharpEntry: './src/Client/Client.fsproj',
+    cssEntry: './src/Client/style.scss',
     outputDir: './deploy/public',
     assetsDir: './src/Client/public',
     devServerPort: 8080,
@@ -68,8 +69,11 @@ module.exports = {
     // have a faster HMR support. In production bundle styles together
     // with the code because the MiniCssExtractPlugin will extract the
     // CSS in a separate files.
-    entry: {
-        app: resolve(CONFIG.fsharpEntry)
+    entry: isProduction ? {
+        app: [resolve(CONFIG.fsharpEntry), resolve(CONFIG.cssEntry)]
+    } : {
+        app: resolve(CONFIG.fsharpEntry),
+        style: resolve(CONFIG.cssEntry)
     },
     // Add a hash to the output file name in production
     // to prevent browser caching if code changes
