@@ -29,6 +29,18 @@ nuget Fulma
 nuget Thoth.Json
 nuget Thoth.Fetch
 
+nuget Feliz
+nuget Feliz.Router
+nuget Feliz.UseElmish
+nuget Feliz.Bulma
+nuget Feliz.Bulma.Checkradio
+nuget Feliz.Bulma.PageLoader
+nuget Feliz.Bulma.QuickView
+nuget Feliz.Bulma.Calendar
+nuget Feliz.Bulma.Popover
+nuget Elmish.SweetAlert
+nuget Elmish.Toastr
+
 group Build
     source https://api.nuget.org/v3/index.json
     framework: netstandard2.0
