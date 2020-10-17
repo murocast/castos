@@ -1,4 +1,5 @@
-namespace Shared
+namespace Murocast.Shared
+
 open System
 
 type Counter = { Value : int }

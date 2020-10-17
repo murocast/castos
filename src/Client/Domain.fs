@@ -1,51 +1,30 @@
 module Murocast.Client.Domain
 
-open Elmish
-open Elmish.React
-open Elmish.UrlParser
-open Elmish.Navigation
-open Fable.Core
-open Fable.React
-open Fable.React.Props
-open Thoth.Fetch
-open Thoth.Json
-open Fulma
-
 open System
-open Browser
-open Shared
+open Router
 
+type CurrentPage =
+    | Anonymous of AnonymousPage
+    | Secured of SecuredPage * int //Yobo.Shared.Core.UserAccount.Domain.Queries.UserAccount
 
+type Model = {
+    IsCheckingUser : bool
+    CurrentPage : CurrentPage
+    ShowTerms : bool
+}
 
-
-type LinkCode =
-    | LinkCode of System.Guid
-    | Invalid
-
-type HttpRequest<'a> =
-    | New
-    | Pending
-    | Success of 'a
-    | Error
-
-type AuthQuery =
-    { LinkCode: string
-      HouseholdId: string }
-
-// The model holds data that you want to keep track of while the application is running
-// in this case, we are keeping track of a counter
-// we mark it as optional, because initially it will not be available from the client
-// the initial value will be requested from server
-type Model = { LinkCode: LinkCode
-               HouseholdId: string
-               Username: string
-               Password: string
-               Authorized: bool }
-
-// The Msg type defines what events/actions can occur while the application is running
-// the state of the application changes *only* in reaction to these events
 type Msg =
-    | Authorize
-    | EmailChanged of string
-    | PasswordChanged of string
-    | Authorized of string
+    // auth
+    | RefreshUser
+    //| UserRefreshed of ServerResult<Yobo.Shared.Core.UserAccount.Domain.Queries.UserAccount>
+    | RefreshUserWithRedirect of SecuredPage
+    //| UserRefreshedWithRedirect of SecuredPage * ServerResult<Yobo.Shared.Core.UserAccount.Domain.Queries.UserAccount>
+    | RefreshToken of string
+    //| TokenRefreshed of ServerResult<string>
+    | LoggedOut
+    | ResendActivation of Guid
+    //| ActivationResent of ServerResult<unit>
+    // navigation
+    | UrlChanged of Page
+    // global
+    | ShowTerms of bool

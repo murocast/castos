@@ -250,7 +250,7 @@ module Smapi =
 
         db.AddAuthRequest request
 
-        let loginFormUrl = (sprintf "%s/?linkcode=%A&householdid=%s" baseUrl request.LinkCode request.HouseholdId)
+        let loginFormUrl = (sprintf "%s/link-sonos?linkcode=%A&householdid=%s" baseUrl request.LinkCode request.HouseholdId) //TODO: use literals from shared
         let response = Smapi.Respond.getAppLinkResponse loginFormUrl (string request.LinkCode)
         ok response
 

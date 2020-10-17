@@ -1,79 +1,87 @@
 module Murocast.Client.State
 
 open System
+
 open Elmish
 open Feliz.Router
 
-open Elmish
-open Elmish.React
-open Elmish.UrlParser
-open Elmish.Navigation
-open Fable.Core
-open Fable.React
-open Fable.React.Props
-open Thoth.Fetch
-open Thoth.Json
-open Fulma
+open Murocast.Client.Domain
+open Murocast.Client.Router
 
-open System
-open Browser
-open Shared
+let navigateToAnonymous (p:AnonymousPage) (m:Model) =
+    { m with CurrentPage = CurrentPage.Anonymous(p) }
 
-open Domain
+let navigateToSecured user (p:SecuredPage) (m:Model) =
+    { m with CurrentPage = CurrentPage.Secured(p, user) }
 
-[<Emit("__BASE_URL__")>]
-let BaseUrl : string = jsNative
+let refreshUser user (m:Model) =
+    match m.CurrentPage with
+    | CurrentPage.Anonymous _ -> m
+    | CurrentPage.Secured(p,_) -> navigateToSecured user p m
 
-let postAuthorization linkCode model =
-    promise {
-        let data = { EMail = model.Username
-                     Password = model.Password
-                     HouseholdId = model.HouseholdId
-                     LinkCode = linkCode }
+let init () =
+    let nextPage = (Router.currentPath() |> Page.parseFromUrlSegments)
+    {
+        CurrentPage = CurrentPage.Anonymous Login
+        IsCheckingUser = false
+        ShowTerms = false
+    }, (nextPage |> UrlChanged |> Cmd.ofMsg)
 
-        return! Fetch.post<SmapiAuthRendition,string>(BaseUrl + "/api/users/smapiauth", data, caseStrategy = CamelCase)
-    }
-
-
-// defines the initial state and initial command (= side-effect) of the application
-let init () : Model * Cmd<Msg> =
-
-    let parser = UrlParser.top <?> stringParam "linkcode" <?> stringParam "householdid"
-    //let linkCodeOption = UrlParser.parsePath (UrlParser.top <?> stringParam "linkcode" <?> stringParam "householdid") Dom.window.location
-    let mapper linkcode householdid =
-        match linkcode, householdid with
-        | Some l, Some h -> Some ({ LinkCode = l; HouseholdId = h })
-        | _ -> None
-    let mapped = UrlParser.map mapper parser
-    let result = UrlParser.parsePath mapped Dom.window.location
-    let authQuery = Option.bind (fun (oa:option<AuthQuery>) -> match oa with
-                                                               | Some s -> match Guid.TryParse s.LinkCode with
-                                                                           | (true, g) -> Some (LinkCode g, s.HouseholdId)
-                                                                           | (false, _) -> None
-                                                               | None -> None ) result
-                                |> Option.defaultValue (Invalid, "INVALID")
-
-    let initialModel = { LinkCode = fst authQuery
-                         HouseholdId = snd authQuery
-                         Username = ""
-                         Password = ""
-                         Authorized = false }
-
-    initialModel, Cmd.none
-
-// The update function computes the next state of the application based on the current state and the incoming events/messages
-// It can also run side-effects (encoded as commands) like calling the server via Http.
-// these commands in turn, can dispatch messages to which the update function will react.
-let update (msg : Msg) (currentModel : Model) : Model * Cmd<Msg> =
+let update (msg:Msg) (model:Model) : Model * Cmd<Msg> =
     match msg with
-    | EmailChanged s ->
-        { currentModel with Username = s }, Cmd.none
-    | PasswordChanged s ->
-        { currentModel with Password = s }, Cmd.none
-    | Authorize ->
-        //create command
-        match currentModel.LinkCode with
-        | LinkCode g  -> currentModel, Cmd.OfPromise.perform (postAuthorization g) currentModel Authorized
-        | _ -> currentModel, Cmd.none
-    | Authorized _ ->
-        currentModel, Cmd.none
+    | UrlChanged page ->
+        match model.CurrentPage, page with
+        | CurrentPage.Secured(_,user), Page.Secured targetPage ->
+            if SecuredPage.isAdminOnly targetPage && false then // TODO: not user.IsAdmin then
+                model, Cmd.ofMsg LoggedOut
+            else
+                let newModel = model |> navigateToSecured user targetPage
+                newModel, Cmd.none
+        | CurrentPage.Anonymous _, Page.Anonymous targetPage
+        | CurrentPage.Secured _, Page.Anonymous targetPage ->
+            let newModel = model |> navigateToAnonymous targetPage
+            newModel, Cmd.none
+        | CurrentPage.Anonymous _, Page.Secured targetpage ->
+            model, Cmd.ofMsg <| RefreshUserWithRedirect(targetpage)
+    | RefreshUserWithRedirect p ->
+        { model with IsCheckingUser = true }, [] // Cmd.OfAsync.eitherAsResult (onUserAccountService (fun x -> x.GetUserInfo)) () (fun u -> UserRefreshedWithRedirect(p, u))
+    // | UserRefreshedWithRedirect(p, u) ->
+    //     let model = { model with IsCheckingUser = false }
+    //     match u with
+    //     | Ok usr -> model |> navigateToSecured usr p, Router.navigatePage (Page.Secured p)
+    //     | Error _ -> model, Cmd.ofMsg LoggedOut
+    | RefreshUser ->
+        model, [] //  Cmd.OfAsync.eitherAsResult (onUserAccountService (fun x -> x.GetUserInfo)) () UserRefreshed
+    // | UserRefreshed res ->
+    //     match res with
+    //     | Ok usr -> model |> refreshUser usr, Cmd.none
+    //     | Error _ -> model, Cmd.ofMsg LoggedOut
+    | RefreshToken token -> model, [] //  Cmd.OfAsync.eitherAsResult authService.RefreshToken token TokenRefreshed
+    // | TokenRefreshed res ->
+    //     match res with
+    //     | Ok t ->
+    //         TokenStorage.setToken t
+    //         model, Cmd.none
+    //     | Error _ -> model, Cmd.ofMsg LoggedOut
+    | LoggedOut ->
+        TokenStorage.removeToken()
+        model, Router.navigatePage (Page.Anonymous Login)
+    // auth
+    | ResendActivation i -> model, [] // Cmd.OfAsync.eitherAsResult authService.ResendActivation i ActivationResent
+    // | ActivationResent _ ->
+    //     model, [
+    //         SharedView.ServerResponseViews.showSuccessToast "Nyní se podívejte do vaší emailové schránky"
+    //         Cmd.ofMsg LoggedOut
+    //     ] |> Cmd.batch
+    | ShowTerms show -> { model with ShowTerms = show }, Cmd.none
+
+let subscribe (_:Model) =
+    let sub dispatch =
+        let timer = (TimeSpan.FromMinutes 1.).TotalMilliseconds |> int
+
+        let handler _ =
+            match TokenStorage.tryGetToken() with
+            | Some t -> dispatch (RefreshToken t) |> ignore
+            | None -> Cmd.none |> ignore
+        Browser.Dom.window.setInterval(handler, timer) |> ignore
+    Cmd.ofSub sub
