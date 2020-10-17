@@ -8,7 +8,7 @@ open Castos.Users
 open System
 open Giraffe
 open Saturn
-open Shared
+open Murocast.Shared
 
 type AddUserRendition =
     {
