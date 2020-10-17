@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Shared\Shared.fsproj" />
@@ -12,9 +13,15 @@
     <Compile Include="Version.fs" />
     <Compile Include="TokenStorage.fs" />
     <Compile Include="Router.fs" />
+    <Compile Include="Server.fs" />
+    <Compile Include="Forms.fs" />
+    <Compile Include="SharedView.fs" />
     <Compile Include="Pages/LinkSonos/Domain.fs" />
     <Compile Include="Pages/LinkSonos/State.fs" />
     <Compile Include="Pages/LinkSonos/View.fs" />
+    <Compile Include="Pages/Login/Domain.fs" />
+    <Compile Include="Pages/Login/State.fs" />
+    <Compile Include="Pages/Login/View.fs" />
     <Compile Include="Domain.fs" />
     <Compile Include="State.fs" />
     <Compile Include="View.fs" />
