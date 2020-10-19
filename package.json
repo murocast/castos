@@ -34,5 +34,8 @@
         "webpack": "^4.44.2",
         "webpack-cli": "^3.3.12",
         "webpack-dev-server": "^3.8.2"
+    },
+    "dependencies": {
+        "toastr": "^2.1.4"
     }
 }

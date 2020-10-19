@@ -9,6 +9,7 @@ open System
 open Giraffe
 open Saturn
 open Murocast.Shared
+open Murocast.Shared.Core.UserAccount.Domain.Queries
 
 type AddUserRendition =
     {
@@ -29,6 +30,9 @@ let getUserComposition eventStore email =
     match getUsersComposition eventStore with
     | Success users -> Success (getUser users email)
     | Failure m -> fail m
+
+let getUserAccountComposition (eventStore:CosmoStore.EventStore<_,_>) (user:AuthenticatedUser) =
+    ok user
 
 let addUserComposition eventStore (rendition:AddUserRendition) =
     let salt = generateSalt()
@@ -61,6 +65,7 @@ let smapiauthComposition (db:Database.DatabaseConnection) eventStore (rendition:
 let usersRouter eventStore db = router {
     //pipe_through authorize  //<-- for all methods of router
     get "" (authorize >=> adminOnly >=>  (processAsync getUsersComposition eventStore))
+    get "/userinfo" (authorize >=> returnUser())
     post "" (processDataAsync addUserComposition eventStore)
     post "/smapiauth" (processDataAsync (smapiauthComposition db) eventStore)
 }

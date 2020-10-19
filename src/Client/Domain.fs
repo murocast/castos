@@ -2,10 +2,11 @@ module Murocast.Client.Domain
 
 open System
 open Router
+open Murocast.Shared.Core.UserAccount.Domain.Queries
 
 type CurrentPage =
     | Anonymous of AnonymousPage
-    | Secured of SecuredPage * int //Yobo.Shared.Core.UserAccount.Domain.Queries.UserAccount
+    | Secured of SecuredPage * Murocast.Shared.Core.UserAccount.Domain.Queries.AuthenticatedUser
 
 type Model = {
     IsCheckingUser : bool
@@ -16,14 +17,14 @@ type Model = {
 type Msg =
     // auth
     | RefreshUser
-    //| UserRefreshed of ServerResult<Yobo.Shared.Core.UserAccount.Domain.Queries.UserAccount>
+    | UserRefreshed of AuthenticatedUser
     | RefreshUserWithRedirect of SecuredPage
-    //| UserRefreshedWithRedirect of SecuredPage * ServerResult<Yobo.Shared.Core.UserAccount.Domain.Queries.UserAccount>
+    | UserRefreshedWithRedirect of SecuredPage * AuthenticatedUser
     | RefreshToken of string
-    //| TokenRefreshed of ServerResult<string>
+    //| TokenRefreshed of string
     | LoggedOut
-    | ResendActivation of Guid
-    //| ActivationResent of ServerResult<unit>
+    //| ResendActivation of Guid
+    //| ActivationResent
     // navigation
     | UrlChanged of Page
     // global

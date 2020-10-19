@@ -7,6 +7,16 @@ open Feliz.Router
 
 open Murocast.Client.Domain
 open Murocast.Client.Router
+open Murocast.Client.Server
+
+open Thoth.Fetch
+open Thoth.Json
+open Murocast.Shared.Core.UserAccount.Domain.Queries
+
+let getUserInfo() : Fable.Core.JS.Promise<AuthenticatedUser> =
+    promise {
+        return! Fetch.get "/api/users/userinfo"
+    }
 
 let navigateToAnonymous (p:AnonymousPage) (m:Model) =
     { m with CurrentPage = CurrentPage.Anonymous(p) }
@@ -44,18 +54,14 @@ let update (msg:Msg) (model:Model) : Model * Cmd<Msg> =
         | CurrentPage.Anonymous _, Page.Secured targetpage ->
             model, Cmd.ofMsg <| RefreshUserWithRedirect(targetpage)
     | RefreshUserWithRedirect p ->
-        { model with IsCheckingUser = true }, [] // Cmd.OfAsync.eitherAsResult (onUserAccountService (fun x -> x.GetUserInfo)) () (fun u -> UserRefreshedWithRedirect(p, u))
-    // | UserRefreshedWithRedirect(p, u) ->
-    //     let model = { model with IsCheckingUser = false }
-    //     match u with
-    //     | Ok usr -> model |> navigateToSecured usr p, Router.navigatePage (Page.Secured p)
-    //     | Error _ -> model, Cmd.ofMsg LoggedOut
+        { model with IsCheckingUser = true }, Cmd.OfPromise.perform getUserInfo () (fun u -> UserRefreshedWithRedirect(p,u))
+     | UserRefreshedWithRedirect(p, u) ->
+         let model = { model with IsCheckingUser = false }
+         model |> navigateToSecured u p, Router.navigatePage (Page.Secured p)
     | RefreshUser ->
-        model, [] //  Cmd.OfAsync.eitherAsResult (onUserAccountService (fun x -> x.GetUserInfo)) () UserRefreshed
-    // | UserRefreshed res ->
-    //     match res with
-    //     | Ok usr -> model |> refreshUser usr, Cmd.none
-    //     | Error _ -> model, Cmd.ofMsg LoggedOut
+        model, Cmd.OfPromise.perform getUserInfo () UserRefreshed
+     | UserRefreshed usr ->
+        model |> refreshUser usr, Cmd.none
     | RefreshToken token -> model, [] //  Cmd.OfAsync.eitherAsResult authService.RefreshToken token TokenRefreshed
     // | TokenRefreshed res ->
     //     match res with
@@ -67,7 +73,7 @@ let update (msg:Msg) (model:Model) : Model * Cmd<Msg> =
         TokenStorage.removeToken()
         model, Router.navigatePage (Page.Anonymous Login)
     // auth
-    | ResendActivation i -> model, [] // Cmd.OfAsync.eitherAsResult authService.ResendActivation i ActivationResent
+    //| ResendActivation i -> model, [] // Cmd.OfAsync.eitherAsResult authService.ResendActivation i ActivationResent
     // | ActivationResent _ ->
     //     model, [
     //         SharedView.ServerResponseViews.showSuccessToast "Nyní se podívejte do vaší emailové schránky"

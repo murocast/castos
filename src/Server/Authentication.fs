@@ -2,6 +2,7 @@ module Castos.Auth
 
 open Castos
 open Castos.Configuration
+open Murocast.Shared.Core.UserAccount.Domain.Queries
 open System
 open System.Security.Cryptography
 open Microsoft.AspNetCore.Cryptography.KeyDerivation
@@ -24,12 +25,6 @@ type User = {
     Email: string
     PasswordHash: string
     Salt: byte array
-    Roles: string list
-}
-
-type AuthenticatedUser = {
-    Id : UserId
-    Email: string
     Roles: string list
 }
 

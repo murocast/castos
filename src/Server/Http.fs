@@ -53,3 +53,9 @@ module Http =
                             | Success (a) -> Successful.OK a next ctx
                             | Failure (_) -> RequestErrors.BAD_REQUEST "Error" next ctx
                 }
+
+    let returnUser() =
+        fun next (ctx:HttpContext) ->
+            task {
+                return! Successful.OK (claimsToAuthUser ctx.User) next ctx
+            }

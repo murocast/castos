@@ -1,5 +1,7 @@
 namespace Castos
 
+open Murocast.Shared.Core.UserAccount.Domain.Queries
+
 open Smapi
 open Smapi.Respond
 open Smapi.GetLastUpdate

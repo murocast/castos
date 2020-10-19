@@ -2,6 +2,7 @@ namespace Castos
 
 module Subscriptions =
     open System
+    open Murocast.Shared.Core.UserAccount.Domain.Queries
 
     type Subscription = {
             UserId : UserId
@@ -54,6 +55,7 @@ module SubscriptionCompositions =
     open Castos.Auth
     open Castos.Http
     open Castos.FeedCompositions
+    open Murocast.Shared.Core.UserAccount.Domain.Queries
 
     type AddSubscribeRendition = {
         FeedId: FeedId

@@ -23,9 +23,13 @@ let view (model:Model) (dispatch:Msg -> unit) =
             match model.CurrentPage with
             | Anonymous pg ->
                 match pg with
+                | Login -> Pages.Login.View.view()
                 | LinkSonos (linkcode,householdId) -> Pages.LinkSonos.View.view { LinkCode = linkcode; HouseholdId = householdId }
                 | _ -> failwith "Unknown anonymous page"
-            | _ -> failwith "Unknown page type"
+            | Secured (pg, user) ->
+                match pg with
+                | Subscriptions -> Pages.Subscriptions.View.view ()
+                | _ -> failwith "Unknown secured page"
 
     React.router [
         router.pathMode

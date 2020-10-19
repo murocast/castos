@@ -22,6 +22,9 @@
     <Compile Include="Pages/Login/Domain.fs" />
     <Compile Include="Pages/Login/State.fs" />
     <Compile Include="Pages/Login/View.fs" />
+    <Compile Include="Pages/Subscriptions/Domain.fs" />
+    <Compile Include="Pages/Subscriptions/State.fs" />
+    <Compile Include="Pages/Subscriptions/View.fs" />
     <Compile Include="Domain.fs" />
     <Compile Include="State.fs" />
     <Compile Include="View.fs" />
