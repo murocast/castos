@@ -21,7 +21,8 @@ let BaseUrl : string = jsNative
 
 let getToken (form:Request.Login) =
     promise {
-        return! Fetch.post<Request.Login,string>(BaseUrl + "/token", form, caseStrategy = CamelCase)
+        let! token = Fetch.post<Request.Login,Request.TokenResult>(BaseUrl + "/token", form, caseStrategy = CamelCase)
+        return token.Token
     }
 
 let init () =

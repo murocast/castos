@@ -12,6 +12,11 @@ module Request =
     module Login =
         let init = { Email = ""; Password = "" }
 
+    type TokenResult =
+        {
+            Token : string
+        }
+
     type Register = {
         FirstName: string
         LastName: string

@@ -58,6 +58,9 @@ console.log('Bundling for ' + environment + '...');
 // The HtmlWebpackPlugin allows us to use a template for the index.html page
 // and automatically injects <script> or <link> tags for generated bundles.
 var commonPlugins = [
+    new webpack.DefinePlugin({
+        __BASE_URL__: isProduction ? JSON.stringify('') : JSON.stringify( 'http://localhost:8085' ) //For production we build urls without base
+    }),
     new HtmlWebpackPlugin({
         filename: 'index.html',
         template: resolve(CONFIG.indexHtmlTemplate)
