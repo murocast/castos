@@ -14,13 +14,18 @@ open Thoth.Fetch
 open Thoth.Json
 open Murocast.Shared.Core.UserAccount.Domain.Queries
 
-let getUserInfo() : Fable.Core.JS.Promise<AuthenticatedUser> =
+let inline getJsonPromise url =
     promise {
         let headers = TokenStorage.tryGetToken()
                     |> Option.map (sprintf "Bearer %s" >> HttpRequestHeaders.Authorization)
                     |> Option.toList
                     |> List.append [ HttpRequestHeaders.ContentType "application/json" ]
-        return! Fetch.get ("/api/users/userinfo", headers = headers)
+        return! Fetch.get (url, headers = headers, caseStrategy = CaseStrategy.CamelCase)
+    }
+
+let getUserInfo() : Fable.Core.JS.Promise<AuthenticatedUser> =
+    promise {
+        return! getJsonPromise "/api/users/userinfo"
     }
 
 let navigateToAnonymous (p:AnonymousPage) (m:Model) =
