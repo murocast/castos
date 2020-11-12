@@ -9,13 +9,18 @@ open Murocast.Client.Domain
 open Murocast.Client.Router
 open Murocast.Client.Server
 
+open Fetch.Types
 open Thoth.Fetch
 open Thoth.Json
 open Murocast.Shared.Core.UserAccount.Domain.Queries
 
 let getUserInfo() : Fable.Core.JS.Promise<AuthenticatedUser> =
     promise {
-        return! Fetch.get "/api/users/userinfo"
+        let headers = TokenStorage.tryGetToken()
+                    |> Option.map (sprintf "Bearer %s" >> HttpRequestHeaders.Authorization)
+                    |> Option.toList
+                    |> List.append [ HttpRequestHeaders.ContentType "application/json" ]
+        return! Fetch.get ("/api/users/userinfo", headers = headers)
     }
 
 let navigateToAnonymous (p:AnonymousPage) (m:Model) =
