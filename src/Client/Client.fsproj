@@ -4,9 +4,6 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Shared\Shared.fsproj" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="index.html" />
     <None Include="paket.references" />
     <None Include="style.scss" />
@@ -29,6 +26,9 @@
     <Compile Include="State.fs" />
     <Compile Include="View.fs" />
     <Compile Include="App.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.fsproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

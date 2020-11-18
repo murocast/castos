@@ -1,33 +1,23 @@
 module Murocast.Client.Pages.Subscriptions.State
 
-open Murocast.Client.Router
 open Elmish
 open Domain
-
-open Murocast.Shared.Auth.Communication
-open Murocast.Shared.Auth.Validation
-open Murocast.Client
-open Murocast.Client.Forms
 open Murocast.Client.Server
-open Murocast.Client.SharedView
 
-open Thoth.Fetch
-open Thoth.Json
+open Murocast.Shared.Core.Subscriptions.Communication.Queries
 
-open Fable.Core
-
-[<Emit("__BASE_URL__")>]
-let BaseUrl : string = jsNative
-
-let getToken (form:Request.Login) =
+let getSubscriptions() : Fable.Core.JS.Promise<SubscriptionRendition list> =
     promise {
-        return! Fetch.post<Request.Login,string>(BaseUrl + "/token", form, caseStrategy = CamelCase)
+        return! getJsonPromise "api/subscriptions"
     }
 
-let init () =
-    {
-        Subsriptions = []
-    }, Cmd.none
+let init () = {
+                Subsriptions = []
+              }, Cmd.OfPromise.eitherAsResult getSubscriptions () SubscriptionsLoaded
 
 let update (msg:Msg) (model:Model) : Model * Cmd<Msg> =
-    model, []
+    match msg with
+    | SubscriptionsLoaded (Ok subs) ->
+        let rows = subs
+                   |> List.map (fun s -> string s.FeedId)
+        { model with Subsriptions = rows }, []

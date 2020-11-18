@@ -25,8 +25,24 @@ let inTemplate (content:ReactElement) =
         ]
     ]
 
+let rows subsriptions =
+    subsriptions
+    |> List.map (fun (s:string) ->
+        Html.tr [
+            prop.children [
+                Html.td [
+                    prop.text s
+                ]
+            ]
+        ]
+    )
+
 let view = React.functionComponent(fun () ->
     let model, dispatch = React.useElmish(State.init, State.update, [| |])
-    Bulma.content "Bla"
+    //Bulma.content "Bla"
+    Bulma.table [
+        prop.children (rows model.Subsriptions)
+    ]
+
     |> inTemplate
 )

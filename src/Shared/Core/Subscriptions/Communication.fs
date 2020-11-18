@@ -4,6 +4,6 @@ open System
 
 module Queries =
 
-    type Subscription = {
-        Id : Guid
+    type SubscriptionRendition = {
+        FeedId : Guid
     }

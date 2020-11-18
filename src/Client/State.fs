@@ -9,19 +9,7 @@ open Murocast.Client.Domain
 open Murocast.Client.Router
 open Murocast.Client.Server
 
-open Fetch.Types
-open Thoth.Fetch
-open Thoth.Json
 open Murocast.Shared.Core.UserAccount.Domain.Queries
-
-let inline getJsonPromise url =
-    promise {
-        let headers = TokenStorage.tryGetToken()
-                    |> Option.map (sprintf "Bearer %s" >> HttpRequestHeaders.Authorization)
-                    |> Option.toList
-                    |> List.append [ HttpRequestHeaders.ContentType "application/json" ]
-        return! Fetch.get (url, headers = headers, caseStrategy = CaseStrategy.CamelCase)
-    }
 
 let getUserInfo() : Fable.Core.JS.Promise<AuthenticatedUser> =
     promise {

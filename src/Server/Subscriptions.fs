@@ -3,6 +3,7 @@ namespace Castos
 module Subscriptions =
     open System
     open Murocast.Shared.Core.UserAccount.Domain.Queries
+    open Murocast.Shared.Core.Subscriptions.Communication.Queries
 
     type Subscription = {
             UserId : UserId
@@ -91,7 +92,8 @@ module SubscriptionCompositions =
 
     let getSubscriptionsComposition eventStore user =
         let evs = subscriptionEvents eventStore user.Id
-        ok (getSubscriptions evs)
+        ok (getSubscriptions evs
+            |> List.map (fun s -> ({ FeedId = s.FeedId }:Murocast.Shared.Core.Subscriptions.Communication.Queries.SubscriptionRendition)))
 
     let getSubscriptionsCategoriesComposition eventStore userId =
         feedsOfUser eventStore userId

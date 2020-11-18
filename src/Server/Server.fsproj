@@ -5,8 +5,8 @@
     <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Smapi\Smapi.fsproj" />
     <ProjectReference Include="..\Shared\Shared.fsproj" />
+    <ProjectReference Include="..\Smapi\Smapi.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration.fs" />

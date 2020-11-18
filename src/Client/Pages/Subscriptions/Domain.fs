@@ -2,6 +2,7 @@ module Murocast.Client.Pages.Subscriptions.Domain
 
 open Murocast.Shared.Errors
 open Murocast.Shared.Auth.Communication
+open Murocast.Shared.Core.Subscriptions.Communication.Queries
 open Murocast.Client.Forms
 
 type Model = {
@@ -9,6 +10,4 @@ type Model = {
 }
 
 type Msg =
-    | FormChanged of Request.Login
-    | Login
-    | LoggedIn of ServerResult<string>
+    | SubscriptionsLoaded of ServerResult<SubscriptionRendition list>
