@@ -11,7 +11,7 @@ open Murocast.Client.Forms
 open Domain
 open Murocast.Client.SharedView
 
-let inTemplate (content:ReactElement) =
+let inTemplate (content:ReactElement list) =
     Bulma.hero [
         Bulma.heroBody [
             Bulma.columns [
@@ -28,11 +28,22 @@ let inTemplate (content:ReactElement) =
 let rows subsriptions =
     subsriptions
     |> List.map (fun (s:string) ->
-        Html.tr [
+        Bulma.media [
             prop.children [
-                Html.td [
+                Bulma.mediaLeft [
+                    Html.p [
+                        prop.className "image is-64x64"
+                        prop.children [
+                            Html.img [
+                                prop.src "https://bulma.io/images/placeholders/128x128.png"
+                            ]
+                        ]
+                    ]
+                ]
+                Bulma.mediaContent [
                     prop.text s
                 ]
+                Bulma.mediaRight []
             ]
         ]
     )
@@ -40,9 +51,6 @@ let rows subsriptions =
 let view = React.functionComponent(fun () ->
     let model, dispatch = React.useElmish(State.init, State.update, [| |])
     //Bulma.content "Bla"
-    Bulma.table [
-        prop.children (rows model.Subsriptions)
-    ]
-
+    (rows model.Subsriptions)
     |> inTemplate
 )
