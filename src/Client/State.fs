@@ -8,6 +8,7 @@ open Feliz.Router
 open Murocast.Client.Domain
 open Murocast.Client.Router
 open Murocast.Client.Server
+open Murocast.Shared.Errors
 
 open Murocast.Shared.Core.UserAccount.Domain.Queries
 
@@ -52,14 +53,18 @@ let update (msg:Msg) (model:Model) : Model * Cmd<Msg> =
         | CurrentPage.Anonymous _, Page.Secured targetpage ->
             model, Cmd.ofMsg <| RefreshUserWithRedirect(targetpage)
     | RefreshUserWithRedirect p ->
-        { model with IsCheckingUser = true }, Cmd.OfPromise.perform getUserInfo () (fun u -> UserRefreshedWithRedirect(p,u))
+        { model with IsCheckingUser = true }, Cmd.OfPromise.eitherAsResult getUserInfo () (fun u -> UserRefreshedWithRedirect(p,u))
      | UserRefreshedWithRedirect(p, u) ->
          let model = { model with IsCheckingUser = false }
-         model |> navigateToSecured u p, Router.navigatePage (Page.Secured p)
+         match u with
+         | Ok usr -> model |> navigateToSecured usr p, Router.navigatePage (Page.Secured p)
+         | Error _ -> model, Cmd.ofMsg LoggedOut
     | RefreshUser ->
-        model, Cmd.OfPromise.perform getUserInfo () UserRefreshed
-     | UserRefreshed usr ->
-        model |> refreshUser usr, Cmd.none
+        model, Cmd.OfPromise.eitherAsResult getUserInfo () UserRefreshed
+     | UserRefreshed res ->
+        match res with
+        | Ok usr -> model |> refreshUser usr, Cmd.none
+        | Error _ -> model, Cmd.ofMsg LoggedOut
     | RefreshToken token -> model, [] //  Cmd.OfAsync.eitherAsResult authService.RefreshToken token TokenRefreshed
     // | TokenRefreshed res ->
     //     match res with

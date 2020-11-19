@@ -3,6 +3,7 @@ module Murocast.Client.Domain
 open System
 open Router
 open Murocast.Shared.Core.UserAccount.Domain.Queries
+open Murocast.Shared.Errors
 
 type CurrentPage =
     | Anonymous of AnonymousPage
@@ -17,9 +18,9 @@ type Model = {
 type Msg =
     // auth
     | RefreshUser
-    | UserRefreshed of AuthenticatedUser
+    | UserRefreshed of ServerResult<AuthenticatedUser>
     | RefreshUserWithRedirect of SecuredPage
-    | UserRefreshedWithRedirect of SecuredPage * AuthenticatedUser
+    | UserRefreshedWithRedirect of SecuredPage * ServerResult<AuthenticatedUser>
     | RefreshToken of string
     //| TokenRefreshed of string
     | LoggedOut
