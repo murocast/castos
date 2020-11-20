@@ -8,13 +8,19 @@ open Feliz.Router
 open Murocast.Client.Domain
 open Murocast.Client.Router
 open Murocast.Client.Server
-open Murocast.Shared.Errors
 
 open Murocast.Shared.Core.UserAccount.Domain.Queries
+open Murocast.Shared.Auth.Communication
 
 let getUserInfo() : Fable.Core.JS.Promise<AuthenticatedUser> =
     promise {
         return! getJsonPromise "/api/users/userinfo"
+    }
+
+let refreshToken (token:string) : Fable.Core.JS.Promise<string> =
+    promise {
+        let! (token:Request.TokenResult) = postJsonPromise "/refreshtoken" token
+        return token.Token
     }
 
 let navigateToAnonymous (p:AnonymousPage) (m:Model) =
@@ -65,13 +71,13 @@ let update (msg:Msg) (model:Model) : Model * Cmd<Msg> =
         match res with
         | Ok usr -> model |> refreshUser usr, Cmd.none
         | Error _ -> model, Cmd.ofMsg LoggedOut
-    | RefreshToken token -> model, [] //  Cmd.OfAsync.eitherAsResult authService.RefreshToken token TokenRefreshed
-    // | TokenRefreshed res ->
-    //     match res with
-    //     | Ok t ->
-    //         TokenStorage.setToken t
-    //         model, Cmd.none
-    //     | Error _ -> model, Cmd.ofMsg LoggedOut
+    | RefreshToken t -> model, Cmd.OfPromise.eitherAsResult refreshToken t TokenRefreshed
+    | TokenRefreshed res ->
+        match res with
+        | Ok t ->
+            TokenStorage.setToken t
+            model, Cmd.none
+        | Error _ -> model, Cmd.ofMsg LoggedOut
     | LoggedOut ->
         TokenStorage.removeToken()
         model, Router.navigatePage (Page.Anonymous Login)

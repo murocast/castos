@@ -22,7 +22,7 @@ type Msg =
     | RefreshUserWithRedirect of SecuredPage
     | UserRefreshedWithRedirect of SecuredPage * ServerResult<AuthenticatedUser>
     | RefreshToken of string
-    //| TokenRefreshed of string
+    | TokenRefreshed of ServerResult<string>
     | LoggedOut
     //| ResendActivation of Guid
     //| ActivationResent

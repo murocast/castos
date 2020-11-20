@@ -9,7 +9,7 @@ open Murocast.Client.SharedView
 
 let getSubscriptions() : Fable.Core.JS.Promise<SubscriptionRendition list> =
     promise {
-        return! getJsonPromise "api/subscriptions"
+        return! getJsonPromise "/api/subscriptions"
     }
 
 let init () = {
