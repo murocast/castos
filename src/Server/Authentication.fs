@@ -84,7 +84,7 @@ let handlePostToken authConfig (getUser:string -> Result<User option, Error>) =
 
             let user = getUser model.Email
             let result = match user with
-                             | Success (Some u) when u.PasswordHash = calculateHash model.Password u.Salt
+                             | Ok (Some u) when u.PasswordHash = calculateHash model.Password u.Salt
                                  -> json { Token = generateToken authConfig.Secret authConfig.Issuer u.Id u.Email u.Roles} next ctx
                              | _ ->
                                     ctx.Response.StatusCode <- HttpStatusCodes.Unauthorized

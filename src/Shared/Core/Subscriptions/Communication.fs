@@ -6,4 +6,5 @@ module Queries =
 
     type SubscriptionRendition = {
         FeedId : Guid
+        Name: string
     }

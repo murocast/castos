@@ -25,9 +25,9 @@ let inTemplate (content:ReactElement list) =
         ]
     ]
 
-let rows subsriptions =
+let rows (subsriptions:Subscription list) =
     subsriptions
-    |> List.map (fun (s:string) ->
+    |> List.map (fun (s:Subscription) ->
         Bulma.media [
             prop.children [
                 Bulma.mediaLeft [
@@ -41,7 +41,7 @@ let rows subsriptions =
                     ]
                 ]
                 Bulma.mediaContent [
-                    prop.text s
+                    prop.text (s.Name)
                 ]
                 Bulma.mediaRight []
             ]
@@ -50,7 +50,7 @@ let rows subsriptions =
 
 let view = React.functionComponent(fun () ->
     let model, dispatch = React.useElmish(State.init, State.update, [| |])
-    //Bulma.content "Bla"
+
     (rows model.Subsriptions)
     |> inTemplate
 )

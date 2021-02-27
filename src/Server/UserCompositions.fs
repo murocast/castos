@@ -24,15 +24,15 @@ let private storeUsersEvent eventStore event =
 
 let getUsersComposition eventStore =
     let (events, _) = getAllEventsFromStreamById eventStore streamId
-    ok (getUsers events)
+    Ok (getUsers events)
 
 let getUserComposition eventStore email =
     match getUsersComposition eventStore with
-    | Success users -> Success (getUser users email)
-    | Failure m -> fail m
+    | Ok users -> Ok (getUser users email)
+    | Error m -> Error m
 
 let getUserAccountComposition (eventStore:CosmoStore.EventStore<_,_>) (user:AuthenticatedUser) =
-    ok user
+    Ok user
 
 let addUserComposition eventStore (rendition:AddUserRendition) =
     let salt = generateSalt()
@@ -43,14 +43,14 @@ let addUserComposition eventStore (rendition:AddUserRendition) =
                 Salt = salt }
     |> storeUsersEvent eventStore
 
-    ok ("added user")
+    Ok ("added user")
 
 
 let smapiauthComposition (db:Database.DatabaseConnection) eventStore (rendition:SmapiAuthRendition) =
     match getUsersComposition eventStore with
-    | Failure m -> fail "Users not found"
-    | Success users -> match (getUser users rendition.EMail) with
-                       | None -> fail "User not found"
+    | Error m -> Error "Users not found"
+    | Ok users -> match (getUser users rendition.EMail) with
+                       | None -> Error "User not found"
                        | Some u -> let correctPassword = (u.PasswordHash = calculateHash rendition.Password u.Salt)
                                    let authReq = db.GetAuthRequestByLinkToken rendition.LinkCode rendition.HouseholdId
                                    let found = authReq.IsSome
@@ -59,8 +59,8 @@ let smapiauthComposition (db:Database.DatabaseConnection) eventStore (rendition:
                                         let updatedReq = { authReq.Value with
                                                             UserId = Some (u.Id) }
                                         db.UpdateAuthRequest updatedReq |> ignore
-                                        ok "Success"
-                                   | _ -> fail "Auth not successful"
+                                        Ok "Success"
+                                   | _ -> Error "Auth not successful"
 
 let usersRouter eventStore db = router {
     //pipe_through authorize  //<-- for all methods of router

@@ -5,8 +5,13 @@ open Murocast.Shared.Auth.Communication
 open Murocast.Shared.Core.Subscriptions.Communication.Queries
 open Murocast.Client.Forms
 
+type Subscription = {
+    FeedId : System.Guid
+    Name : string
+}
+
 type Model = {
-    Subsriptions : string list
+    Subsriptions : Subscription list
 }
 
 type Msg =
