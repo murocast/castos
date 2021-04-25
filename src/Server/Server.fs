@@ -66,7 +66,7 @@ let app = application {
                                             .WithOrigins appConfig.CorsUrls
                                            |> ignore )
     use_gzip
-    logging (fun logger -> logger.SetMinimumLevel LogLevel.Information |> ignore)
+    logging (fun logger -> logger.SetMinimumLevel LogLevel.Debug |> ignore)
 }
 
 [<EntryPoint>]
