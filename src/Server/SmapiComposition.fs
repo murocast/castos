@@ -74,10 +74,10 @@ module SmapiCompositions =
                 let! result = smapiImp appConfig eventStore db ctx
                 let logger = ctx.GetLogger()
                 return! match result with
-                        | Success (content) ->
+                        | Ok (content) ->
                             logger.LogDebug content
                             text content next ctx
-                        | Failure (error) ->
+                        | Error (error) ->
                             logger.LogError (sprintf "Error Handling Request: %s" error)
                             RequestErrors.BAD_REQUEST error next ctx
             }
