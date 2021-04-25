@@ -8,3 +8,15 @@ Fable.React
 Fulma
 Thoth.Fetch
 Thoth.Json
+
+Feliz
+Feliz.Router
+Feliz.UseElmish
+Feliz.Bulma
+Feliz.Bulma.Checkradio
+Feliz.Bulma.PageLoader
+Feliz.Bulma.QuickView
+Feliz.Bulma.Calendar
+Feliz.Bulma.Popover
+Elmish.SweetAlert
+Elmish.Toastr

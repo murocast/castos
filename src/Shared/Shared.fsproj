@@ -1,11 +1,21 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="DateTime.fs" />
+    <Compile Include="Validation.fs" />
+    <Compile Include="Errors.fs" />
+    <Compile Include="Auth/Communication.fs" />
+    <Compile Include="Auth/Validation.fs" />
     <Compile Include="Shared.fs" />
+    <Compile Include="Core/UserAccount/Domain.fs" />
+    <Compile Include="Core/Subscriptions/Domain.fs" />
+    <Compile Include="Core/Subscriptions/Communication.fs" />
   </ItemGroup>
-
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
 </Project>

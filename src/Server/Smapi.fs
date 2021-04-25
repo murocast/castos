@@ -1,5 +1,7 @@
 namespace Castos
 
+open Murocast.Shared.Core.UserAccount.Domain.Queries
+
 open Smapi
 open Smapi.Respond
 open Smapi.GetLastUpdate
@@ -101,7 +103,7 @@ module Smapi =
     let getCategories eventStore userId =
         let result = SubscriptionCompositions.getSubscriptionsCategoriesComposition eventStore userId
         match result with
-        | Success (categories) -> categories
+        | Ok (categories) -> categories
                                   |> List.sort
                                   |> List.map (fun (category) -> MediaCollection { Id = "__category_" + category
                                                                                    ItemType = Collection
@@ -116,7 +118,7 @@ module Smapi =
     let getPodcastsOfCategory eventStore userId c =
         let result = getPodcastsOfCategoriesForUser eventStore userId c
         match result with
-        | Success (feeds) -> feeds
+        | Ok (feeds) -> feeds
                                      |> List.sortBy (fun s -> s.Name)
                                      |> List.map (fun p -> MediaCollection { Id = getFeedIdId p.Id
                                                                              ItemType = Collection
@@ -134,7 +136,7 @@ module Smapi =
         let yymmdd1 (date:System.DateTime) = date.ToString("dd.MM.yyyy")
         let result = getEpisodesOfFeedComposition eventStore (string id)
         match result with
-        | Success (episodes) -> episodes
+        | Ok (episodes) -> episodes
                                 |> List.sortByDescending (fun e -> e.ReleaseDate)
                                 |> List.map (fun e -> MediaMetadata { Id = sprintf "%A___%A" e.FeedId e.Id
                                                                       ItemType = Track
@@ -159,7 +161,7 @@ module Smapi =
                     | _ -> failwithf "unknown id %s" id
 
         let response = getMetadataResponse items
-        ok response
+        Ok response
 
     let processGetMediaMetadata eventStore (s:GetMediaMetadataRequest.Envelope) =
         let id = s.Body.GetMediaMetadata.Id
@@ -174,7 +176,7 @@ module Smapi =
                                                         Duration = e.Length
                                                         CanResume = true  }}
         let response = Smapi.Respond.getMediaMetadataRepnose metadata
-        ok response
+        Ok response
 
     let lastPlayEpisodeStopped ls =
         let filteredLs = List.filter (fun x -> match x with
@@ -211,14 +213,14 @@ module Smapi =
                        | _ -> None
 
         let response = Smapi.Respond.getMediaUriResponse path id position
-        ok response
+        Ok response
 
     let processGetLastUpdate s =
         let result = { AutoRefreshEnabled = false
                        Catalog = (string 4321)
                        Favorites = (string 4321)
                        PollIntervall = 500 }
-        ok (toLastUpdateXml result)
+        Ok (toLastUpdateXml result)
 
     let processReportPlaySecondsRequest eventstore s u =
         let req = ReportPlaySecondsRequest.Parse s
@@ -250,12 +252,12 @@ module Smapi =
 
         db.AddAuthRequest request
 
-        let loginFormUrl = (sprintf "%s/?linkcode=%A&householdid=%s" baseUrl request.LinkCode request.HouseholdId)
+        let loginFormUrl = (sprintf "%s/link-sonos?linkcode=%A&householdid=%s" baseUrl request.LinkCode request.HouseholdId) //TODO: use literals from shared
         let response = Smapi.Respond.getAppLinkResponse loginFormUrl (string request.LinkCode)
-        ok response
+        Ok response
 
     let linkcodeFault() =
-        Smapi.Respond.getFault "Client.NOT_LINKED_RETRY" "Access token not found, retry" "Retry token request." "5"
+        Smapi.Respond.getFault "Client.NOT_LINKED_RETRY" "Access tOken not found, retry" "Retry tOken request." "5"
 
     let processGetDeviceAuthTokenRequest (db:Database.DatabaseConnection) s =
         let req = GetDeviceAuthTokenRequest.Parse s
@@ -264,10 +266,10 @@ module Smapi =
 
         let found = db.GetAuthRequestByLinkToken linkCode householdId
         match found with
-        | None -> ok (linkcodeFault())
+        | None -> Ok (linkcodeFault())
         | Some r ->
             match r.UserId with
-            | None -> ok (linkcodeFault())
+            | None -> Ok (linkcodeFault())
             | Some u ->
                     let updatedReq = { r with Used = Some System.DateTime.Now }
                     db.UpdateAuthRequest updatedReq |> ignore
@@ -281,7 +283,7 @@ module Smapi =
                     db.AddAuthToken authToken
 
                     let response = Smapi.Respond.processGetDeviceAuthTokenResponse authToken.Token authToken.PrivateKey
-                    ok response
+                    Ok response
 
     let processGetExtendedMetadata s =
         let req = GetExtendedMetadataRequest.Parse s

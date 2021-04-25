@@ -3,6 +3,9 @@ namespace Castos
 module Subscriptions =
     open System
 
+    open Murocast.Shared.Core.UserAccount.Domain.Queries
+    open Murocast.Shared.Core.Subscriptions.Communication.Queries
+
     type Subscription = {
             UserId : UserId
             FeedId : FeedId
@@ -54,6 +57,8 @@ module SubscriptionCompositions =
     open Castos.Auth
     open Castos.Http
     open Castos.FeedCompositions
+    open Murocast.Shared.Core.UserAccount.Domain.Queries
+    open Murocast.Shared.Core.Subscriptions.Communication.Queries
 
     type AddSubscribeRendition = {
         FeedId: FeedId
@@ -81,15 +86,29 @@ module SubscriptionCompositions =
     let addSubscriptionComposition eventStore rendition user =
         let result = feedExists eventStore rendition.FeedId
         match result with
-        | Success _ -> let events = subscriptionEvents eventStore (user.Id)
-                       let added = addSubscription rendition.FeedId (user.Id) events
-                       storeSubscriptionEvent eventStore added
-                       ok ("added subscription")
-        | Failure m -> fail m
+        | Ok _ -> let events = subscriptionEvents eventStore (user.Id)
+                  let added = addSubscription rendition.FeedId (user.Id) events
+                  storeSubscriptionEvent eventStore added
+                  Ok ("added subscription")
+        | Error m -> Error m
+
+    let getRenditionForSubscriptions eventStore (subs:Subscription list) : (SubscriptionRendition option) list =
+        subs
+        |> List.map (fun s -> let feedResult = getFeedComposition eventStore (s.FeedId)
+                              match feedResult with
+                              | Ok f -> Some ({ FeedId = f.Id
+                                                Name = f.Name }:SubscriptionRendition)
+                              | Error _ -> None )
 
     let getSubscriptionsComposition eventStore user =
         let evs = subscriptionEvents eventStore user.Id
-        ok (getSubscriptions evs)
+        let results =  getSubscriptions evs
+                       |> getRenditionForSubscriptions eventStore
+
+        Ok (results
+            |> List.filter (Option.isSome)
+            |> List.map (Option.get))
+
 
     let getSubscriptionsCategoriesComposition eventStore userId =
         feedsOfUser eventStore userId
@@ -98,8 +117,8 @@ module SubscriptionCompositions =
     let getPodcastsOfCategoriesForUser eventStore userId c =
         let feedIds = feedsOfUser eventStore userId
         match getFeedsOfCategoryComposition eventStore c with
-        | Success feeds -> ok (feeds |> List.filter (fun f -> List.contains (f.Id) feedIds))
-        | Failure _ -> failwith "Bla"
+        | Ok feeds -> Ok (feeds |> List.filter (fun f -> List.contains (f.Id) feedIds))
+        | Error _ -> failwith "Bla"
 
     let subscriptionsRouter eventStore = router {
         pipe_through authorize

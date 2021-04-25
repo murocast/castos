@@ -58,6 +58,9 @@ console.log('Bundling for ' + environment + '...');
 // The HtmlWebpackPlugin allows us to use a template for the index.html page
 // and automatically injects <script> or <link> tags for generated bundles.
 var commonPlugins = [
+    new webpack.DefinePlugin({
+        __BASE_URL__: isProduction ? JSON.stringify('') : JSON.stringify( 'http://localhost:8085' ) //For production we build urls without base
+    }),
     new HtmlWebpackPlugin({
         filename: 'index.html',
         template: resolve(CONFIG.indexHtmlTemplate)
@@ -79,6 +82,7 @@ module.exports = {
     // to prevent browser caching if code changes
     output: {
         path: resolve(CONFIG.outputDir),
+        publicPath: "/",
         filename: isProduction ? '[name].[hash].js' : '[name].js'
     },
     mode: isProduction ? 'production' : 'development',
@@ -115,7 +119,8 @@ module.exports = {
         port: CONFIG.devServerPort,
         proxy: CONFIG.devServerProxy,
         hot: true,
-        inline: true
+        inline: true,
+        historyApiFallback: true
     },
     // - fable-loader: transforms F# into JS
     // - babel-loader: transforms JS to old syntax (compatible with old browsers)

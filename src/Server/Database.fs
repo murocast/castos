@@ -2,6 +2,9 @@ namespace Castos
 
 [<RequireQualifiedAccess>]
 module Database =
+
+    open Murocast.Shared.Core.UserAccount.Domain.Queries
+
     open LiteDB
     open LiteDB.FSharp
 

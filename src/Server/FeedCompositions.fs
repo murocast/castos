@@ -38,13 +38,13 @@ module FeedCompositions =
     let getCategoriesComposition eventStore =
         let events = allFeedsEvents eventStore
         let feeds = getFeeds events
-        ok (getCategories feeds)
+        Ok (getCategories feeds)
 
     let getCategoriesOfFeedsComposition eventStore feedIds =
         let events = allFeedsEvents eventStore
         let feeds = getFeeds events
                     |> List.filter (fun f -> List.contains (f.Id) feedIds)
-        ok (getCategories feeds)
+        Ok (getCategories feeds)
 
     let addEpisodeComposition eventStore feedId rendition =
         let (_, version) = getAllEventsFromStreamById eventStore (getFeedStreamId feedId)
@@ -53,13 +53,13 @@ module FeedCompositions =
         //TODO: Version
         storeFeedEvent eventStore added
 
-        ok ("added episode")
+        Ok ("added episode")
 
     let addFeedComposition eventStore rendition =
         let event = addFeed rendition
         storeEvent eventStore feedStreamId event
 
-        ok ("added feed")
+        Ok ("added feed")
 
     let deleteFeedComposition eventStore id =
         let (events, version) = getAllEventsFromStreamById eventStore (getFeedStreamId id)
@@ -70,24 +70,24 @@ module FeedCompositions =
             storeFeedEvent eventStore ev
         | None -> ()
 
-        ok (sprintf "Deleted %s" id)
+        Ok (sprintf "Deleted %s" id)
 
     let getFeedsComposition eventStore =
         let events = allEventsFromStreamsStartsWith eventStore "feed-"
-        ok (getFeeds events)
+        Ok (getFeeds events)
 
     let getFeedComposition eventStore id =
         let (events, _) = getAllEventsFromStreamById eventStore (getFeedStreamId id)
-        ok (getFeed events)
+        Ok (getFeed events)
 
     let getFeedsOfCategoryComposition eventStore category =
         let feeds = allFeedsEvents eventStore
                     |> getFeeds
-        ok (getFeedsOfCategory category feeds)
+        Ok (getFeedsOfCategory category feeds)
 
     let getEpisodesOfFeedComposition eventStore id =
         let (events, _) = getAllEventsFromStreamById eventStore (getFeedStreamId id)
-        ok (getEpisodes events)
+        Ok (getEpisodes events)
 
     let getEpisodeOfFeedComposition eventStore feedId episodeId =
         let (events, _) = getAllEventsFromStreamById eventStore (getFeedStreamId feedId)

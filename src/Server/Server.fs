@@ -4,6 +4,7 @@ open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Logging
 
 open Saturn
+open Giraffe
 open System.IO
 
 open Castos
@@ -47,6 +48,7 @@ let db = Database.createDatabaseConnection DataFolder
 
 let webApp appConfig = router {
     post "/token" (handlePostToken appConfig.Auth (getUserComposition eventStore))
+    post "/refreshtoken" (authorize >=> (handleRefreshToken appConfig.Auth))
     forward "/api/users" (usersRouter eventStore db)
     forward "/api/feeds" (feedsRouter eventStore)
     forward "/api/subscriptions" (subscriptionsRouter eventStore)
@@ -66,7 +68,7 @@ let app = application {
                                             .WithOrigins appConfig.CorsUrls
                                            |> ignore )
     use_gzip
-    logging (fun logger -> logger.SetMinimumLevel LogLevel.Information |> ignore)
+    logging (fun logger -> logger.SetMinimumLevel LogLevel.Debug |> ignore)
 }
 
 [<EntryPoint>]
