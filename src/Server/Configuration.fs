@@ -1,4 +1,5 @@
 module Castos.Configuration
+open Microsoft.Extensions.Logging
 
 type AuthConfig = {
     Secret: string
@@ -10,4 +11,5 @@ type Configuration =
       Url: string
       ClientBaseUrl: string
       Port: uint16
-      CorsUrls: string array }
+      CorsUrls: string array
+      LogLevel: LogLevel }

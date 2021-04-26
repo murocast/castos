@@ -30,13 +30,20 @@ let appConfig =
             .AddEnvironmentVariables()
             .Build()
 
+    let parsedLevel = builder.["LogLevel"]
+                      |> Option.ofObj
+                      |> Option.map (fun str ->
+                                           let parsed, (value:LogLevel) = LogLevel.TryParse(str)
+                                           if parsed then Some value else None)
+                      |> Option.flatten
     { Auth = {
         Secret = builder.["Auth:Secret"]
         Issuer = builder.["Auth:Issuer"] }
       CorsUrls = builder.["CorsUrls"].Split([|';'|], System.StringSplitOptions.RemoveEmptyEntries)
       Url = builder.["Url"]
       ClientBaseUrl = builder.["ClientBaseUrl"]
-      Port = System.UInt16.Parse builder.["Port"] }
+      Port = System.UInt16.Parse builder.["Port"]
+      LogLevel = Option.defaultValue LogLevel.Information parsedLevel }
 
 let eventStore = { LiteDb.Configuration.Empty with
                         StoreType = LiteDb.LocalDB
@@ -66,7 +73,7 @@ let app = application {
                                             .WithOrigins appConfig.CorsUrls
                                            |> ignore )
     use_gzip
-    logging (fun logger -> logger.SetMinimumLevel LogLevel.Debug |> ignore)
+    logging (fun logger -> logger.SetMinimumLevel appConfig.LogLevel |> ignore)
 }
 
 [<EntryPoint>]
