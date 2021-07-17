@@ -64,9 +64,13 @@ Target.create "Clean" (fun _ ->
 
 Target.create "InstallClient" (fun _ -> npm "install" ".")
 
+Target.create "Build" (fun _ ->
+    dotnet "build" "."
+    dotnet (sprintf "fable %s --sourceMaps --verbose --run webpack --mode production" clientPath) "."
+)
+
 Target.create "Bundle" (fun _ ->
     dotnet (sprintf "publish -c Release -o \"%s\"" deployDir) serverPath
-    npm "run build" "."
 )
 
 Target.create "Run" (fun _ ->
@@ -103,6 +107,7 @@ open Fake.Core.TargetOperators
 
 "Clean"
     ==> "InstallClient"
+    ==> "Build"
     ==> "Bundle"
     ==> "Docker"
 
