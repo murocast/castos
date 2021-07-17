@@ -58,7 +58,7 @@ var CONFIG = {
 }
 
 // If we're running the webpack-dev-server, assume we're in development mode
-var isProduction = !process.argv.find(v => v.indexOf('webpack-dev-server') !== -1);
+var isProduction = !process.argv.find(v => v.indexOf('serve') !== -1);
 var environment = isProduction ? 'production' : 'development';
 process.env.NODE_ENV = environment;
 console.log('Bundling for ' + environment + '...');
