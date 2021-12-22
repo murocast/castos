@@ -3,7 +3,6 @@ namespace Castos
 module Http =
     open Giraffe
     open Microsoft.AspNetCore.Http
-    open FSharp.Control.Tasks.V2
     open System.IO
     open Auth
 

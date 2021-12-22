@@ -2,7 +2,6 @@ namespace Castos
 
 open Giraffe
 open Saturn
-open FSharp.Control.Tasks.V2
 
 open Castos
 open Castos.Configuration
@@ -12,7 +11,7 @@ open Microsoft.Extensions.Logging
 
 module SmapiCompositions =
     let internal getSmapiMethod db (c:HttpContext) =
-            task{
+            task {
                 let m = match c.GetRequestHeader "SOAPAction" with
                         | Error msg -> failwith msg
                         | Result.Ok headerValue -> extractSmapiMethod headerValue
