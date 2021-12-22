@@ -8,7 +8,6 @@ open System.Security.Cryptography
 open Microsoft.AspNetCore.Cryptography.KeyDerivation
 open Giraffe
 open Saturn
-open FSharp.Control.Tasks.V2
 
 
 open Microsoft.AspNetCore.Http
