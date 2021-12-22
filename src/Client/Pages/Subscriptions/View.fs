@@ -5,25 +5,13 @@ open System
 open Feliz
 open Feliz.Bulma
 open Feliz.UseElmish
+open Fable.React.Helpers
 
 open Murocast.Client.Router
 open Murocast.Client.Forms
 open Domain
 open Murocast.Client.SharedView
-
-let inTemplate (content:ReactElement list) =
-    Bulma.hero [
-        Bulma.heroBody [
-            Bulma.columns [
-                Bulma.column [
-                    column.is4
-                    column.isOffset4
-                    text.hasTextCentered
-                    prop.children content
-                ]
-            ]
-        ]
-    ]
+open Murocast.Client.Template
 
 let rows (subsriptions:Subscription list) =
     subsriptions
@@ -52,5 +40,6 @@ let view = React.functionComponent(fun () ->
     let model, dispatch = React.useElmish(State.init, State.update, [| |])
 
     (rows model.Subsriptions)
+    |> ofList
     |> inTemplate
 )

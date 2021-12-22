@@ -15,6 +15,7 @@ type AnonymousPage =
 
 type SecuredPage =
     | Subscriptions
+    | AddSubscription
     | MyAccount
 
     // admin
@@ -39,6 +40,7 @@ module Page =
     module private Paths =
         let [<Literal>] Login = "login"
         let [<Literal>] Subscriptions = "subscriptions"
+        let [<Literal>] AddSubscription = "addsubscription"
         let [<Literal>] MyAccount = "my-account"
         let [<Literal>] Users = "users"
         let [<Literal>] Feeds = "feeds"
@@ -52,6 +54,7 @@ module Page =
             [ Paths.Registration ], Anonymous Registration
             [ Paths.ForgottenPassword ], Anonymous ForgottenPassword
             [ Paths.Subscriptions ], Secured Subscriptions
+            [ Paths.AddSubscription ], Secured AddSubscription
             [ Paths.MyAccount ], Secured MyAccount
             [ Paths.Users ], Secured Users
             [ Paths.Feeds ], Secured Feeds

@@ -19,6 +19,7 @@ let view (model:Model) (dispatch:Msg -> unit) =
             | Secured (pg, user) ->
                 match pg with
                 | Subscriptions -> Pages.Subscriptions.View.view ()
+                | AddSubscription -> Pages.AddSubscription.View.AddSubscriptionView ()
                 | _ -> failwith "Unknown secured page"
 
     React.router [
