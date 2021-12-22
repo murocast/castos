@@ -36,10 +36,10 @@ let rows (subsriptions:Subscription list) =
         ]
     )
 
-let view = React.functionComponent(fun () ->
+[<ReactComponent>]
+let view () = 
     let model, dispatch = React.useElmish(State.init, State.update, [| |])
 
     (rows model.Subsriptions)
     |> ofList
     |> inTemplate
-)

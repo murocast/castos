@@ -25,7 +25,8 @@ let inTemplate (content:ReactElement) =
         ]
     ]
 
-let view = React.functionComponent(fun () ->
+[<ReactComponent>]
+let view () =
     let model, dispatch = React.useElmish(State.init, State.update, [| |])
     Bulma.box [
         Html.img [ prop.src "https://placehold.it/128x128" ]
@@ -69,4 +70,3 @@ let view = React.functionComponent(fun () ->
         ]
     ]
     |> inTemplate
-)

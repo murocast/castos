@@ -54,8 +54,9 @@ let column (model : Model) (dispatch : Msg -> unit) =
           br [ ]
         ]
 
-let view = React.functionComponent(fun (props:ViewProps) ->
-    let model, dispatch = React.useElmish((State.init props.LinkCode props.HouseholdId), State.update, [||])
+[<ReactComponent>]
+let view linkCode householdId =
+    let model, dispatch = React.useElmish((State.init linkCode householdId), State.update, [||])
     Hero.hero
         [ Hero.Color IsSuccess
           Hero.IsFullHeight ]
@@ -63,4 +64,3 @@ let view = React.functionComponent(fun (props:ViewProps) ->
             [ Container.container
                 [ Container.Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
                 [ column model dispatch ] ] ]
-)

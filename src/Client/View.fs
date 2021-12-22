@@ -14,7 +14,7 @@ let view (model:Model) (dispatch:Msg -> unit) =
             | Anonymous pg ->
                 match pg with
                 | Login -> Pages.Login.View.view()
-                | LinkSonos (linkcode,householdId) -> Pages.LinkSonos.View.view { LinkCode = linkcode; HouseholdId = householdId }
+                | LinkSonos (linkcode,householdId) -> Pages.LinkSonos.View.view linkcode householdId
                 | _ -> failwith "Unknown anonymous page"
             | Secured (pg, user) ->
                 match pg with
