@@ -17,3 +17,6 @@ Castos.v3.ncrunchsolution.user
 
 .ionide
 src/Server/appsettings.json
+
+*.fs.js
+*.fs.js.map

@@ -2,12 +2,12 @@ module Castos.Auth
 
 open Castos
 open Castos.Configuration
+open Murocast.Shared.Core.UserAccount.Domain.Queries
 open System
 open System.Security.Cryptography
 open Microsoft.AspNetCore.Cryptography.KeyDerivation
 open Giraffe
 open Saturn
-open FSharp.Control.Tasks.V2
 
 
 open Microsoft.AspNetCore.Http
@@ -24,12 +24,6 @@ type User = {
     Email: string
     PasswordHash: string
     Salt: byte array
-    Roles: string list
-}
-
-type AuthenticatedUser = {
-    Id : UserId
-    Email: string
     Roles: string list
 }
 
@@ -66,18 +60,21 @@ let claimsToAuthUser (cp:ClaimsPrincipal):AuthenticatedUser =
           Email = ""
           Roles = [] }
 
-let generateToken secret issuer (user:User) =
+let generateToken secret issuer userId email roles =
     let claims = [|
-        Claim(JwtRegisteredClaimNames.Sub, user.Email)
+        Claim(JwtRegisteredClaimNames.Sub, email)
         Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        Claim(ClaimTypes.Sid, (user.Id).ToString())
+        Claim(ClaimTypes.Sid, (userId).ToString())
         Claim(ClaimTypes.Role, "Admin") |] //TODO: Not everone is admin; use literal
 
-    let roles = user.Roles |> List.map (fun r -> Claim(ClaimTypes.Role, r))
+    let roles = roles |> List.map (fun r -> Claim(ClaimTypes.Role, r))
 
     claims
     |> Array.append (Array.ofList roles)
     |> Auth.generateJWT (secret, SecurityAlgorithms.HmacSha256) issuer (DateTime.UtcNow.AddHours(1.0))
+
+let authorize:(HttpFunc-> HttpContext -> HttpFuncResult) =
+    requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
 
 let handlePostToken authConfig (getUser:string -> Result<User option, Error>) =
     fun (next : HttpFunc) (ctx : HttpContext) ->
@@ -86,16 +83,20 @@ let handlePostToken authConfig (getUser:string -> Result<User option, Error>) =
 
             let user = getUser model.Email
             let result = match user with
-                             | Success (Some u) when u.PasswordHash = calculateHash model.Password u.Salt
-                                 -> json { Token = generateToken authConfig.Secret authConfig.Issuer u} next ctx
+                             | Ok (Some u) when u.PasswordHash = calculateHash model.Password u.Salt
+                                 -> json { Token = generateToken authConfig.Secret authConfig.Issuer u.Id u.Email u.Roles} next ctx
                              | _ ->
                                     ctx.Response.StatusCode <- HttpStatusCodes.Unauthorized
                                     json "" next ctx
             return! result
 }
 
-let authorize:(HttpFunc-> HttpContext -> HttpFuncResult) =
-    requiresAuthentication (challenge JwtBearerDefaults.AuthenticationScheme)
+let handleRefreshToken authConfig =
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+            task {
+                let u = claimsToAuthUser ctx.User
+                return! json ({ Token = generateToken authConfig.Secret authConfig.Issuer u.Id u.Email u.Roles}:TokenResult) next ctx
+            }
 
 let adminOnly =
     fun (next : HttpFunc) (ctx : HttpContext) ->

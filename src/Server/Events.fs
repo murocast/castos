@@ -1,6 +1,8 @@
 [<AutoOpen>]
 module Castos.Events
 
+open Murocast.Shared.Core.UserAccount.Domain.Queries
+
 type CastosEventData =
     //Stream per feed
     | FeedAdded of FeedAdded
@@ -74,7 +76,6 @@ and PasswordChanged = {
     Id: UserId
     Password: string
 }
-and UserId = System.Guid
 
 
 type Error =

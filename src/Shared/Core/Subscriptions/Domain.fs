@@ -1,0 +1,1 @@
+module Murocast.Shared.Core.Subscriptions.Domain
